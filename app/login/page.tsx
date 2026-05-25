@@ -24,13 +24,12 @@ export default function Login() {
         const data = await res.json().catch(() => ({}));
         setError(data?.message ?? "Invalid credentials. Please try again.");
       }
-      // On success, handle redirect / session as needed
     } catch {
       setError("Unable to connect. Please try again.");
     } finally {
       setLoading(false);
       if (!error) {
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       }
     }
   }
@@ -43,7 +42,6 @@ export default function Login() {
         display: "flex",
       }}
     >
-      {/* ── Main area ── */}
       <main
         style={{
           flex: 1,
@@ -51,10 +49,9 @@ export default function Login() {
           alignItems: "center",
           justifyContent: "center",
           padding: "40px 24px",
-          backgroundColor: "#333333", // Dark gray background from image
+          backgroundColor: "#333333",
         }}
       >
-        {/* Card */}
         <div
           style={{
             width: "100%",
@@ -66,7 +63,6 @@ export default function Login() {
             overflow: "hidden",
           }}
         >
-          {/* Card top bar */}
           <div
             style={{
               height: 4,
@@ -75,7 +71,6 @@ export default function Login() {
           />
 
           <div style={{ padding: "36px 40px 40px" }}>
-            {/* Wordmark */}
             <div
               style={{
                 display: "flex",
@@ -117,7 +112,6 @@ export default function Login() {
               </span>
             </div>
 
-            {/* Heading */}
             <h1
               style={{
                 margin: "0 0 4px",
@@ -140,7 +134,6 @@ export default function Login() {
               Sign in to your dashboard
             </p>
 
-            {/* Error banner */}
             {error && (
               <div
                 style={{
@@ -175,12 +168,10 @@ export default function Login() {
               </div>
             )}
 
-            {/* Form */}
             <form
               onSubmit={handleSubmit}
               style={{ display: "flex", flexDirection: "column", gap: 16 }}
             >
-              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -219,7 +210,6 @@ export default function Login() {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <div
                   style={{
@@ -272,7 +262,6 @@ export default function Login() {
                 />
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -335,7 +324,6 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Divider */}
             <div
               style={{
                 display: "flex",
@@ -382,7 +370,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Footnote */}
         <p
           style={{
             position: "absolute",
@@ -396,7 +383,6 @@ export default function Login() {
         </p>
       </main>
 
-      {/* Spin keyframe */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
