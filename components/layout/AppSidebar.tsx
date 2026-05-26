@@ -9,6 +9,11 @@ import AssetsIcon from "@/public/assets.webp";
 import MaintenanceIcon from "@/public/calendar.webp";
 import PredictionsIcon from "@/public/predictions.webp";
 import ReportsIcon from "@/public/report.webp";
+import DashboardIconActive from "@/public/dashboardActive.webp";
+import assetsIconActive from "@/public/assetsActive.webp";
+// import maintenanceIconActive from "@/public/calendarActive.webp";
+// import predictionsIconActive from "@/public/predictionsActive.webp";
+import reportsIconActive from "@/public/reportsActive.webp";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -18,15 +23,16 @@ export function AppSidebar() {
   const { isOpen, setIsOpen } = useSidebar();
 
   const links = [
-    { name: "Dashboard", href: "/dashboard", icon: DashboardIcon },
-    { name: "Assets", href: "/assets", icon: AssetsIcon },
+    { name: "Dashboard", href: "/dashboard", icon: DashboardIcon, iconActive: DashboardIconActive },
+    { name: "Assets", href: "/assets", icon: AssetsIcon, iconActive: assetsIconActive },
     {
       name: "Maintenance Calendar",
       href: "/maintenance",
       icon: MaintenanceIcon,
+      iconActive: MaintenanceIcon, // No active version available
     },
-    { name: "Predictions", href: "/predictions", icon: PredictionsIcon },
-    { name: "AI Reports", href: "/reports", icon: ReportsIcon },
+    { name: "Predictions", href: "/predictions", icon: PredictionsIcon, iconActive: PredictionsIcon }, // No active version available
+    { name: "AI Reports", href: "/reports", icon: ReportsIcon, iconActive: reportsIconActive },
   ];
 
   return (
@@ -63,11 +69,11 @@ export function AppSidebar() {
                 href={link.href}
                 className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                   isActive
-                    ? "bg-white text-black"
-                    : "text-gray-300 hover:bg-white/10"
+                    ? "bg-white text-[#3F65ED]"
+                    : "text-gray hover:bg-white/10"
                 }`}
               >
-                <Image src={link.icon} alt={link.name} className="w-5 h-5" />
+                <Image src={isActive ? link.iconActive : link.icon} alt={link.name} className="w-5 h-5" />
                 <span className="font-medium">{link.name}</span>
               </Link>
             );

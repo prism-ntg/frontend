@@ -58,5 +58,5 @@ export async function middleware(request: NextRequest) {
 
 // Ensure middleware runs only for relevant paths
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp3|wav|ogg|woff|woff2|ttf)$).*)'],
 };
