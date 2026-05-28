@@ -8,10 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "db:setup": "tsx scripts/db-setup.ts",
-    "db:push": "npm run db:setup && drizzle-kit push"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:push": "npm run db:setup && drizzle-kit push && npm run db:seed"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "csv-parse": "^6.2.1",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "jose": "^6.2.3",
