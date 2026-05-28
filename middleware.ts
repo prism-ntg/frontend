@@ -45,6 +45,9 @@ export async function middleware(request: NextRequest) {
 
   // If the path is not public and token is invalid, redirect to /login
   if (!isPublicPath && !isValidToken) {
+    if (path.startsWith('/api/')) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.redirect(new URL('/login', request.nextUrl));
   }
 

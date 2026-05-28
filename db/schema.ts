@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, text, timestamp, float } from 'drizzle-orm/mysql-core';
+import { mysqlTable, int, varchar, text, timestamp, float, json } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 export const users = mysqlTable('users', {
@@ -7,6 +7,22 @@ export const users = mysqlTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: text('password').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const mainData = mysqlTable('main_data', {
+  id: int('id').autoincrement().primaryKey(),
+  idAset: varchar('id_aset', { length: 255 }).notNull().unique(),
+  kategori: varchar('kategori', { length: 255 }),
+  subKategori: varchar('sub_kategori', { length: 255 }),
+  tipe: varchar('tipe', { length: 255 }),
+  jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
+  severity: varchar('severity', { length: 255 }),
+  penyebab: text('penyebab'),
+  biayaPerbaikan: int('biaya_perbaikan'),
+  sparePartDigunakan: text('spare_part_digunakan'),
+  lokasiGedung: varchar('lokasi_gedung', { length: 255 }),
+  lokasiLantai: varchar('lokasi_lantai', { length: 255 }),
+  lokasiZona: varchar('lokasi_zona', { length: 255 }),
 });
 
 export const predictions = mysqlTable('predictions', {
@@ -27,21 +43,25 @@ export const predictions = mysqlTable('predictions', {
   targetFrekuensi: varchar('target_frekuensi', { length: 255 }),
 });
 
-export const mainData = mysqlTable('main_data', {
+export const chatMessage = mysqlTable('chat_messages', {
   id: int('id').autoincrement().primaryKey(),
-  idAset: varchar('id_aset', { length: 255 }).notNull().unique(),
-  kategori: varchar('kategori', { length: 255 }),
-  subKategori: varchar('sub_kategori', { length: 255 }),
-  tipe: varchar('tipe', { length: 255 }),
-  jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
-  severity: varchar('severity', { length: 255 }),
-  penyebab: text('penyebab'),
-  biayaPerbaikan: int('biaya_perbaikan'),
-  sparePartDigunakan: text('spare_part_digunakan'),
-  lokasiGedung: varchar('lokasi_gedung', { length: 255 }),
-  lokasiLantai: varchar('lokasi_lantai', { length: 255 }),
-  lokasiZona: varchar('lokasi_zona', { length: 255 }),
+  userId: int('user_id').notNull().references(() => users.id),
+  sender: varchar('sender', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  url: varchar('url', { length: 255 }),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  chatMessages: many(chatMessage),
+}));
+
+export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
+  user: one(users, {
+    fields: [chatMessage.userId],
+    references: [users.id],
+  }),
+}));
 
 export const mainDataRelations = relations(mainData, ({ many }) => ({
   predictions: many(predictions),

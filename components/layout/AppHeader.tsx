@@ -12,6 +12,7 @@ export function AppHeader() {
     if (path === "/" || path === "/dashboard") return "Dashboard";
     const segment = path.split("/")[1];
     if (!segment) return "Dashboard";
+    if (segment === "reports") return "AI Reports";
     return (
       segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ")
     );

@@ -39,10 +39,6 @@ async function seed() {
   for (let i = 0; i < records.length; i += batchSize) {
     const batch = records.slice(i, i + batchSize);
     
-    // Create unique sets based on idAset to prevent duplicate insertion error
-    // Some lines might have the same id_aset, in which case we may need to deduplicate them
-    // based on our schema idAset is unique in mainData but predictions have unique too?
-    // Wait, let's look at schema.ts again!
     
     const uniqueBatch = [];
     const seenIds = new Set();
@@ -90,13 +86,8 @@ async function seed() {
     if (!val) return null;
     val = val.trim();
     if (val.includes(',')) {
-      // e.g. "9.999.994.441.359.390,2767" -> "9999994441359390.2767"
       val = val.replace(/\./g, '').replace(',', '.');
     } else {
-      // e.g. "13.333.333.333.333.300" -> this is crazy, let parseFloat handle it or replace dots since it might be thousand separators?
-      // but wait, "0.0" is just 0.0. "52615000.0" is just 52615000.0.
-      // If it ends with ".0", dots are decimal.
-      // To be safe, if we don't have comma, just parse float.
     }
     return parseFloat(val);
   }
@@ -127,7 +118,6 @@ async function seed() {
   for (let i = 0; i < predRecords.length; i += batchSize) {
     const batch = predRecords.slice(i, i + batchSize);
     
-    // Predictions shouldn't have duplicate id_aset? Wait! If it does, we deduplicate again.
     const uniquePredBatch = [];
     const seenPredIds = new Set();
     for (const d of batch) {

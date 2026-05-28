@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const INFERENCE_URL =
-  process.env.INFERENCE_SERVER_URL ?? "http://localhost:8000";
+  process.env.AI_API_URL;
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 
 interface RawWorkOrder {
   ID_Aset: string;
@@ -45,9 +42,6 @@ interface AssetResult extends AssetFeatures {
   Rekomendasi_Jadwal: string;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 const KEKRITISAN_MAP: Record<string, number> = {
   Minor: 1,
@@ -147,9 +141,6 @@ async function predictAsset(features: AssetFeatures): Promise<string> {
   return json.rekomendasi_jadwal;
 }
 
-// ---------------------------------------------------------------------------
-// POST /api/assets/analyze
-// ---------------------------------------------------------------------------
 
 export async function POST(req: NextRequest) {
   try {
