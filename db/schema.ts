@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, text, timestamp, float, json } from 'drizzle-orm/mysql-core';
+import { mysqlTable, int, varchar, text, timestamp, float, date } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 export const users = mysqlTable('users', {
@@ -9,38 +9,44 @@ export const users = mysqlTable('users', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const mainData = mysqlTable('main_data', {
+export const masterAset = mysqlTable('master_aset', {
   id: int('id').autoincrement().primaryKey(),
   idAset: varchar('id_aset', { length: 255 }).notNull().unique(),
+  nama: varchar('nama', { length: 255 }),
+  merek: varchar('merek', { length: 255 }),
+  model: varchar('model', { length: 255 }),
   kategori: varchar('kategori', { length: 255 }),
   subKategori: varchar('sub_kategori', { length: 255 }),
   tipe: varchar('tipe', { length: 255 }),
-  jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
-  severity: varchar('severity', { length: 255 }),
-  penyebab: text('penyebab'),
-  biayaPerbaikan: int('biaya_perbaikan'),
-  sparePartDigunakan: text('spare_part_digunakan'),
+  tglInstalasi: date('tgl_instalasi'),
   lokasiGedung: varchar('lokasi_gedung', { length: 255 }),
   lokasiLantai: varchar('lokasi_lantai', { length: 255 }),
   lokasiZona: varchar('lokasi_zona', { length: 255 }),
+  kekritisan: varchar('kekritisan', { length: 50 }),
+  status: varchar('status', { length: 50 }).notNull().default('Aktif'),
+  statusJadwal: varchar('status_jadwal', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const predictions = mysqlTable('predictions', {
+export const asetKomplain = mysqlTable('aset_komplain', {
   id: int('id').autoincrement().primaryKey(),
-  idAset: varchar('id_aset', { length: 255 }).notNull().references(() => mainData.idAset),
-  tanggalInstalasi: timestamp('tanggal_instalasi'),
-  kekritisanScore: float('kekritisan_score'),
-  avgMaintenanceDelay: float('avg_maintenance_delay'),
-  maxMaintenanceDelay: float('max_maintenance_delay'),
-  totalDowntime: float('total_downtime'),
-  avgDowntime: float('avg_downtime'),
-  totalBiayaPerbaikan: float('total_biaya_perbaikan'),
-  failureFrequency: float('failure_frequency'),
-  peakSeverity: float('peak_severity'),
-  avgBiayaPenggantian: float('avg_biaya_penggantian'),
-  costRiskRatio: float('cost_risk_ratio'),
-  umurAsetHari: int('umur_aset_hari'),
-  targetFrekuensi: varchar('target_frekuensi', { length: 255 }),
+  idAset: varchar('id_aset', { length: 255 }).notNull().references(() => masterAset.idAset),
+  tanggalPerencanaan: date('tanggal_perencanaan'),
+  tanggalPengerjaan: date('tanggal_pengerjaan'),
+  tanggalSelesai: date('tanggal_selesai'),
+  jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
+  severity: varchar('severity', { length: 50 }),
+  severityScore: int('severity_score'),
+  penyebab: text('penyebab'),
+  biayaPerbaikan: float('biaya_perbaikan'),
+  sparePartDigunakan: text('spare_part_digunakan'),
+  teknisiPelaksana: varchar('teknisi_pelaksana', { length: 255 }),
+});
+
+// Reference table: avg replacement price per asset type, used for Avg_Biaya_Penggantian feature
+export const katalogHarga = mysqlTable('katalog_harga', {
+  tipe: varchar('tipe', { length: 255 }).primaryKey(),
+  hargaBeli: float('harga_beli'),
 });
 
 export const chatMessage = mysqlTable('chat_messages', {
@@ -57,19 +63,13 @@ export const userRelations = relations(users, ({ many }) => ({
 }));
 
 export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
-  user: one(users, {
-    fields: [chatMessage.userId],
-    references: [users.id],
-  }),
+  user: one(users, { fields: [chatMessage.userId], references: [users.id] }),
 }));
 
-export const mainDataRelations = relations(mainData, ({ many }) => ({
-  predictions: many(predictions),
+export const masterAsetRelations = relations(masterAset, ({ many }) => ({
+  komplain: many(asetKomplain),
 }));
 
-export const predictionsRelations = relations(predictions, ({ one }) => ({
-  mainData: one(mainData, {
-    fields: [predictions.idAset],
-    references: [mainData.idAset],
-  }),
+export const asetKomplainRelations = relations(asetKomplain, ({ one }) => ({
+  masterAset: one(masterAset, { fields: [asetKomplain.idAset], references: [masterAset.idAset] }),
 }));

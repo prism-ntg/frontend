@@ -1,165 +1,119 @@
 import fs from 'fs';
 import path from 'path';
-import { parse } from 'csv-parse';
+import { parse } from 'csv-parse/sync';
 import { db } from '../db';
-import { mainData, predictions } from '../db/schema';
-import { inArray, sql } from 'drizzle-orm';
+import { masterAset, asetKomplain, katalogHarga } from '../db/schema';
+import { sql } from 'drizzle-orm';
 
-const csvFilePath = path.resolve(__dirname, '../public/main_data.csv');
-const predictionsCsvFilePath = path.resolve(__dirname, '../public/predictions.csv');
+const BATCH = 500;
+const PUBLIC = path.resolve(__dirname, '../public');
+
+function readCsv(filename: string): Record<string, string>[] {
+  const content = fs.readFileSync(path.join(PUBLIC, filename), 'utf-8');
+  return parse(content, { columns: true, skip_empty_lines: true }) as Record<string, string>[];
+}
+
+function parseDate(val: string | undefined): Date | null {
+  if (!val || val === 'NaT' || val.trim() === '') return null;
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function parseFloat2(val: string | undefined): number | null {
+  if (!val || val.trim() === '') return null;
+  const n = parseFloat(val);
+  return isNaN(n) ? null : n;
+}
+
+function parseInt2(val: string | undefined): number | null {
+  if (!val || val.trim() === '') return null;
+  const n = parseInt(val, 10);
+  return isNaN(n) ? null : n;
+}
+
+async function insertBatches<T extends object>(
+  table: Parameters<typeof db.insert>[0],
+  rows: T[],
+  label: string,
+  updateSet: Record<string, ReturnType<typeof sql>>,
+) {
+  let inserted = 0;
+  for (let i = 0; i < rows.length; i += BATCH) {
+    const batch = rows.slice(i, i + BATCH);
+    try {
+      await db.insert(table).values(batch).onDuplicateKeyUpdate({ set: updateSet });
+      inserted += batch.length;
+    } catch (err) {
+      console.error(`[${label}] batch error at offset ${i}:`, err);
+    }
+  }
+  console.log(`[${label}] inserted ${inserted} / ${rows.length} rows`);
+}
+
+async function seedMasterAset() {
+  const rows = readCsv('master_aset.csv').map((r) => ({
+    idAset: r.id_aset,
+    nama: r.nama || null,
+    merek: r.merek || null,
+    model: r.model || null,
+    kategori: r.kategori || null,
+    subKategori: r.sub_kategori || null,
+    tipe: r.tipe || null,
+    tglInstalasi: parseDate(r.tgl_instalasi),
+    lokasiGedung: r.lokasi_gedung || null,
+    lokasiLantai: r.lokasi_lantai || null,
+    lokasiZona: r.lokasi_zona || null,
+    kekritisan: r.kekritisan || null,
+    status: r.status || 'Aktif',
+    statusJadwal: null,
+  }));
+  await insertBatches(masterAset, rows, 'master_aset', { status: sql`VALUES(status)` });
+}
+
+async function seedKatalogHarga() {
+  const rows = readCsv('katalog_harga.csv').map((r) => ({
+    tipe: r.tipe,
+    hargaBeli: parseFloat2(r.harga_beli),
+  }));
+  await insertBatches(katalogHarga, rows, 'katalog_harga', { hargaBeli: sql`VALUES(harga_beli)` });
+}
+
+async function seedAsetKomplain() {
+  const rows = readCsv('aset_komplain.csv').map((r) => ({
+    idAset: r.id_aset,
+    tanggalPerencanaan: parseDate(r.tanggal_perencanaan),
+    tanggalPengerjaan: parseDate(r.tanggal_pengerjaan),
+    tanggalSelesai: parseDate(r.tanggal_selesai),
+    jenisKerusakan: r.jenis_kerusakan || null,
+    severity: r.severity || null,
+    severityScore: parseInt2(r.severity_score),
+    penyebab: r.penyebab || null,
+    biayaPerbaikan: parseFloat2(r.biaya_perbaikan),
+    sparePartDigunakan: r.spare_part_digunakan || null,
+    teknisiPelaksana: r.teknisi_pelaksana || null,
+  }));
+
+  // aset_komplain FK references master_aset — skip orphan rows
+  const masterIds = new Set(
+    readCsv('master_aset.csv').map((r) => r.id_aset),
+  );
+  const valid = rows.filter((r) => masterIds.has(r.idAset));
+  const orphans = rows.length - valid.length;
+  if (orphans > 0) console.log(`[aset_komplain] skipping ${orphans} orphan rows (no matching master asset)`);
+
+  await insertBatches(asetKomplain, valid, 'aset_komplain', { id: sql`id` });
+}
 
 async function seed() {
-  console.log('Seeding main_data from CSV...');
-  const records: any[] = [];
-  
-  const parser = fs
-    .createReadStream(csvFilePath)
-    .pipe(parse({ columns: true, skip_empty_lines: true }));
-
-  for await (const record of parser) {
-    records.push({
-      idAset: record.id_aset,
-      kategori: record.kategori,
-      subKategori: record.sub_kategori,
-      tipe: record.tipe,
-      jenisKerusakan: record.jenis_kerusakan,
-      severity: record.severity,
-      penyebab: record.penyebab,
-      biayaPerbaikan: record.biaya_perbaikan ? parseInt(record.biaya_perbaikan) : null,
-      sparePartDigunakan: record.spare_part_digunakan,
-      lokasiGedung: record.lokasi_gedung,
-      lokasiLantai: record.lokasi_lantai,
-      lokasiZona: record.lokasi_zona,
-    });
-  }
-
-  const batchSize = 1000;
-  let inserted = 0;
-  
-  for (let i = 0; i < records.length; i += batchSize) {
-    const batch = records.slice(i, i + batchSize);
-    
-    
-    const uniqueBatch = [];
-    const seenIds = new Set();
-    for (const d of batch) {
-      if (!seenIds.has(d.idAset)) {
-        seenIds.add(d.idAset);
-        uniqueBatch.push(d);
-      }
-    }
-
-    if (uniqueBatch.length > 0) {
-      try {
-        await db.insert(mainData).values(uniqueBatch).onDuplicateKeyUpdate({
-          set: {
-            kategori: sql`VALUES(kategori)`,
-            subKategori: sql`VALUES(sub_kategori)`,
-            tipe: sql`VALUES(tipe)`,
-            jenisKerusakan: sql`VALUES(jenis_kerusakan)`,
-            severity: sql`VALUES(severity)`,
-            penyebab: sql`VALUES(penyebab)`,
-            biayaPerbaikan: sql`VALUES(biaya_perbaikan)`,
-            sparePartDigunakan: sql`VALUES(spare_part_digunakan)`,
-            lokasiGedung: sql`VALUES(lokasi_gedung)`,
-            lokasiLantai: sql`VALUES(lokasi_lantai)`,
-            lokasiZona: sql`VALUES(lokasi_zona)`,
-          }
-        });
-        inserted += uniqueBatch.length;
-      } catch (err) {
-        console.error(`Error inserting batch at ${i}: `, err);
-      }
-    }
-  }
-
-  console.log(`Successfully seeded ${inserted} records into main_data`);
-
-  console.log('Seeding predictions from CSV...');
-  const predRecords: any[] = [];
-  
-  const predParser = fs
-    .createReadStream(predictionsCsvFilePath)
-    .pipe(parse({ columns: true, skip_empty_lines: true }));
-
-  function parseNumber(val: string | null | undefined): number | null {
-    if (!val) return null;
-    val = val.trim();
-    if (val.includes(',')) {
-      val = val.replace(/\./g, '').replace(',', '.');
-    } else {
-    }
-    return parseFloat(val);
-  }
-
-  for await (const record of predParser) {
-    predRecords.push({
-      idAset: record.id_aset,
-      tanggalInstalasi: record.tanggal_instalasi ? new Date(record.tanggal_instalasi) : null,
-      kekritisanScore: parseNumber(record.kekritisan_score),
-      avgMaintenanceDelay: parseNumber(record.avg_maintenance_delay),
-      maxMaintenanceDelay: parseNumber(record.max_maintenance_delay),
-      totalDowntime: parseNumber(record.total_downtime),
-      avgDowntime: parseNumber(record.avg_downtime),
-      totalBiayaPerbaikan: parseNumber(record.total_biaya_perbaikan),
-      failureFrequency: parseNumber(record.failure_frequency),
-      peakSeverity: parseNumber(record.peak_severity),
-      avgBiayaPenggantian: parseNumber(record.avg_biaya_penggantian),
-      costRiskRatio: parseNumber(record.cost_risk_ratio),
-      umurAsetHari: parseNumber(record.umur_aset_hari),
-      targetFrekuensi: record.target_frekuensi,
-    });
-  }
-
-  let predInserted = 0;
-  
-  await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0;`);
-
-  for (let i = 0; i < predRecords.length; i += batchSize) {
-    const batch = predRecords.slice(i, i + batchSize);
-    
-    const uniquePredBatch = [];
-    const seenPredIds = new Set();
-    for (const d of batch) {
-      if (!seenPredIds.has(d.idAset)) {
-        seenPredIds.add(d.idAset);
-        uniquePredBatch.push(d);
-      }
-    }
-
-    if (uniquePredBatch.length > 0) {
-      try {
-        await db.insert(predictions).values(uniquePredBatch).onDuplicateKeyUpdate({
-          set: {
-            tanggalInstalasi: sql`VALUES(tanggal_instalasi)`,
-            kekritisanScore: sql`VALUES(kekritisan_score)`,
-            avgMaintenanceDelay: sql`VALUES(avg_maintenance_delay)`,
-            maxMaintenanceDelay: sql`VALUES(max_maintenance_delay)`,
-            totalDowntime: sql`VALUES(total_downtime)`,
-            avgDowntime: sql`VALUES(avg_downtime)`,
-            totalBiayaPerbaikan: sql`VALUES(total_biaya_perbaikan)`,
-            failureFrequency: sql`VALUES(failure_frequency)`,
-            peakSeverity: sql`VALUES(peak_severity)`,
-            avgBiayaPenggantian: sql`VALUES(avg_biaya_penggantian)`,
-            costRiskRatio: sql`VALUES(cost_risk_ratio)`,
-            umurAsetHari: sql`VALUES(umur_aset_hari)`,
-            targetFrekuensi: sql`VALUES(target_frekuensi)`,
-          }
-        });
-        predInserted += uniquePredBatch.length;
-      } catch (err) {
-        console.error(`Error inserting predictions batch at ${i}: `, err);
-      }
-    }
-  }
-
-  console.log(`Successfully seeded ${predInserted} records into predictions`);
-  await db.execute(sql`SET FOREIGN_KEY_CHECKS = 1;`);
-
+  console.log('Starting PRISM database seed...\n');
+  await seedMasterAset();
+  await seedKatalogHarga();
+  await seedAsetKomplain();
+  console.log('\nSeed complete.');
   process.exit(0);
 }
 
 seed().catch((err) => {
-  console.error(err);
+  console.error('Seed failed:', err);
   process.exit(1);
 });
