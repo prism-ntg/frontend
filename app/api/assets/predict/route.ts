@@ -132,12 +132,13 @@ export async function POST() {
       hasil: { id_aset: string; rekomendasi_jadwal: string }[];
     };
 
-    // 7. Bulk-update statusJadwal in master_aset
+    // 7. Bulk-update statusJadwal + lastPredictedAt in master_aset
+    const now = new Date();
     await Promise.all(
       aiJson.hasil.map((item) =>
         db
           .update(masterAset)
-          .set({ statusJadwal: item.rekomendasi_jadwal })
+          .set({ statusJadwal: item.rekomendasi_jadwal, lastPredictedAt: now })
           .where(eq(masterAset.idAset, item.id_aset)),
       ),
     );

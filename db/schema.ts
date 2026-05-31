@@ -25,6 +25,7 @@ export const masterAset = mysqlTable('master_aset', {
   kekritisan: varchar('kekritisan', { length: 50 }),
   status: varchar('status', { length: 50 }).notNull().default('Aktif'),
   statusJadwal: varchar('status_jadwal', { length: 255 }),
+  lastPredictedAt: timestamp('last_predicted_at'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 

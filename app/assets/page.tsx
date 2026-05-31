@@ -31,6 +31,13 @@ interface KomplainLog {
   teknisiPelaksana: string | null;
 }
 
+interface Filters {
+  kategori: string[];
+  tipe: string[];
+  lokasi: string[];
+  jadwal: string[];
+}
+
 const JADWAL_COLORS: Record<string, string> = {
   Harian: "bg-red-100 text-red-700",
   Mingguan: "bg-orange-100 text-orange-700",
@@ -48,10 +55,15 @@ export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("Aktif");
-  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState<Filters>({ kategori: [], tipe: [], lokasi: [], jadwal: [] });
+  const [selectedKategori, setSelectedKategori] = useState("");
+  const [selectedTipe, setSelectedTipe] = useState("");
+  const [selectedLokasi, setSelectedLokasi] = useState("");
+  const [selectedJadwal, setSelectedJadwal] = useState("");
+  const [loading, setLoading] = useState(true);
   const [predicting, setPredicting] = useState(false);
   const [predMsg, setPredMsg] = useState<string | null>(null);
+  const [lastPredictedAt, setLastPredictedAt] = useState<string | null>(null);
 
   const [modalAsset, setModalAsset] = useState<Asset | null>(null);
   const [komplainLogs, setKomplainLogs] = useState<KomplainLog[]>([]);
@@ -59,19 +71,34 @@ export default function AssetsPage() {
 
   const LIMIT = 50;
 
+  // Load filters on mount
+  useEffect(() => {
+    fetch("/api/assets/filters")
+      .then((r) => r.json())
+      .then((data) => setFilters(data))
+      .catch((err) => console.error("Failed to load filters:", err));
+  }, []);
+
   const fetchAssets = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/assets?page=${page}&limit=${LIMIT}&status=${statusFilter}`,
-      );
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(LIMIT),
+        status: "Aktif",
+        ...(selectedKategori && { kategori: selectedKategori }),
+        ...(selectedTipe && { tipe: selectedTipe }),
+        ...(selectedLokasi && { lokasi: selectedLokasi }),
+        ...(selectedJadwal && { jadwal: selectedJadwal }),
+      });
+      const res = await fetch(`/api/assets?${params}`);
       const json = await res.json();
       setAssets(json.data ?? []);
       setTotal(json.total ?? 0);
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter]);
+  }, [page, selectedKategori, selectedTipe, selectedLokasi, selectedJadwal]);
 
   useEffect(() => {
     fetchAssets();
@@ -84,15 +111,15 @@ export default function AssetsPage() {
       const res = await fetch("/api/assets/predict", { method: "POST" });
       const json = await res.json();
       if (!res.ok) {
-        setPredMsg(`Error: ${json.message ?? "Gagal menghubungi AI server"}`);
+        setPredMsg(`❌ Prediksi gagal: ${json.message ?? "Server error"}`);
       } else {
-        setPredMsg(
-          `Prediksi selesai — ${json.total_diproses} aset diperbarui.`,
-        );
+        const now = new Date().toLocaleString("id-ID");
+        setLastPredictedAt(now);
+        setPredMsg(`✅ Prediksi berhasil — ${json.total_diproses ?? 0} aset diperbarui pada ${now}`);
         fetchAssets();
       }
-    } catch {
-      setPredMsg("Gagal: tidak dapat terhubung ke server.");
+    } catch (err) {
+      setPredMsg(`❌ Prediksi gagal: ${String(err)}`);
     } finally {
       setPredicting(false);
     }
@@ -113,54 +140,116 @@ export default function AssetsPage() {
     }
   }
 
+  const handleFilterChange = (type: "kategori" | "tipe" | "lokasi" | "jadwal", value: string) => {
+    if (type === "kategori") setSelectedKategori(value);
+    else if (type === "tipe") setSelectedTipe(value);
+    else if (type === "lokasi") setSelectedLokasi(value);
+    else if (type === "jadwal") setSelectedJadwal(value);
+    setPage(1);
+  };
+
   const totalPages = Math.ceil(total / LIMIT);
 
   return (
     <div className="min-h-screen bg-zinc-50 p-6 font-sans">
       {/* Header */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Manajemen Aset</h1>
-          <p className="text-sm text-zinc-500">
-            {total.toLocaleString()} aset ditemukan
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <select
-            value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm"
-          >
-            <option value="Aktif">Aktif</option>
-            <option value="Non-Aktif">Non-Aktif</option>
-            <option value="">Semua</option>
-          </select>
-
+      <div className="mb-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-zinc-900">Manajemen Aset</h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              {total.toLocaleString()} aset ditemukan
+            </p>
+          </div>
           <button
             onClick={runPrediction}
             disabled={predicting}
-            className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 w-fit"
           >
             {predicting ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Memproses...
+                Prediksi berjalan...
               </>
             ) : (
-              "Jalankan Prediksi AI"
+              "🚀 Jalankan Prediksi"
             )}
           </button>
         </div>
+        {lastPredictedAt && (
+          <p className="text-xs text-zinc-400 mt-2">
+            Prediksi terakhir: {lastPredictedAt}
+          </p>
+        )}
       </div>
 
+      {/* Status Message */}
       {predMsg && (
         <div
-          className={`mb-4 rounded-lg px-4 py-3 text-sm ${predMsg.startsWith("Error") || predMsg.startsWith("Gagal") ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}
+          className={`mb-4 rounded-lg px-4 py-3 text-sm animate-in fade-in ${
+            predMsg.includes("✅")
+              ? "bg-green-50 text-green-700 border border-green-200"
+              : "bg-red-50 text-red-700 border border-red-200"
+          }`}
         >
           {predMsg}
         </div>
       )}
+
+      {/* Filters */}
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
+        <select
+          value={selectedKategori}
+          onChange={(e) => handleFilterChange("kategori", e.target.value)}
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm"
+        >
+          <option value="">Semua Kategori</option>
+          {filters.kategori.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedTipe}
+          onChange={(e) => handleFilterChange("tipe", e.target.value)}
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm"
+        >
+          <option value="">Semua Tipe</option>
+          {filters.tipe.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedLokasi}
+          onChange={(e) => handleFilterChange("lokasi", e.target.value)}
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm"
+        >
+          <option value="">Semua Lokasi</option>
+          {filters.lokasi.map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedJadwal}
+          onChange={(e) => handleFilterChange("jadwal", e.target.value)}
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm"
+        >
+          <option value="">Semua Jadwal Prediksi</option>
+          {filters.jadwal.map((j) => (
+            <option key={j} value={j}>
+              {j}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
@@ -170,10 +259,10 @@ export default function AssetsPage() {
               <tr className="border-b border-zinc-100 bg-zinc-50 text-left text-xs font-medium uppercase tracking-wide text-zinc-500">
                 <th className="px-4 py-3">ID Aset</th>
                 <th className="px-4 py-3">Tipe</th>
+                <th className="px-4 py-3">Tanggal Instalasi</th>
                 <th className="px-4 py-3">Kategori</th>
                 <th className="px-4 py-3">Lokasi</th>
                 <th className="px-4 py-3">Kekritisan</th>
-                <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Jadwal AI</th>
               </tr>
             </thead>
@@ -181,7 +270,7 @@ export default function AssetsPage() {
               {loading ? (
                 <tr>
                   <td colSpan={7} className="py-16 text-center text-zinc-400">
-                    Memuat data...
+                    Memuat data dari database...
                   </td>
                 </tr>
               ) : assets.length === 0 ? (
@@ -201,6 +290,11 @@ export default function AssetsPage() {
                       {a.idAset}
                     </td>
                     <td className="px-4 py-3 text-zinc-700">{a.tipe ?? "—"}</td>
+                    <td className="px-4 py-3 text-zinc-500">
+                      {a.tglInstalasi
+                        ? new Date(a.tglInstalasi).toLocaleDateString("id-ID")
+                        : "—"}
+                    </td>
                     <td className="px-4 py-3 text-zinc-500">
                       {a.kategori ?? "—"}
                       {a.subKategori ? ` / ${a.subKategori}` : ""}
@@ -222,13 +316,6 @@ export default function AssetsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${a.status === "Aktif" ? "bg-green-100 text-green-700" : "bg-zinc-100 text-zinc-500"}`}
-                      >
-                        {a.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
                       {a.statusJadwal ? (
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-medium ${JADWAL_COLORS[a.statusJadwal] ?? "bg-indigo-100 text-indigo-700"}`}
@@ -236,7 +323,7 @@ export default function AssetsPage() {
                           {a.statusJadwal}
                         </span>
                       ) : (
-                        <span className="text-zinc-300">Belum dianalisis</span>
+                        <span className="text-zinc-300">—</span>
                       )}
                     </td>
                   </tr>
