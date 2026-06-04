@@ -66,6 +66,9 @@ const FREQ_TO_JADWAL: Record<string, string> = {
   Daily: "Harian", Weekly: "Mingguan", Monthly: "Bulanan", Yearly: "Tahunan", Reactive: "Reaktif",
 };
 
+const FREQ_OPTIONS = ["Daily", "Weekly", "Monthly", "Yearly", "Reactive"];
+const RISK_TABS = ["All", "Major", "Minor", "Healthy", "Critical"];
+
 // Utilities                                                                 
 
 function freqLabel(j: string | null): string {
@@ -225,8 +228,8 @@ function OverviewTab({ asset, logs, loading }: { asset: Asset; logs: KomplainLog
         </div>
         <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${healthBarColor(hs)}`}
-            style={{ width: `${hs}%` }}
+            className={`h-full rounded-full ${healthBarColor(hs)}`}
+            style={{ width: `${hs}%`, transition: "width 700ms cubic-bezier(0.23, 1, 0.32, 1)" }}
           />
         </div>
       </div>
@@ -341,6 +344,7 @@ function FilterCombobox({
   placeholder: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [dropVis, setDropVis] = useState(false);
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -354,6 +358,11 @@ function FilterCombobox({
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setDropVis(open));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
 
   const filtered = query
     ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
@@ -375,7 +384,7 @@ function FilterCombobox({
   return (
     <div ref={containerRef} className="relative">
       <div
-        className={`flex items-center rounded-lg border bg-white shadow-sm transition-all duration-150 ${
+        className={`flex items-center rounded-lg border bg-white shadow-sm transition-[border-color,box-shadow,background-color] duration-150 ${
           open
             ? "border-indigo-300 ring-2 ring-indigo-100"
             : value
@@ -405,7 +414,12 @@ function FilterCombobox({
       </div>
 
       {open && (
-        <div className="absolute top-[calc(100%+4px)] left-0 z-50 min-w-full w-max max-w-56 rounded-xl border border-zinc-100 bg-white shadow-lg">
+        <div
+          className={`absolute top-[calc(100%+4px)] left-0 z-50 min-w-full w-max max-w-56 rounded-xl border border-zinc-100 bg-white shadow-lg origin-top transition-[opacity,transform] duration-150 ${
+            dropVis ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
+          style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+        >
           <div className="max-h-52 overflow-y-auto py-1">
             {filtered.length === 0 ? (
               <p className="px-3 py-2.5 text-xs text-zinc-400 italic">No matches</p>
@@ -458,6 +472,11 @@ export default function AssetsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const router = useRouter();
+  const riskTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [riskIndicator, setRiskIndicator] = useState({ left: 0, width: 0, ready: false });
+  const panelTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [panelIndicator, setPanelIndicator] = useState({ left: 0, width: 0, ready: false });
+  const [panelVis, setPanelVis] = useState(false);
 
   const LIMIT = 50;
 
@@ -530,7 +549,30 @@ export default function AssetsPage() {
     }
   }, [buildParams]);
 
-  // Original: run prediction   
+  // Sliding risk tab indicator
+  useEffect(() => {
+    const idx = RISK_TABS.indexOf(riskFilter);
+    const el = riskTabRefs.current[idx];
+    if (!el) return;
+    setRiskIndicator({ left: el.offsetLeft + 12, width: el.offsetWidth - 24, ready: true });
+  }, [riskFilter]);
+
+  // Panel entry animation
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setPanelVis(!!modalAsset));
+    return () => cancelAnimationFrame(id);
+  }, [modalAsset]);
+
+  // Panel tab sliding indicator
+  useEffect(() => {
+    const tabs = ["overview", "maintenance"] as const;
+    const idx = tabs.indexOf(activeTab);
+    const el = panelTabRefs.current[idx];
+    if (!el) return;
+    setPanelIndicator({ left: el.offsetLeft + 8, width: el.offsetWidth - 16, ready: true });
+  }, [activeTab, modalAsset]);
+
+  // Original: run prediction
   async function runPrediction() {
     setPredicting(true);
     setPredMsg(null);
@@ -589,8 +631,6 @@ export default function AssetsPage() {
     setPage(1);
   }
 
-  const FREQ_OPTIONS = ["Daily", "Weekly", "Monthly", "Yearly", "Reactive"];
-
   const totalPages = Math.ceil(total / LIMIT);
   const showingFrom = total === 0 ? 0 : (page - 1) * LIMIT + 1;
   const showingTo = Math.min(page * LIMIT, total);
@@ -607,8 +647,6 @@ export default function AssetsPage() {
     pageNums.push(totalPages - 1, totalPages);
   }
 
-  const riskTabs = ["All", "Major", "Minor", "Healthy", "Critical"];
-
   return (
     <div className="-m-4 md:-m-8 flex overflow-hidden" style={{ height: "calc(100svh - 5rem - 2rem)" }}>
 
@@ -616,12 +654,13 @@ export default function AssetsPage() {
       <div className="flex-1 flex flex-col overflow-hidden min-w-0 p-4 md:p-6">
 
         {/* Risk filter tabs */}
-        <div className="flex items-end gap-0 border-b border-zinc-100 mb-4 shrink-0">
-          {riskTabs.map((tab) => (
+        <div className="relative flex items-end gap-0 border-b border-zinc-100 mb-4 shrink-0">
+          {RISK_TABS.map((tab, i) => (
             <button
               key={tab}
+              ref={(el) => { riskTabRefs.current[i] = el; }}
               onClick={() => { setRiskFilter(tab); setPage(1); }}
-              className={`relative px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${
+              className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${
                 riskFilter === tab
                   ? "text-indigo-600"
                   : "text-zinc-400 hover:text-zinc-600"
@@ -633,11 +672,18 @@ export default function AssetsPage() {
                   {total.toLocaleString()}
                 </span>
               )}
-              {riskFilter === tab && (
-                <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-indigo-600 rounded-full" />
-              )}
             </button>
           ))}
+          {riskIndicator.ready && (
+            <span
+              className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-200"
+              style={{
+                transform: `translateX(${riskIndicator.left}px)`,
+                width: `${riskIndicator.width}px`,
+                transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+              }}
+            />
+          )}
         </div>
 
         {/* Search + Filters row */}
@@ -650,7 +696,7 @@ export default function AssetsPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search..."
-              className="w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 py-2 text-xs text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+              className="w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 py-2 text-xs text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-[border-color,box-shadow]"
             />
           </div>
 
@@ -679,25 +725,25 @@ export default function AssetsPage() {
             placeholder="Category"
           />
 
-          <button
-            onClick={runPrediction}
-            disabled={predicting}
-            title="Run AI Prediction"
-            className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-500 shadow-sm hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 disabled:opacity-50 transition-all duration-150"
-          >
-            {predicting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            {predicting ? "Running…" : "Predict"}
-          </button>
-
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-500 hover:bg-red-50 hover:border-red-200 hover:text-red-500 active:scale-95 transition-all duration-150"
+              className="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-500 hover:bg-red-50 hover:border-red-200 hover:text-red-500 active:scale-95 transition-[background-color,border-color,color,transform] duration-150"
             >
               <X className="w-3 h-3" />
               Reset
             </button>
           )}
+
+          <button
+            onClick={runPrediction}
+            disabled={predicting}
+            title="Run AI Prediction"
+            className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-500 shadow-sm hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 disabled:opacity-50 transition-[background-color,border-color,color,transform] duration-150"
+          >
+            {predicting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            {predicting ? "Running…" : "Predict"}
+          </button>
         </div>
 
         {/* Prediction status */}
@@ -816,7 +862,7 @@ export default function AssetsPage() {
                       <button
                         key={n}
                         onClick={() => setPage(n as number)}
-                        className={`w-7 h-7 rounded text-xs font-medium transition-all duration-150 ${
+                        className={`w-7 h-7 rounded text-xs font-medium transition-[background-color,color] duration-150 ${
                           page === n
                             ? "bg-indigo-600 text-white shadow-sm"
                             : "text-zinc-500 hover:bg-zinc-100"
@@ -839,7 +885,7 @@ export default function AssetsPage() {
               {/* Add Asset(s) button */}
               <button
                 onClick={() => router.push("/update_assets")}
-                className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-150"
+                className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-[background-color,box-shadow,transform] duration-150"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add Asset(s)
@@ -859,7 +905,12 @@ export default function AssetsPage() {
 
       {/* Right: Asset Detail Panel */}
       {modalAsset && (
-        <div className="w-80 xl:w-96 shrink-0 border-l border-zinc-100 flex flex-col bg-white overflow-hidden">
+        <div
+          className={`w-80 xl:w-96 shrink-0 border-l border-zinc-100 flex flex-col bg-white overflow-hidden transition-[transform,opacity] duration-200 motion-reduce:transition-opacity ${
+            panelVis ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+          }`}
+          style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+        >
           {/* Header with geometric decoration */}
           <div className="relative overflow-hidden p-5 bg-gradient-to-br from-white to-indigo-50/30 shrink-0">
             <GeoDeco />
@@ -880,7 +931,7 @@ export default function AssetsPage() {
                 </div>
                 <button
                   onClick={() => setModalAsset(null)}
-                  className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 active:scale-90 transition-all duration-150"
+                  className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 active:scale-95 transition-[background-color,color,transform] duration-150"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -889,21 +940,29 @@ export default function AssetsPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex border-b border-zinc-100 px-4 shrink-0">
-            {(["overview", "maintenance"] as const).map((tab) => (
+          <div className="relative flex border-b border-zinc-100 px-4 shrink-0">
+            {(["overview", "maintenance"] as const).map((tab, i) => (
               <button
                 key={tab}
+                ref={(el) => { panelTabRefs.current[i] = el; }}
                 onClick={() => setActiveTab(tab)}
-                className={`relative px-3 py-2.5 text-xs font-medium capitalize transition-colors duration-150 ${
+                className={`px-3 py-2.5 text-xs font-medium capitalize transition-colors duration-150 ${
                   activeTab === tab ? "text-indigo-600" : "text-zinc-400 hover:text-zinc-600"
                 }`}
               >
                 {tab === "overview" ? "Overview" : "Maintenance History"}
-                {activeTab === tab && (
-                  <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 rounded-full" />
-                )}
               </button>
             ))}
+            {panelIndicator.ready && (
+              <span
+                className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-200"
+                style={{
+                  transform: `translateX(${panelIndicator.left}px)`,
+                  width: `${panelIndicator.width}px`,
+                  transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+                }}
+              />
+            )}
           </div>
 
           {/* Tab content */}
@@ -919,7 +978,7 @@ export default function AssetsPage() {
           <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end bg-white">
             <button
               onClick={() => router.push(`/update_assets?assetId=${encodeURIComponent(modalAsset.idAset)}`)}
-              className="flex items-center gap-1.5 rounded-lg bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+              className="flex items-center gap-1.5 rounded-lg bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-[background-color,box-shadow,transform] duration-150"
             >
               Edit Asset
             </button>

@@ -45,7 +45,7 @@ function buildMonthRange(from: string, count = 12): string[] {
 
 // Animated Number (count-up on mount)                                      
 
-function AnimatedNumber({ value, duration = 900 }: { value: number; duration?: number }) {
+function AnimatedNumber({ value, duration = 600 }: { value: number; duration?: number }) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     if (value === 0) return;
@@ -114,8 +114,16 @@ function DateRangeFilter({
         <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-2xl border border-slate-100 shadow-2xl p-5 w-64">
+      <div
+        className="absolute right-0 top-full mt-2 z-50 bg-white rounded-2xl border border-slate-100 shadow-2xl p-5 w-64"
+        style={{
+          opacity: open ? 1 : 0,
+          transform: open ? "scale(1)" : "scale(0.96)",
+          pointerEvents: open ? "auto" : "none",
+          transformOrigin: "top right",
+          transition: "opacity 150ms cubic-bezier(0.23,1,0.32,1), transform 150ms cubic-bezier(0.23,1,0.32,1)",
+        }}
+      >
           <div className="mb-4">
             <p className="text-sm font-semibold text-slate-800">Select Period</p>
             <p className="text-[11px] text-slate-400 mt-0.5">Chart always displays 12 months</p>
@@ -149,12 +157,11 @@ function DateRangeFilter({
 
           <button
             onClick={() => setOpen(false)}
-            className="mt-4 w-full rounded-xl bg-indigo-600 text-white text-xs font-semibold py-2.5 hover:bg-indigo-700 active:scale-95 transition-all duration-150 cursor-pointer"
+            className="mt-4 w-full rounded-xl bg-indigo-600 text-white text-xs font-semibold py-2.5 hover:bg-indigo-700 active:scale-[0.97] transition duration-150 cursor-pointer"
           >
             Apply
           </button>
         </div>
-      )}
     </div>
   );
 }
@@ -170,15 +177,38 @@ function niceGridStep(maxVal: number): number {
   );
 }
 
-function MaintenanceBarChart({ data }: { data: MonthCount[] }) {
+function MaintenanceBarChart({ data, fromMonth }: { data: MonthCount[]; fromMonth: string }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [displayData, setDisplayData] = useState(data);
+  const [exiting, setExiting] = useState(false);
+  const prevFromMonth = useRef<string | null>(null);
+
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
   }, []);
 
-  if (data.length === 0) {
+  useEffect(() => {
+    // Skip if fromMonth hasn't actually changed (handles React Strict Mode double-invoke)
+    if (prevFromMonth.current === null || prevFromMonth.current === fromMonth) {
+      prevFromMonth.current = fromMonth;
+      return;
+    }
+    prevFromMonth.current = fromMonth;
+    setHovered(null);
+    setExiting(true);
+    setMounted(false);
+    const t = setTimeout(() => {
+      setDisplayData(data);
+      setExiting(false);
+      requestAnimationFrame(() => requestAnimationFrame(() => setMounted(true)));
+    }, 280);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromMonth]);
+
+  if (displayData.length === 0) {
     return (
       <div className="flex items-center justify-center h-44 text-sm text-slate-400">
         No maintenance records in selected range
@@ -191,15 +221,15 @@ function MaintenanceBarChart({ data }: { data: MonthCount[] }) {
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
   const bottomY = PAD.top + chartH;
-  const maxVal = Math.max(...data.map(m => m.total), 10);
+  const maxVal = Math.max(...displayData.map(m => m.total), 10);
   const step = niceGridStep(maxVal);
   const yMax = Math.ceil((maxVal * 1.1) / step) * step;
   const gridLines: number[] = [];
   for (let v = step; v <= yMax; v += step) gridLines.push(v);
-  const slotW = chartW / data.length;
+  const slotW = chartW / displayData.length;
   const barW = Math.min(slotW * 0.72, 80);
   const MIN_BH = 6;
-  const bars = data.map((item, i) => {
+  const bars = displayData.map((item, i) => {
     const cx = PAD.left + i * slotW + slotW / 2;
     const bh = item.total > 0 ? Math.max((item.total / yMax) * chartH, MIN_BH) : MIN_BH;
     const x = cx - barW / 2;
@@ -220,116 +250,125 @@ function MaintenanceBarChart({ data }: { data: MonthCount[] }) {
   const tooltipY = hovered !== null ? Math.max(bars[hovered].y - 52, PAD.top) : 0;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full"
-      style={{ height: 252 }}
-      onMouseLeave={() => setHovered(null)}
-    >
-      <defs>
-        <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4F75FF" />
-          <stop offset="100%" stopColor="#818cf8" stopOpacity="0.35" />
-        </linearGradient>
-        <linearGradient id="barGradHov" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#a5b4fc" stopOpacity="0.6" />
-        </linearGradient>
-        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4F75FF" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#4F75FF" stopOpacity="0" />
-        </linearGradient>
-      </defs>
+    <div style={{
+      opacity: exiting ? 0 : 1,
+      transition: exiting ? "opacity 0.2s ease-out" : "opacity 0.3s ease-out",
+    }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full"
+        style={{ height: 252 }}
+        onMouseLeave={() => setHovered(null)}
+      >
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4F75FF" />
+            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.35" />
+          </linearGradient>
+          <linearGradient id="barGradHov" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#a5b4fc" stopOpacity="0.6" />
+          </linearGradient>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4F75FF" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#4F75FF" stopOpacity="0" />
+          </linearGradient>
+        </defs>
 
-      {/* Grid lines */}
-      {gridLines.map(v => {
-        const y = bottomY - (v / yMax) * chartH;
-        return (
-          <g key={v}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y}
-              stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4 3" />
-            <text x={PAD.left - 8} y={y + 4} textAnchor="end" fontSize="10" fill="#94a3b8"
-              fontFamily="system-ui,sans-serif">{v.toLocaleString()}</text>
+        {/* Grid lines */}
+        {gridLines.map(v => {
+          const y = bottomY - (v / yMax) * chartH;
+          return (
+            <g key={v}>
+              <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y}
+                stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4 3" />
+              <text x={PAD.left - 8} y={y + 4} textAnchor="end" fontSize="10" fill="#94a3b8"
+                fontFamily="system-ui,sans-serif">{v.toLocaleString()}</text>
+            </g>
+          );
+        })}
+
+        {/* X-axis baseline */}
+        <line x1={PAD.left} y1={bottomY} x2={W - PAD.right} y2={bottomY} stroke="#e2e8f0" strokeWidth="1" />
+
+        {/* Area fill under trend */}
+        {areaD && <path d={areaD} fill="url(#areaGrad)" />}
+
+        {/* Bars */}
+        {bars.map((bar, i) => (
+          <g key={i}>
+            {bar.isEmpty ? (
+              <rect
+                x={bar.x} y={bottomY - MIN_BH} width={barW} height={MIN_BH} rx="3"
+                fill="none" stroke="#e2e8f0" strokeWidth="1.5" strokeDasharray="3 2"
+                style={{
+                  transformOrigin: `${bar.cx}px ${bottomY}px`,
+                  transform: mounted ? "scaleY(1)" : "scaleY(0)",
+                  transition: exiting
+                    ? "transform 0.22s ease-out"
+                    : `transform 0.45s ease-out ${i * 0.05}s`,
+                }}
+              />
+            ) : (
+              <rect
+                x={bar.x} y={bar.y} width={barW} height={bar.bh} rx="5"
+                fill={hovered === i ? "url(#barGradHov)" : "url(#barGrad)"}
+                opacity={hovered !== null && hovered !== i ? 0.6 : 1}
+                style={{
+                  transformOrigin: `${bar.cx}px ${bottomY}px`,
+                  transform: mounted ? "scaleY(1)" : "scaleY(0)",
+                  transition: exiting
+                    ? "transform 0.22s ease-out"
+                    : `transform 0.55s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.05}s, fill 0.15s, opacity 0.15s`,
+                }}
+              />
+            )}
+            {/* hover target */}
+            <rect
+              x={bar.x - 3} y={PAD.top} width={barW + 6} height={chartH}
+              fill="transparent" style={{ cursor: "pointer" }}
+              onMouseEnter={() => setHovered(i)}
+            />
+            <text x={bar.cx} y={H - 6} textAnchor="middle" fontSize="10"
+              fill={hovered === i ? "#6366f1" : "#94a3b8"}
+              fontFamily="system-ui,sans-serif"
+              style={{ transition: "fill 0.15s" }}>
+              {bar.label}
+            </text>
           </g>
-        );
-      })}
+        ))}
 
-      {/* X-axis baseline */}
-      <line x1={PAD.left} y1={bottomY} x2={W - PAD.right} y2={bottomY} stroke="#e2e8f0" strokeWidth="1" />
+        {/* Trend line */}
+        {bars.length > 1 && (
+          <path d={trendD} stroke="#f43f5e" strokeWidth="2" fill="none"
+            strokeLinecap="round" strokeLinejoin="round"
+            strokeDasharray="6 3" opacity="0.75" />
+        )}
+        {/* Trend dots */}
+        {bars.map((bar, i) => (
+          <circle key={i} cx={bar.cx} cy={bar.y} r={hovered === i ? 5 : 3.5}
+            fill={bar.isEmpty ? "#fda4af" : "#f43f5e"}
+            stroke="white" strokeWidth="1.5"
+            style={{ transition: "r 0.15s" }}
+            opacity={bar.isEmpty ? 0.5 : 0.85} />
+        ))}
 
-      {/* Area fill under trend */}
-      {areaD && <path d={areaD} fill="url(#areaGrad)" />}
-
-      {/* Bars */}
-      {bars.map((bar, i) => (
-        <g key={i}>
-          {bar.isEmpty ? (
-            <rect
-              x={bar.x} y={bottomY - MIN_BH} width={barW} height={MIN_BH} rx="3"
-              fill="none" stroke="#e2e8f0" strokeWidth="1.5" strokeDasharray="3 2"
-              style={{
-                transformOrigin: `${bar.cx}px ${bottomY}px`,
-                transform: mounted ? "scaleY(1)" : "scaleY(0)",
-                transition: `transform 0.45s ease-out ${i * 0.05}s`,
-              }}
-            />
-          ) : (
-            <rect
-              x={bar.x} y={bar.y} width={barW} height={bar.bh} rx="5"
-              fill={hovered === i ? "url(#barGradHov)" : "url(#barGrad)"}
-              opacity={hovered !== null && hovered !== i ? 0.6 : 1}
-              style={{
-                transformOrigin: `${bar.cx}px ${bottomY}px`,
-                transform: mounted ? "scaleY(1)" : "scaleY(0)",
-                transition: `transform 0.55s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.05}s, fill 0.15s, opacity 0.15s`,
-              }}
-            />
-          )}
-          {/* hover target */}
-          <rect
-            x={bar.x - 3} y={PAD.top} width={barW + 6} height={chartH}
-            fill="transparent" style={{ cursor: "pointer" }}
-            onMouseEnter={() => setHovered(i)}
-          />
-          <text x={bar.cx} y={H - 6} textAnchor="middle" fontSize="10"
-            fill={hovered === i ? "#6366f1" : "#94a3b8"}
-            fontFamily="system-ui,sans-serif"
-            style={{ transition: "fill 0.15s" }}>
-            {bar.label}
-          </text>
-        </g>
-      ))}
-
-      {/* Trend line */}
-      {bars.length > 1 && (
-        <path d={trendD} stroke="#f43f5e" strokeWidth="2" fill="none"
-          strokeLinecap="round" strokeLinejoin="round"
-          strokeDasharray="6 3" opacity="0.75" />
-      )}
-      {/* Trend dots */}
-      {bars.map((bar, i) => (
-        <circle key={i} cx={bar.cx} cy={bar.y} r={hovered === i ? 5 : 3.5}
-          fill={bar.isEmpty ? "#fda4af" : "#f43f5e"}
-          stroke="white" strokeWidth="1.5"
-          style={{ transition: "r 0.15s" }}
-          opacity={bar.isEmpty ? 0.5 : 0.85} />
-      ))}
-
-      {/* Tooltip */}
-      {hovered !== null && (
-        <g pointerEvents="none">
-          <rect x={tooltipX} y={tooltipY} width={TW} height={40} rx={8} fill="#0f172a" />
-          <text x={tooltipX + TW / 2} y={tooltipY + 14} textAnchor="middle"
-            fontSize="9" fill="#94a3b8" fontFamily="system-ui,sans-serif">
-            {bars[hovered].label}
-          </text>
-          <text x={tooltipX + TW / 2} y={tooltipY + 30} textAnchor="middle"
-            fontSize="14" fontWeight="700" fill="white" fontFamily="system-ui,sans-serif">
-            {bars[hovered].total.toLocaleString()}
-          </text>
-        </g>
-      )}
-    </svg>
+        {/* Tooltip */}
+        {hovered !== null && (
+          <g pointerEvents="none">
+            <rect x={tooltipX} y={tooltipY} width={TW} height={40} rx={8} fill="#0f172a" />
+            <text x={tooltipX + TW / 2} y={tooltipY + 14} textAnchor="middle"
+              fontSize="9" fill="#94a3b8" fontFamily="system-ui,sans-serif">
+              {bars[hovered].label}
+            </text>
+            <text x={tooltipX + TW / 2} y={tooltipY + 30} textAnchor="middle"
+              fontSize="14" fontWeight="700" fill="white" fontFamily="system-ui,sans-serif">
+              {bars[hovered].total.toLocaleString()}
+            </text>
+          </g>
+        )}
+      </svg>
+    </div>
   );
 }
 
@@ -385,7 +424,7 @@ function DonutChart({ categories, total }: { categories: CategoryCount[]; total:
             strokeDasharray={`${mounted ? seg.dash : 0} ${mounted ? seg.gap : circ}`}
             transform={`rotate(${seg.startDeg} ${CX} ${CY})`}
             style={{
-              transition: `stroke-dasharray 0.65s cubic-bezier(0.4,0,0.2,1) ${i * 0.12}s, stroke-width 0.2s ease`,
+              transition: `stroke-dasharray 0.45s cubic-bezier(0.4,0,0.2,1) ${i * 0.06}s, stroke-width 0.2s ease`,
               cursor: "pointer",
             }}
             onMouseEnter={() => setHovered(i)}
@@ -494,7 +533,7 @@ function HorizontalBarsChart({
                   width: mounted ? `${widthPct}%` : "0%",
                   backgroundColor: bar.color,
                   opacity: hovered !== null && !isHov ? 0.35 : 1,
-                  transition: `width 0.8s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.12}s, opacity 0.2s ease`,
+                  transition: `width 0.8s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.12}s, opacity 0.2s ease`,
                 }}
               />
             </div>
@@ -529,12 +568,19 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [fromMonth, setFromMonth] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("dashboard_fromMonth");
+      if (saved && /^\d{4}-\d{2}$/.test(saved)) return saved;
+    }
     const d = new Date();
     d.setMonth(d.getMonth() - 11);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   });
-  // toMonth is always exactly 11 months after fromMonth (12-bar window, locked)
   const toMonth = addMonths(fromMonth, 11);
+
+  useEffect(() => {
+    localStorage.setItem("dashboard_fromMonth", fromMonth);
+  }, [fromMonth]);
 
   useEffect(() => {
     Promise.all([
@@ -593,7 +639,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-12 gap-4">
 
         {/* Total Assets */}
-        <div className="col-span-12 md:col-span-3 group rounded-xl border border-slate-200 bg-white p-5 shadow-sm relative overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default">
+        <div className="col-span-12 md:col-span-3 group rounded-xl border border-slate-200 bg-white p-5 shadow-sm relative overflow-hidden hover:shadow-md transition duration-200 cursor-default">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
           <p className="text-xs font-medium text-slate-500 mb-3">Total Assets</p>
           <p className="text-4xl font-bold text-slate-800 tabular-nums">
@@ -609,19 +655,19 @@ export default function Dashboard() {
 
         {/* Health KPIs */}
         <div className="col-span-12 md:col-span-6 grid grid-cols-3 gap-3">
-          <div className="group rounded-xl border border-red-200 bg-red-50 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default relative overflow-hidden">
+          <div className="group rounded-xl border border-red-200 bg-red-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-red-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-red-500 mb-2">Critical</p>
             <p className="text-3xl font-bold text-red-600 tabular-nums"><AnimatedNumber value={critical} /></p>
             <p className="text-[11px] text-red-400 mt-1.5">Need attention</p>
           </div>
-          <div className="group rounded-xl border border-amber-200 bg-amber-50 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default relative overflow-hidden">
+          <div className="group rounded-xl border border-amber-200 bg-amber-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-amber-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-amber-500 mb-2">At Risk</p>
             <p className="text-3xl font-bold text-amber-600 tabular-nums"><AnimatedNumber value={atRisk} /></p>
             <p className="text-[11px] text-amber-400 mt-1.5">Past 1 Week</p>
           </div>
-          <div className="group rounded-xl border border-blue-200 bg-blue-50 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default relative overflow-hidden">
+          <div className="group rounded-xl border border-blue-200 bg-blue-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-blue-500 mb-2">Healthy</p>
             <p className="text-3xl font-bold text-blue-600 tabular-nums"><AnimatedNumber value={healthy} /></p>
@@ -633,21 +679,21 @@ export default function Dashboard() {
         <div className="col-span-12 md:col-span-3 space-y-3 flex flex-col justify-center">
           <button
             onClick={() => router.push("/reports")}
-            className="w-full flex items-center justify-between rounded-xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 cursor-pointer"
+            className="w-full flex items-center justify-between rounded-xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition duration-150 cursor-pointer"
           >
             <span>Create Report</span>
             <Sparkles className="w-4 h-4 opacity-80" />
           </button>
           <button
             onClick={() => router.push("/assets")}
-            className="w-full flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 cursor-pointer"
+            className="w-full flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition duration-150 cursor-pointer"
           >
             <span>Edit Asset(s)</span>
             <SquarePen className="w-4 h-4 opacity-70" />
           </button>
           <button
             onClick={() => router.push("/update_assets")}
-            className="w-full flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 cursor-pointer"
+            className="w-full flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition duration-150 cursor-pointer"
           >
             <span>Add Asset(s)</span>
             <PlusSquare className="w-4 h-4 opacity-70" />
@@ -673,7 +719,7 @@ export default function Dashboard() {
               onFromChange={setFromMonth}
             />
           </div>
-          <MaintenanceBarChart data={maintenance} />
+          <MaintenanceBarChart data={maintenance} fromMonth={fromMonth} />
         </div>
 
         {/* Maintenance Frequency */}
