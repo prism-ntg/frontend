@@ -16,3 +16,29 @@ export async function GET(
 
   return NextResponse.json({ total: logs.length, data: logs });
 }
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ idAset: string }> },
+) {
+  const { idAset } = await params;
+  const decoded = decodeURIComponent(idAset);
+  const body = await req.json();
+  const { tanggalPerencanaan, tanggalPengerjaan, tanggalSelesai, jenisKerusakan, penyebab, biayaPerbaikan } = body;
+
+  try {
+    await db.insert(asetKomplain).values({
+      idAset: decoded,
+      tanggalPerencanaan: tanggalPerencanaan || null,
+      tanggalPengerjaan: tanggalPengerjaan || null,
+      tanggalSelesai: tanggalSelesai || null,
+      jenisKerusakan: jenisKerusakan || null,
+      penyebab: penyebab || null,
+      biayaPerbaikan: biayaPerbaikan != null ? Number(biayaPerbaikan) : null,
+    });
+    return NextResponse.json({ message: "Maintenance record saved" });
+  } catch (err) {
+    console.error("[POST /api/assets/[idAset]/komplain]", err);
+    return NextResponse.json({ message: "Failed to save maintenance record" }, { status: 500 });
+  }
+}
