@@ -35,6 +35,7 @@ export const asetKomplain = mysqlTable('aset_komplain', {
   tanggalPerencanaan: date('tanggal_perencanaan'),
   tanggalPengerjaan: date('tanggal_pengerjaan'),
   tanggalSelesai: date('tanggal_selesai'),
+  maintenanceType: varchar('maintenance_type', { length: 50 }),
   jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
   severity: varchar('severity', { length: 50 }),
   severityScore: int('severity_score'),
@@ -42,6 +43,20 @@ export const asetKomplain = mysqlTable('aset_komplain', {
   biayaPerbaikan: float('biaya_perbaikan'),
   sparePartDigunakan: text('spare_part_digunakan'),
   teknisiPelaksana: varchar('teknisi_pelaksana', { length: 255 }),
+});
+
+// Riwayat penggantian aset — independent dari aset_komplain, relasi ke master_aset
+// No FK constraint on idAsetLama/idAsetBaru karena tidak semua aset ada di DB saat ini
+export const riwayatPenggantianAset = mysqlTable('riwayat_penggantian_aset', {
+  id: int('id').autoincrement().primaryKey(),
+  idAsetLama: varchar('id_aset_lama', { length: 255 }).notNull(),
+  idAsetBaru: varchar('id_aset_baru', { length: 255 }),
+  merekBaru: varchar('merek_baru', { length: 255 }),
+  modelBaru: varchar('model_baru', { length: 255 }),
+  tanggalPenggantian: date('tanggal_penggantian'),
+  alasanPenggantian: text('alasan_penggantian'),
+  biayaPenggantian: float('biaya_penggantian'),
+  severity: varchar('severity', { length: 50 }),
 });
 
 // Reference table: avg replacement price per asset type, used for Avg_Biaya_Penggantian feature
@@ -69,6 +84,7 @@ export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
 
 export const masterAsetRelations = relations(masterAset, ({ many }) => ({
   komplain: many(asetKomplain),
+  penggantian: many(riwayatPenggantianAset),
 }));
 
 export const asetKomplainRelations = relations(asetKomplain, ({ one }) => ({

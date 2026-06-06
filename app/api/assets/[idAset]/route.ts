@@ -26,9 +26,9 @@ export async function PUT(
   const { idAset } = await params;
   const body = await req.json();
   const {
-    nama, merek, kategori, subKategori, tipe,
+    nama, merek, model, kategori, subKategori, tipe,
     tglInstalasi, lokasiGedung, lokasiLantai, lokasiZona,
-    kekritisan, statusJadwal,
+    kekritisan, statusJadwal, status,
   } = body;
 
   try {
@@ -37,6 +37,7 @@ export async function PUT(
       .set({
         nama: nama || null,
         merek: merek || null,
+        model: model || null,
         kategori: kategori || null,
         subKategori: subKategori || null,
         tipe: tipe || null,
@@ -46,6 +47,7 @@ export async function PUT(
         lokasiZona: lokasiZona || null,
         kekritisan: kekritisan || null,
         statusJadwal: statusJadwal || null,
+        ...(status && { status }),
       })
       .where(eq(masterAset.idAset, decodeURIComponent(idAset)));
 
