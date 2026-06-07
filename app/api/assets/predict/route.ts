@@ -134,18 +134,22 @@ export async function POST() {
 
     // 7. Bulk-update statusJadwal + confidence + lastPredictedAt in master_aset
     const now = new Date();
-    await Promise.all(
-      aiJson.hasil.map((item) =>
-        db
-          .update(masterAset)
-          .set({
-            statusJadwal: item.rekomendasi_jadwal,
-            confidence: item.confidence ?? null,
-            lastPredictedAt: now,
-          })
-          .where(eq(masterAset.idAset, Number(item.id_aset))),
-      ),
-    );
+    const batchSize = 10;
+    for (let i = 0; i < aiJson.hasil.length; i += batchSize) {
+      const batch = aiJson.hasil.slice(i, i + batchSize);
+      await Promise.all(
+        batch.map((item) =>
+          db
+            .update(masterAset)
+            .set({
+              statusJadwal: item.rekomendasi_jadwal,
+              confidence: item.confidence ?? null,
+              lastPredictedAt: now,
+            })
+            .where(eq(masterAset.idAset, Number(item.id_aset))),
+        )
+      );
+    }
 
     return NextResponse.json({
       total_aset: assets.length,

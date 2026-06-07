@@ -37,7 +37,6 @@ export const asetKomplain = mysqlTable('aset_komplain', {
   tanggalPerencanaan: date('tanggal_perencanaan'),
   tanggalPengerjaan: date('tanggal_pengerjaan'),
   tanggalSelesai: date('tanggal_selesai'),
-  maintenanceType: varchar('maintenance_type', { length: 50 }),
   jenisKerusakan: varchar('jenis_kerusakan', { length: 255 }),
   severity: varchar('severity', { length: 50 }),
   severityScore: int('severity_score'),
