@@ -379,7 +379,7 @@ export default function Login() {
             textAlign: "center",
           }}
         >
-          © 2026 PRISM__. All rights reserved.
+          © 2026 PRISM. All rights reserved.
         </p>
       </main>
 

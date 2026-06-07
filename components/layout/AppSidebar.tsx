@@ -6,13 +6,9 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "./SidebarContext";
 import DashboardIcon from "@/public/dashboard.webp";
 import AssetsIcon from "@/public/assets.webp";
-import MaintenanceIcon from "@/public/calendar.webp";
-import PredictionsIcon from "@/public/predictions.webp";
 import ReportsIcon from "@/public/report.webp";
 import DashboardIconActive from "@/public/dashboardActive.webp";
 import assetsIconActive from "@/public/assetsActive.webp";
-// import maintenanceIconActive from "@/public/calendarActive.webp";
-// import predictionsIconActive from "@/public/predictionsActive.webp";
 import reportsIconActive from "@/public/reportsActive.webp";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -35,12 +31,7 @@ export function AppSidebar() {
       icon: AssetsIcon,
       iconActive: assetsIconActive,
     },
-    {
-      name: "Predictions",
-      href: "/predictions",
-      icon: PredictionsIcon,
-      iconActive: PredictionsIcon,
-    }, // No active version available
+
     {
       name: "AI Reports",
       href: "/reports",
