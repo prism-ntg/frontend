@@ -49,11 +49,11 @@ export const asetKomplain = mysqlTable('aset_komplain', {
 
 export const riwayatPenggantianAset = mysqlTable('riwayat_penggantian_aset', {
   id: int('id').autoincrement().primaryKey(),
-  idAsetLama: int('id_aset_lama').notNull(),
+  idAsetLama: int('id_aset_lama').notNull().references(() => masterAset.idAset),
   namaAsetLama: varchar('nama_aset_lama', { length: 255 }),
   kategori: varchar('kategori', { length: 255 }),
   tipe: varchar('tipe', { length: 255 }),
-  idAsetBaru: int('id_aset_baru'),
+  idAsetBaru: int('id_aset_baru').references(() => masterAset.idAset),
   tanggalPenggantian: date('tanggal_penggantian'),
   alasanPenggantian: text('alasan_penggantian'),
   biayaPenggantian: float('biaya_penggantian'),

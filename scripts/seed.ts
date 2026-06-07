@@ -79,6 +79,10 @@ async function seedKatalogHarga() {
 }
 
 async function seedAsetKomplain() {
+  const masterIds = new Set(
+    readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
+  );
+  
   const rows = readCsv('aset_komplain.csv').map((r) => ({
     idAset: parseInt2(r.id_aset)!,
     nama: r.nama || null,
@@ -94,13 +98,12 @@ async function seedAsetKomplain() {
     teknisiPelaksana: r.teknisi_pelaksana || null,
   }));
 
-  // aset_komplain FK references master_aset — skip orphan rows
-  const masterIds = new Set(
-    readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
-  );
   const valid = rows.filter((r) => masterIds.has(r.idAset));
   const orphans = rows.length - valid.length;
-  if (orphans > 0) console.log(`[aset_komplain] skipping ${orphans} orphan rows (no matching master asset)`);
+  
+  if (orphans > 0) {
+    console.log(`[aset_komplain] skipping ${orphans} orphan rows`);
+  }
 
   await insertBatches(asetKomplain, valid, 'aset_komplain', { id: sql`id` });
 }
@@ -109,18 +112,25 @@ async function seedRiwayatPenggantianAset() {
   const masterIds = new Set(
     readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
   );
+  
   const rows = readCsv('riwayat_penggantian_aset.csv')
-    .map((r) => ({
-      idAsetLama: parseInt2(r.id_aset_lama)!,
-      namaAsetLama: r.nama_aset_lama || null,
-      kategori: r.kategori || null,
-      tipe: r.tipe || null,
-      idAsetBaru: parseInt2(r.id_aset_baru),
-      tanggalPenggantian: parseDate(r.tanggal_penggantian),
-      alasanPenggantian: r.alasan_penggantian || null,
-      biayaPenggantian: parseFloat2(r.biaya_penggantian),
-    }))
+    .map((r) => {
+      const parsedBaru = parseInt2(r.id_aset_baru);
+      const validIdBaru = parsedBaru !== null && masterIds.has(parsedBaru) ? parsedBaru : null;
+
+      return {
+        idAsetLama: parseInt2(r.id_aset_lama)!,
+        namaAsetLama: r.nama_aset_lama || null,
+        kategori: r.kategori || null,
+        tipe: r.tipe || null,
+        idAsetBaru: validIdBaru,
+        tanggalPenggantian: parseDate(r.tanggal_penggantian),
+        alasanPenggantian: r.alasan_penggantian || null,
+        biayaPenggantian: parseFloat2(r.biaya_penggantian),
+      };
+    })
     .filter((r) => masterIds.has(r.idAsetLama));
+    
   await insertBatches(riwayatPenggantianAset, rows, 'riwayat_penggantian_aset', { idAsetLama: sql`VALUES(id_aset_lama)` });
 }
 

@@ -23,16 +23,30 @@ export function AppSidebar() {
   const { isOpen, setIsOpen } = useSidebar();
 
   const links = [
-    { name: "Dashboard", href: "/dashboard", icon: DashboardIcon, iconActive: DashboardIconActive },
-    { name: "Assets", href: "/assets", icon: AssetsIcon, iconActive: assetsIconActive },
     {
-      name: "Maintenance Calendar",
-      href: "/maintenance",
-      icon: MaintenanceIcon,
-      iconActive: MaintenanceIcon, // No active version available
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: DashboardIcon,
+      iconActive: DashboardIconActive,
     },
-    { name: "Predictions", href: "/predictions", icon: PredictionsIcon, iconActive: PredictionsIcon }, // No active version available
-    { name: "AI Reports", href: "/reports", icon: ReportsIcon, iconActive: reportsIconActive },
+    {
+      name: "Assets",
+      href: "/assets",
+      icon: AssetsIcon,
+      iconActive: assetsIconActive,
+    },
+    {
+      name: "Predictions",
+      href: "/predictions",
+      icon: PredictionsIcon,
+      iconActive: PredictionsIcon,
+    }, // No active version available
+    {
+      name: "AI Reports",
+      href: "/reports",
+      icon: ReportsIcon,
+      iconActive: reportsIconActive,
+    },
   ];
 
   return (
@@ -73,7 +87,11 @@ export function AppSidebar() {
                     : "text-gray hover:bg-white/10"
                 }`}
               >
-                <Image src={isActive ? link.iconActive : link.icon} alt={link.name} className="w-5 h-5" />
+                <Image
+                  src={isActive ? link.iconActive : link.icon}
+                  alt={link.name}
+                  className="w-5 h-5"
+                />
                 <span className="font-medium">{link.name}</span>
               </Link>
             );
