@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
   Loader2, RefreshCw, Plus, X, Pencil, AlertTriangle,
-  ArrowRight, ArrowDown, Wrench, User, Filter,
+  ArrowRight, ArrowDown, Wrench, User, Filter, Trash2,
 } from "lucide-react";
 
 // Types                                                                    
@@ -15,7 +15,7 @@ type PanelView = "overview" | "edit" | "maintenance-history" | "add-maintenance"
 
 interface Asset {
   id: number;
-  idAset: string;
+  idAset: number;
   nama: string | null;
   merek: string | null;
   model: string | null;
@@ -29,11 +29,13 @@ interface Asset {
   kekritisan: string | null;
   status: string;
   statusJadwal: string | null;
+  confidence: number | null;
+  latestSeverity: string | null;
 }
 
 interface KomplainLog {
   id: number;
-  idAset: string;
+  idAset: number;
   tanggalPerencanaan: string | null;
   tanggalPengerjaan: string | null;
   tanggalSelesai: string | null;
@@ -49,14 +51,17 @@ interface KomplainLog {
 
 interface ReplaceLog {
   id: number;
-  idAsetLama: string;
-  idAsetBaru: string | null;
-  merekBaru: string | null;
-  modelBaru: string | null;
+  idAsetLama: number;
+  namaAsetLama: string | null;
+  kategori: string | null;
+  tipe: string | null;
+  idAsetBaru: number | null;
+  namaAsetBaru: string | null;
+  merekAsetBaru: string | null;
+  modelAsetBaru: string | null;
   tanggalPenggantian: string | null;
   alasanPenggantian: string | null;
   biayaPenggantian: number | null;
-  severity: string | null;
 }
 
 // Unified shape for the maintenance history list display
@@ -74,9 +79,11 @@ interface MaintenanceEntry {
   sparePartDigunakan?: string | null;
   teknisiPelaksana?: string | null;
   // Replace fields
-  idAsetBaru?: string | null;
-  merekBaru?: string | null;
-  modelBaru?: string | null;
+  idAsetBaru?: number | null;
+  namaAsetLama?: string | null;
+  namaAsetBaru?: string | null;
+  merekAsetBaru?: string | null;
+  modelAsetBaru?: string | null;
   alasanPenggantian?: string | null;
 }
 
@@ -94,11 +101,8 @@ interface RepairForm {
 
 interface ReplaceForm {
   tanggalPengerjaan: string;
-  idAsetBaru: string;
-  merekBaru: string;
-  modelBaru: string;
+  prefix: string;
   alasanPenggantian: string;
-  severity: string;
   biayaPenggantian: string;
 }
 
@@ -115,7 +119,6 @@ const RISK_COLORS: Record<string, string> = {
   Critical: "bg-red-100 text-red-700 border border-red-200",
   Major: "bg-red-50 text-red-500 border border-red-200",
   Minor: "bg-yellow-50 text-yellow-600 border border-yellow-200",
-  Healthy: "bg-green-50 text-green-600 border border-green-200",
 };
 
 const FREQ_LABEL: Record<string, string> = {
@@ -127,7 +130,7 @@ const FREQ_TO_JADWAL: Record<string, string> = {
 };
 
 const FREQ_OPTIONS = ["Daily", "Weekly", "Monthly", "Yearly", "Reactive"];
-const RISK_TABS = ["All", "Healthy", "Minor", "Major", "Critical"];
+const SEVERITY_TABS = ["All Assets", "Fatal", "At Risk", "Healthy"];
 
 // Severity — displayed in English, stored in Indonesian to match existing DB data
 const SEVERITY_OPTIONS = ["Fatal", "Serious", "Medium", "Mild"];
@@ -150,16 +153,16 @@ const SEVERITY_BADGE: Record<string, string> = {
 };
 
 // Asset status — English display, Indonesian storage
-const STATUS_OPTIONS = ["Active", "Damaged", "Replaced"];
-const STATUS_EN_TO_ID: Record<string, string> = {
-  Active: "Aktif", Damaged: "Rusak", Replaced: "Diganti",
-};
+const STATUS_OPTIONS = ["Active", "Non-active"];
 const STATUS_ID_TO_EN: Record<string, string> = {
-  Aktif: "Active", Rusak: "Damaged", Diganti: "Replaced",
+  Aktif: "Active", Rusak: "Non-active", Diganti: "Non-active", Dihapus: "Non-active",
 };
 
 // Zone — kept in Indonesian for both display and storage
 const ZONE_OPTIONS = ["Timur", "Barat", "Utara", "Selatan"];
+
+// Priority to company — stored in master_aset.kekritisan (same values as the Priority column)
+const PRIORITY_OPTIONS = ["Critical", "Major", "Minor"];
 
 function severityToEn(dbVal: string | null): string | null {
   if (!dbVal) return null;
@@ -173,8 +176,7 @@ const INIT_REPAIR: RepairForm = {
 };
 
 const INIT_REPLACE: ReplaceForm = {
-  tanggalPengerjaan: "", idAsetBaru: "", merekBaru: "",
-  modelBaru: "", alasanPenggantian: "", severity: "", biayaPenggantian: "",
+  tanggalPengerjaan: "", prefix: "", alasanPenggantian: "", biayaPenggantian: "",
 };
 
 // Utilities                                                                
@@ -183,38 +185,22 @@ function freqLabel(j: string | null): string {
   return j ? (FREQ_LABEL[j] ?? j) : "Reactive";
 }
 
-function healthScore(a: Asset): number {
-  const s = a.id % 30;
-  if (a.kekritisan === "Critical") return 25 + (s % 15);
-  if (a.kekritisan === "Major") return 52 + (s % 13);
-  if (a.kekritisan === "Minor") return 70 + (s % 12);
-  return 83 + (s % 12);
+function assetAgeParts(tglInstalasi: string | null | Date): { value: number; unit: string } {
+  if (!tglInstalasi) return { value: 0, unit: "Days" };
+  const ms = Date.now() - new Date(tglInstalasi as string).getTime();
+  const days = Math.floor(ms / 86_400_000);
+  if (days >= 365) { const y = Math.floor(days / 365); return { value: y, unit: y === 1 ? "Year" : "Years" }; }
+  if (days >= 30) { const m = Math.floor(days / 30); return { value: m, unit: "Months" }; }
+  if (days >= 7) { const w = Math.floor(days / 7); return { value: w, unit: "Weeks" }; }
+  return { value: days, unit: days === 1 ? "Day" : "Days" };
 }
 
-function rul(a: Asset): number {
-  const s = a.id % 25;
-  if (a.kekritisan === "Critical") return 5 + s;
-  if (a.kekritisan === "Major") return 28 + s;
-  if (a.kekritisan === "Minor") return 62 + s * 2;
-  return 115 + s * 3;
-}
-
-function confidence(a: Asset): number {
-  return 78 + (a.id % 20);
-}
-
-function healthBarColor(score: number): string {
-  if (score < 40) return "bg-red-500";
-  if (score < 65) return "bg-orange-400";
-  if (score < 78) return "bg-yellow-400";
-  return "bg-green-500";
-}
-
-function healthTextColor(score: number): string {
-  if (score < 40) return "text-red-600";
-  if (score < 65) return "text-orange-500";
-  if (score < 78) return "text-yellow-600";
-  return "text-green-600";
+// No complaint history is treated as "Healthy" — consistent with the Healthy
+// severity tab/count, which also group assets with no recent failures.
+function getHealthStatusDisplay(latestSeverity: string | null): { label: string; css: string } {
+  if (latestSeverity === "Fatal") return { label: "Fatal", css: "bg-red-100 text-red-700 border border-red-200" };
+  if (latestSeverity === "Berat" || latestSeverity === "Sedang") return { label: "At Risk", css: "bg-amber-100 text-amber-700 border border-amber-200" };
+  return { label: "Healthy", css: "bg-green-100 text-green-700 border border-green-200" };
 }
 
 function lastMaintenance(logs: KomplainLog[]): Date | null {
@@ -267,26 +253,30 @@ function fmtCost(n: number | null): string {
 // Shared UI helpers                                                         
 
 function ToggleGroup({
-  label, options, value, onChange,
-}: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
+  label, options, value, onChange, disabledOptions,
+}: { label: string; options: string[]; value: string; onChange: (v: string) => void; disabledOptions?: string[] }) {
   return (
     <div>
       <label className="text-xs font-medium text-zinc-700 mb-1.5 block">{label}</label>
       <div className="flex flex-wrap gap-1.5">
-        {options.map(opt => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => onChange(opt)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 active:scale-95 ${
-              value === opt
-                ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
-                : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
+        {options.map(opt => {
+          const disabled = disabledOptions?.includes(opt) ?? false;
+          return (
+            <button
+              key={opt}
+              type="button"
+              disabled={disabled}
+              onClick={() => onChange(opt)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-[border-color,background-color,color,box-shadow] duration-150 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:border-zinc-200 disabled:hover:text-zinc-500 ${
+                value === opt
+                  ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
+                  : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
+              }`}
+            >
+              {opt}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -306,34 +296,71 @@ function GeoDeco() {
   );
 }
 
-function HealthChart({ logs, score }: { logs: KomplainLog[]; score: number }) {
-  const W = 240, H = 90, P = 12;
-  const raw =
-    logs.length >= 2
-      ? logs.slice(-6).map((l) => Math.max(5, Math.min(100, l.severityScore != null ? 100 - l.severityScore * 18 : score)))
-      : [52, 38, 70, 58, 88, score];
-  const pts = raw.map((v, i) => ({
-    x: P + (i / (raw.length - 1)) * (W - P * 2),
-    y: P + ((100 - v) / 100) * (H - P * 2),
+function DowntimeChart({ logs }: { logs: KomplainLog[] }) {
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    return {
+      label: d.toLocaleDateString("en-US", { month: "short" }),
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+    };
+  });
+
+  const downtimeByMonth: Record<string, number> = {};
+  for (const log of logs) {
+    if (!log.tanggalPengerjaan) continue;
+    const d = new Date(log.tanggalPengerjaan);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const start = log.tanggalPengerjaan ? new Date(log.tanggalPengerjaan) : null;
+    const end = log.tanggalSelesai ? new Date(log.tanggalSelesai) : null;
+    const days = start && end ? Math.max(0, Math.round((end.getTime() - start.getTime()) / 86_400_000)) : 0;
+    downtimeByMonth[key] = (downtimeByMonth[key] ?? 0) + days;
+  }
+
+  const data = months.map(m => ({ ...m, value: downtimeByMonth[m.key] ?? 0 }));
+  const maxVal = Math.max(...data.map(d => d.value), 1);
+  const yMax = Math.max(Math.ceil(maxVal / 5) * 5, 5);
+  const ySteps = 4;
+  const yLabels = Array.from({ length: ySteps + 1 }, (_, i) => Math.round((i / ySteps) * yMax));
+
+  const W = 240, H = 90, PL = 24, PT = 6, PB = 16, PR = 4;
+  const chartW = W - PL - PR;
+  const chartH = H - PT - PB;
+
+  const pts = data.map((d, i) => ({
+    x: PL + (i / (data.length - 1)) * chartW,
+    y: PT + ((yMax - d.value) / yMax) * chartH,
   }));
+
   const lineD = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
-  const areaD = `${lineD} L${pts[pts.length - 1].x.toFixed(1)} ${H} L${pts[0].x.toFixed(1)} ${H} Z`;
-  const months = ["May", "Jun", "Jul", "Aug", "Sept", "Oct"];
+  const areaD = `${lineD} L${pts[pts.length - 1].x.toFixed(1)} ${PT + chartH} L${pts[0].x.toFixed(1)} ${PT + chartH} Z`;
+
   return (
     <div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-16">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-20">
         <defs>
-          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.2" />
+          <linearGradient id="dtg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.15" />
             <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path d={areaD} fill="url(#cg)" />
-        <path d={lineD} stroke="#6366f1" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        {pts.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="3" fill="#6366f1" />)}
+        {yLabels.map((v, i) => {
+          const y = PT + ((yMax - v) / yMax) * chartH;
+          return (
+            <g key={i}>
+              <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="#e4e4e7" strokeWidth="0.5" />
+              <text x={PL - 3} y={y + 3} textAnchor="end" fontSize="8" fill="#71717a">{v}</text>
+            </g>
+          );
+        })}
+        <path d={areaD} fill="url(#dtg)" />
+        <path d={lineD} stroke="#6366f1" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {pts.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="2.5" fill="#6366f1" />)}
       </svg>
-      <div className="flex justify-between text-[10px] text-zinc-400 mt-0.5">
-        {months.map((m) => <span key={m}>{m}</span>)}
+      <div className="flex" style={{ paddingLeft: `${(PL / W) * 100}%`, paddingRight: `${(PR / W) * 100}%` }}>
+        {data.map((d, i) => (
+          <span key={i} className="flex-1 text-[10px] text-zinc-500 text-center">{d.label}</span>
+        ))}
       </div>
     </div>
   );
@@ -342,9 +369,12 @@ function HealthChart({ logs, score }: { logs: KomplainLog[]; score: number }) {
 // Incomplete Warning Modal                                                  
 
 function IncompleteWarningModal({ onContinue, onLeave }: { onContinue: () => void; onLeave: () => void }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const id = requestAnimationFrame(() => setVis(true)); return () => cancelAnimationFrame(id); }, []);
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4">
+    <div className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}>
+      <div className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}>
         <div className="flex flex-col items-center text-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -359,13 +389,13 @@ function IncompleteWarningModal({ onContinue, onLeave }: { onContinue: () => voi
         <div className="flex gap-2">
           <button
             onClick={onLeave}
-            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150"
           >
             Discard
           </button>
           <button
             onClick={onContinue}
-            className="flex-1 px-3 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 transition-colors"
+            className="flex-1 px-3 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 active:scale-[0.97] transition-[background-color,transform] duration-150"
           >
             Keep Editing
           </button>
@@ -375,12 +405,56 @@ function IncompleteWarningModal({ onContinue, onLeave }: { onContinue: () => voi
   );
 }
 
-// Leave (unsaved changes) Warning Modal                                     
+// Delete Asset Warning Modal — same design/animation as IncompleteWarningModal, red accent
+function DeleteAssetModal({ onCancel, onConfirm, deleting }: { onCancel: () => void; onConfirm: () => void; deleting: boolean }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const id = requestAnimationFrame(() => setVis(true)); return () => cancelAnimationFrame(id); }, []);
+  return (
+    <div className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}>
+      <div className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}>
+        <div className="flex flex-col items-center text-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-zinc-900">Delete Asset</h3>
+            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+              This asset will be marked as deleted and moved to the Inactive list. You can still find it there later. Delete it?
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            disabled={deleting}
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={deleting}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-red-600 text-xs font-semibold text-white hover:bg-red-700 active:scale-[0.97] transition-[background-color,transform] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {deleting && <Loader2 className="w-3 h-3 animate-spin" />}
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Leave (unsaved changes) Warning Modal
 
 function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: () => void }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const id = requestAnimationFrame(() => setVis(true)); return () => cancelAnimationFrame(id); }, []);
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4">
+    <div className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}>
+      <div className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}>
         <div className="flex flex-col items-center text-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -395,13 +469,13 @@ function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: (
         <div className="flex gap-2">
           <button
             onClick={onLeave}
-            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150"
           >
             Leave
           </button>
           <button
             onClick={onStay}
-            className="flex-1 px-3 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 transition-colors"
+            className="flex-1 px-3 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 active:scale-[0.97] transition-[background-color,transform] duration-150"
           >
             Keep Editing
           </button>
@@ -411,78 +485,106 @@ function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: (
   );
 }
 
-// Overview Content                                                          
+// Animated count badge for the active severity tab.
+// A CSS keyframe (defined in globals.css) replays on every mount — reliable across
+// re-renders where a single rAF toggle would sometimes skip the transition.
+function TabCountBadge({ count }: { count: number }) {
+  return (
+    <span className="animate-badge-pop ml-1.5 inline-block rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] text-indigo-600">
+      {count.toLocaleString()}
+    </span>
+  );
+}
+
+// Overview Content
+
+// Skeleton that mirrors the overview layout — keeps panel loading consistent with the table
+function OverviewSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse motion-reduce:animate-none">
+      <div className="grid grid-cols-2 gap-3">
+        {[0, 1].map(i => (
+          <div key={i}>
+            <div className="h-2.5 w-16 rounded bg-zinc-100 mb-2" />
+            <div className="h-7 w-20 rounded bg-zinc-200" />
+          </div>
+        ))}
+      </div>
+      <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-3 space-y-3">
+        <div className="h-2.5 w-40 rounded bg-zinc-100" />
+        <div className="h-5 w-24 rounded bg-zinc-200" />
+        <div className="flex justify-between pt-2 border-t border-zinc-200">
+          <div className="h-3 w-20 rounded bg-zinc-200" />
+          <div className="h-3 w-20 rounded bg-zinc-200" />
+        </div>
+      </div>
+      <div>
+        <div className="h-2.5 w-32 rounded bg-zinc-100 mb-2" />
+        <div className="h-20 w-full rounded-lg bg-zinc-100" />
+      </div>
+      <div className="space-y-2.5">
+        <div className="h-2.5 w-24 rounded bg-zinc-100 mb-1" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex justify-between">
+            <div className="h-3 w-20 rounded bg-zinc-100" />
+            <div className="h-3 w-24 rounded bg-zinc-200" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: KomplainLog[]; loading: boolean }) {
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
-      </div>
-    );
+    return <OverviewSkeleton />;
   }
-  const hs = healthScore(asset);
-  const r = rul(asset);
-  const c = confidence(asset);
+
+  const age = assetAgeParts(asset.tglInstalasi);
+  const conf = asset.confidence != null ? Math.round(asset.confidence * 100) : null;
   const last = lastMaintenance(logs);
   const next = nextRecommended(last, asset.statusJadwal);
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <p className="text-[11px] text-zinc-400 mb-0.5">Health Score</p>
-          <p className={`text-2xl font-bold ${healthTextColor(hs)}`}>
-            {hs} <span className="text-xs font-normal text-zinc-400">/100</span>
-          </p>
-        </div>
-        <div>
-          <p className="text-[11px] text-zinc-400 mb-0.5">RUL</p>
+          <p className="text-[11px] text-zinc-500 mb-0.5">Asset Age</p>
           <p className="text-2xl font-bold text-zinc-800">
-            {r} <span className="text-xs font-normal text-zinc-400">Days</span>
+            {age.value} <span className="text-xs font-normal text-zinc-500">{age.unit}</span>
           </p>
         </div>
         <div>
-          <p className="text-[11px] text-zinc-400 mb-0.5">Confidence</p>
-          <p className="text-2xl font-bold text-zinc-800">{c}%</p>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex justify-between text-[10px] text-zinc-400 mb-1">
-          <span>Poor</span><span>Excellent</span>
-        </div>
-        <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
-          <div
-            className={`h-full rounded-full ${healthBarColor(hs)}`}
-            style={{ width: `${hs}%`, transition: "width 700ms cubic-bezier(0.23, 1, 0.32, 1)" }}
-          />
+          <p className="text-[11px] text-zinc-500 mb-0.5">Confidence</p>
+          <p className="text-2xl font-bold text-zinc-800">
+            {conf != null ? `${conf}%` : <span className="text-zinc-500 text-sm font-medium">Run Predict</span>}
+          </p>
         </div>
       </div>
 
       <div className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-3">
-        <p className="text-[11px] text-zinc-400 mb-1">Maintenance Frequency</p>
+        <p className="text-[11px] text-zinc-500 mb-1">Recommended Maintenance Frequency</p>
         <div className="flex items-baseline justify-between">
           <p className="text-xl font-bold text-zinc-900">{freqLabel(asset.statusJadwal)}</p>
-          <p className="text-[10px] text-zinc-400">
+          <p className="text-[10px] text-zinc-500">
             {asset.statusJadwal ? `Last updated on ${new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}` : "—"}
           </p>
         </div>
         <div className="flex justify-between mt-2 pt-2 border-t border-zinc-200">
           <div>
-            <p className="text-[10px] text-zinc-400">Last Maintenance</p>
+            <p className="text-[10px] text-zinc-500">Last Maintenance</p>
             <p className="text-xs font-medium text-zinc-700">{fmtMonthYear(last)}</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-zinc-400">Next Recommended</p>
+            <p className="text-[10px] text-zinc-500">Next Recommended</p>
             <p className="text-xs font-medium text-indigo-600">{fmtMonthYear(next)}</p>
           </div>
         </div>
       </div>
 
       <div>
-        <p className="text-xs font-medium text-zinc-600 mb-2">Health Score Overview</p>
-        <HealthChart logs={logs} score={hs} />
+        <p className="text-xs font-medium text-zinc-600 mb-2">Downtime Overview</p>
+        <DowntimeChart logs={logs} />
       </div>
 
       <div>
@@ -495,7 +597,7 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
             ["Installation Date", asset.tglInstalasi ? new Date(asset.tglInstalasi).toLocaleDateString("en-GB") : "—"],
           ].map(([label, value]) => (
             <div key={label} className="flex justify-between text-xs">
-              <span className="text-zinc-400">{label}</span>
+              <span className="text-zinc-500">{label}</span>
               <span className="text-zinc-700 font-medium text-right max-w-[55%] truncate">{value}</span>
             </div>
           ))}
@@ -508,12 +610,13 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
 // Edit Asset Form                                                           
 
 function EditAssetForm({
-  asset, filters, onSave, onCancel, onGoToReplace, onDirtyChange,
+  asset, filters, onSave, onCancel, onDelete, onGoToReplace, onDirtyChange,
 }: {
   asset: Asset;
   filters: Filters;
   onSave: (updated: Partial<Asset>) => void;
   onCancel: () => void;
+  onDelete: () => void;
   onGoToReplace: () => void;
   onDirtyChange?: (dirty: boolean) => void;
 }) {
@@ -530,10 +633,16 @@ function EditAssetForm({
     lokasiGedung: asset.lokasiGedung ?? "",
     lokasiLantai: asset.lokasiLantai ?? "",
     lokasiZona: asset.lokasiZona ?? "",
+    kekritisan: asset.kekritisan ?? "",
   };
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Replaced/deleted assets can't be reactivated, so the form is read-only (preview)
+  const readOnly = asset.status === "Diganti" || asset.status === "Dihapus";
 
   // Report dirty state up so the page can guard against navigating away with unsaved edits
   const dirty = JSON.stringify(form) !== JSON.stringify(initialForm);
@@ -544,7 +653,7 @@ function EditAssetForm({
   const requiredFilled = !!(
     form.nama.trim() && form.status && form.tipe && form.kategori &&
     form.subKategori && form.merek && form.model && form.tglInstalasi &&
-    form.lokasiGedung && form.lokasiLantai && form.lokasiZona
+    form.lokasiGedung && form.lokasiLantai && form.lokasiZona && form.kekritisan
   );
 
   async function handleSave() {
@@ -552,7 +661,14 @@ function EditAssetForm({
     setSaving(true);
     setError(null);
     try {
-      const statusId = STATUS_EN_TO_ID[form.status] ?? form.status;
+      // Active -> Aktif. Non-active writes Rusak only when the user actually flips an
+      // active asset off; an already non-active asset keeps its real status (Diganti/Dihapus).
+      const statusId =
+        form.status === "Active"
+          ? "Aktif"
+          : asset.status !== "Aktif"
+            ? asset.status
+            : "Rusak";
       const zonaId = form.lokasiZona || null;
       const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}`, {
         method: "PUT",
@@ -569,6 +685,7 @@ function EditAssetForm({
           lokasiGedung: form.lokasiGedung || null,
           lokasiLantai: form.lokasiLantai || null,
           lokasiZona: zonaId,
+          kekritisan: form.kekritisan || null,
         }),
       });
       if (!res.ok) throw new Error((await res.json()).message ?? "Failed to update");
@@ -578,7 +695,7 @@ function EditAssetForm({
         subKategori: form.subKategori || null, merek: form.merek || null,
         model: form.model || null, tglInstalasi: form.tglInstalasi || null,
         lokasiGedung: form.lokasiGedung || null, lokasiLantai: form.lokasiLantai || null,
-        lokasiZona: zonaId,
+        lokasiZona: zonaId, kekritisan: form.kekritisan || null,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -587,19 +704,57 @@ function EditAssetForm({
     }
   }
 
-  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
-  const selectCls = `${inputCls} appearance-none`;
+  // Soft delete — mark as "Dihapus" (kept in DB, surfaces in the Inactive list)
+  async function handleDelete() {
+    setDeleting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: asset.nama,
+          merek: asset.merek,
+          model: asset.model,
+          kategori: asset.kategori,
+          subKategori: asset.subKategori,
+          tipe: asset.tipe,
+          tglInstalasi: asset.tglInstalasi,
+          lokasiGedung: asset.lokasiGedung,
+          lokasiLantai: asset.lokasiLantai,
+          lokasiZona: asset.lokasiZona,
+          status: "Dihapus",
+        }),
+      });
+      if (!res.ok) throw new Error((await res.json()).message ?? "Failed to delete");
+      onDelete();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setShowDeleteWarning(false);
+      setDeleting(false);
+    }
+  }
+
+  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white disabled:bg-zinc-50 disabled:text-zinc-400 disabled:cursor-not-allowed";
 
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 pt-3 pb-2 shrink-0">
-        <p className="text-xs font-medium text-zinc-800">Edit Asset Information</p>
-        <p className="text-[11px] text-zinc-400 mt-0.5">
-          Replaced this asset with a new one?{" "}
-          <button onClick={onGoToReplace} className="text-indigo-600 hover:underline">
-            Go to Add Maintenance
-          </button>
+        <p className="text-xs font-medium text-zinc-800">
+          {readOnly ? "Asset Information" : "Edit Asset Information"}
         </p>
+        {readOnly ? (
+          <p className="text-[11px] text-zinc-500 mt-0.5">
+            This asset is {asset.status === "Diganti" ? "replaced" : "deleted"} and can no longer be edited.
+          </p>
+        ) : (
+          <p className="text-[11px] text-zinc-500 mt-0.5">
+            Replaced this asset with a new one?{" "}
+            <button onClick={onGoToReplace} className="text-indigo-600 hover:underline">
+              Go to Add Maintenance
+            </button>
+          </p>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3.5">
@@ -610,92 +765,102 @@ function EditAssetForm({
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Asset Name*</label>
           <input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))}
-            placeholder={asset.idAset} className={inputCls} />
+            placeholder={asset.nama ?? String(asset.idAset)} className={inputCls} disabled={readOnly} />
         </div>
 
         <ToggleGroup label="Asset Status*" options={STATUS_OPTIONS}
-          value={form.status} onChange={v => setForm(f => ({ ...f, status: v }))} />
+          value={form.status} onChange={v => setForm(f => ({ ...f, status: v }))}
+          disabledOptions={readOnly ? STATUS_OPTIONS : undefined} />
+
+        <ToggleGroup label="Priority to Company*" options={PRIORITY_OPTIONS}
+          value={form.kekritisan} onChange={v => setForm(f => ({ ...f, kekritisan: v }))}
+          disabledOptions={readOnly ? PRIORITY_OPTIONS : undefined} />
 
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Asset Type*</label>
-          <div className="relative">
-            <select value={form.tipe} onChange={e => setForm(f => ({ ...f, tipe: e.target.value }))} className={selectCls}>
-              <option value="">e.g. Air Conditioner</option>
-              {filters.tipe.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
-          </div>
+          <FilterCombobox block disabled={readOnly} value={form.tipe}
+            onChange={v => setForm(f => ({ ...f, tipe: v }))}
+            options={filters.tipe} placeholder="Select asset type" />
         </div>
 
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Category*</label>
-          <div className="relative">
-            <select value={form.kategori} onChange={e => setForm(f => ({ ...f, kategori: e.target.value }))} className={selectCls}>
-              <option value="">Select Category</option>
-              {filters.kategori.map(k => <option key={k} value={k}>{k}</option>)}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
-          </div>
+          <FilterCombobox block disabled={readOnly} value={form.kategori}
+            onChange={v => setForm(f => ({ ...f, kategori: v }))}
+            options={filters.kategori} placeholder="Select category" />
         </div>
 
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Sub-category*</label>
           <input value={form.subKategori} onChange={e => setForm(f => ({ ...f, subKategori: e.target.value }))}
-            placeholder="e.g. Control Panel" className={inputCls} />
+            placeholder="e.g. Control Panel" className={inputCls} disabled={readOnly} />
         </div>
 
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Manufacturer*</label>
           <input value={form.merek} onChange={e => setForm(f => ({ ...f, merek: e.target.value }))}
-            placeholder="e.g. Mitsubishi Co. Ltd" className={inputCls} />
+            placeholder="e.g. Mitsubishi Co. Ltd" className={inputCls} disabled={readOnly} />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Asset Model*</label>
             <input value={form.model} onChange={e => setForm(f => ({ ...f, model: e.target.value }))}
-              placeholder="e.g. MSY-GN-792" className={inputCls} />
+              placeholder="e.g. MSY-GN-792" className={inputCls} disabled={readOnly} />
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Installation Date*</label>
             <input type="date" value={form.tglInstalasi}
-              onChange={e => setForm(f => ({ ...f, tglInstalasi: e.target.value }))} className={inputCls} />
+              onChange={e => setForm(f => ({ ...f, tglInstalasi: e.target.value }))} className={inputCls} disabled={readOnly} />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Building*</label>
-            <div className="relative">
-              <select value={form.lokasiGedung} onChange={e => setForm(f => ({ ...f, lokasiGedung: e.target.value }))} className={selectCls}>
-                <option value="">Select</option>
-                {filters.lokasi.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-400" />
-            </div>
+            <FilterCombobox block disabled={readOnly} value={form.lokasiGedung}
+              onChange={v => setForm(f => ({ ...f, lokasiGedung: v }))}
+              options={filters.lokasi} placeholder="Select building" />
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Floor Level*</label>
             <input value={form.lokasiLantai} onChange={e => setForm(f => ({ ...f, lokasiLantai: e.target.value }))}
-              placeholder="e.g. 15" className={inputCls} />
+              placeholder="e.g. 15" className={inputCls} disabled={readOnly} />
           </div>
         </div>
 
         <ToggleGroup label="Zone*" options={ZONE_OPTIONS}
-          value={form.lokasiZona ?? ""} onChange={v => setForm(f => ({ ...f, lokasiZona: v }))} />
+          value={form.lokasiZona ?? ""} onChange={v => setForm(f => ({ ...f, lokasiZona: v }))}
+          disabledOptions={readOnly ? ZONE_OPTIONS : undefined} />
       </div>
 
-      <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
-        <button onClick={onCancel}
-          className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors">
-          Cancel
+      <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-between gap-2 bg-white">
+        <button onClick={() => setShowDeleteWarning(true)} disabled={readOnly} aria-label="Delete asset"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50 active:scale-[0.97] transition-[background-color,transform] duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:active:scale-100">
+          <Trash2 className="w-3.5 h-3.5" />
+          Delete
         </button>
-        <button onClick={handleSave} disabled={!requiredFilled || saving}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-          {saving && <Loader2 className="w-3 h-3 animate-spin" />}
-          Save edit
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={onCancel}
+            className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+            Cancel
+          </button>
+          <button onClick={handleSave} disabled={!requiredFilled || saving || readOnly}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] transition-[background-color,transform] duration-150">
+            {saving && <Loader2 className="w-3 h-3 animate-spin" />}
+            Save edit
+          </button>
+        </div>
       </div>
+
+      {showDeleteWarning && createPortal(
+        <DeleteAssetModal
+          deleting={deleting}
+          onCancel={() => { if (!deleting) setShowDeleteWarning(false); }}
+          onConfirm={handleDelete}
+        />,
+        document.body,
+      )}
     </div>
   );
 }
@@ -745,7 +910,7 @@ function RepairFormFields({ form, setForm }: {
             onChange={e => setForm(f => ({ ...f, jenisKerusakan: e.target.value.slice(0, 90) }))}
             placeholder="Fixed outdoor fan..."
             className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 resize-none transition-[border-color,box-shadow] bg-white" />
-          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-400">{form.jenisKerusakan.length}/90</span>
+          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">{form.jenisKerusakan.length}/90</span>
         </div>
       </div>
 
@@ -756,7 +921,7 @@ function RepairFormFields({ form, setForm }: {
             onChange={e => setForm(f => ({ ...f, penyebab: e.target.value.slice(0, 90) }))}
             placeholder="Someone knocked too hard..."
             className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 resize-none transition-[border-color,box-shadow] bg-white" />
-          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-400">{form.penyebab.length}/90</span>
+          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">{form.penyebab.length}/90</span>
         </div>
       </div>
 
@@ -765,7 +930,7 @@ function RepairFormFields({ form, setForm }: {
         <div className="flex gap-1.5">
           {SEVERITY_OPTIONS.map(s => (
             <button key={s} type="button" onClick={() => setForm(f => ({ ...f, severity: s }))}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 active:scale-95 ${
+              className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-[border-color,background-color,color,box-shadow] duration-150 active:scale-[0.97] ${
                 form.severity === s ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm" : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
               }`}>
               {s}
@@ -777,7 +942,7 @@ function RepairFormFields({ form, setForm }: {
       <div>
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Repair Cost*</label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Rp.</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">Rp.</span>
           <input type="text" value={form.biayaPerbaikan} placeholder="00,00"
             onChange={e => setForm(f => ({ ...f, biayaPerbaikan: e.target.value }))}
             className="w-full rounded-lg border border-zinc-200 pl-9 pr-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
@@ -803,12 +968,16 @@ function RepairFormFields({ form, setForm }: {
 
 // Replace Form Fields                                                       
 
-function ReplaceFormFields({ form, setForm, asset }: {
+function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
   form: ReplaceForm;
   setForm: React.Dispatch<React.SetStateAction<ReplaceForm>>;
   asset: Asset;
+  nextIdAset: number | null;
 }) {
-  const inputCls = "flex-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
+  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
+  const previewName = form.prefix.trim() && nextIdAset != null
+    ? `${form.prefix.trim()}-${nextIdAset}`
+    : null;
 
   return (
     <div className="space-y-3.5">
@@ -816,7 +985,7 @@ function ReplaceFormFields({ form, setForm, asset }: {
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Execution Date*</label>
         <input type="date" value={form.tanggalPengerjaan}
           onChange={e => setForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))}
-          className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
+          className={inputCls} />
       </div>
 
       <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2.5 flex gap-2">
@@ -831,8 +1000,8 @@ function ReplaceFormFields({ form, setForm, asset }: {
         <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="text-xs font-semibold text-zinc-800">{asset.idAset}</p>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
+              <p className="text-xs font-semibold text-zinc-800">{asset.nama ?? String(asset.idAset)}</p>
+              <p className="text-[11px] text-zinc-500 mt-0.5">
                 {[asset.subKategori, asset.tipe].filter(Boolean).join(" · ") || (asset.kategori ?? "—")}
               </p>
             </div>
@@ -847,50 +1016,38 @@ function ReplaceFormFields({ form, setForm, asset }: {
         <div className="w-px h-3 border-l border-dashed border-zinc-300" />
       </div>
 
-      <div className="space-y-2">
-        <p className="text-xs font-medium text-zinc-700">Replace With</p>
-        {[
-          { key: "idAsetBaru" as const, label: "Name*", placeholder: "e.g. MIT-E0IF-0028" },
-          { key: "merekBaru" as const, label: "Manufacturer*", placeholder: asset.merek ?? "e.g. Mitsubishi" },
-          { key: "modelBaru" as const, label: "Model*", placeholder: asset.model ?? "e.g. SMRG-08712" },
-        ].map(({ key, label, placeholder }) => (
-          <div key={key} className="flex items-center gap-3">
-            <label className="text-xs text-zinc-500 w-24 shrink-0">{label}</label>
-            <input value={form[key]} placeholder={placeholder}
-              onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className={inputCls} />
+      <div>
+        <label className="text-xs font-medium text-zinc-700 mb-1 block">New Asset Name Prefix*</label>
+        <div className="flex items-center gap-2">
+          <input value={form.prefix}
+            onChange={e => setForm(f => ({ ...f, prefix: e.target.value }))}
+            placeholder="e.g. MAS-SAHX"
+            className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
+          <span className="text-xs text-zinc-500 shrink-0">-</span>
+          <div className="rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-xs font-mono text-zinc-500 min-w-[4.5rem] text-center">
+            {nextIdAset ?? "…"}
           </div>
-        ))}
+        </div>
+        {previewName && (
+          <p className="text-[11px] text-indigo-600 font-medium mt-1.5">→ {previewName}</p>
+        )}
       </div>
 
       <div>
-        <label className="text-xs font-medium text-zinc-700 mb-1 block">Damage Cause*</label>
+        <label className="text-xs font-medium text-zinc-700 mb-1 block">Reason for Replacement*</label>
         <div className="relative">
           <textarea value={form.alasanPenggantian} rows={2}
             onChange={e => setForm(f => ({ ...f, alasanPenggantian: e.target.value.slice(0, 90) }))}
-            placeholder="Someone knocked too hard..."
+            placeholder="e.g. End of service life..."
             className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 resize-none transition-[border-color,box-shadow] bg-white" />
-          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-400">{form.alasanPenggantian.length}/90</span>
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-zinc-700 mb-1.5 block">Severity Level*</label>
-        <div className="flex gap-1.5">
-          {SEVERITY_OPTIONS.map(s => (
-            <button key={s} type="button" onClick={() => setForm(f => ({ ...f, severity: s }))}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 active:scale-95 ${
-                form.severity === s ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm" : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
-              }`}>
-              {s}
-            </button>
-          ))}
+          <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">{form.alasanPenggantian.length}/90</span>
         </div>
       </div>
 
       <div>
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Replacement Cost*</label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Rp.</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">Rp.</span>
           <input type="text" value={form.biayaPenggantian} placeholder="00,00"
             onChange={e => setForm(f => ({ ...f, biayaPenggantian: e.target.value }))}
             className="w-full rounded-lg border border-zinc-200 pl-9 pr-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
@@ -905,22 +1062,44 @@ function ReplaceFormFields({ form, setForm, asset }: {
 function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, onDirtyChange }: {
   asset: Asset;
   initialType?: "repair" | "replace";
-  onSave: () => void;
+  onSave: (result?: { newIdAset?: number; newNama?: string }) => void;
   onCancel: () => void;
   onDirtyChange?: (dirty: boolean) => void;
 }) {
   const [type, setType] = useState<"repair" | "replace">(initialType);
   const [repair, setRepair] = useState<RepairForm>(INIT_REPAIR);
-  const [replace, setReplace] = useState<ReplaceForm>(INIT_REPLACE);
+  const [replace, setReplace] = useState<ReplaceForm>({
+    ...INIT_REPLACE,
+    prefix: asset.nama?.replace(/-\d+$/, "") ?? "",
+  });
+  const [nextIdAset, setNextIdAset] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWarning, setShowWarning] = useState(false);
+  const repairBtnRef = useRef<HTMLButtonElement>(null);
+  const replaceBtnRef = useRef<HTMLButtonElement>(null);
+  const [pill, setPill] = useState<{ left: number; width: number; ready: boolean; animate: boolean }>({ left: 0, width: 0, ready: false, animate: false });
+
+  useEffect(() => {
+    const btn = type === "repair" ? repairBtnRef.current : replaceBtnRef.current;
+    if (!btn) return;
+    setPill(prev => ({ left: btn.offsetLeft, width: btn.offsetWidth, ready: true, animate: prev.ready }));
+  }, [type]);
+
+  useEffect(() => {
+    if (type === "replace") {
+      fetch("/api/assets/next-id")
+        .then(r => r.json())
+        .then(d => setNextIdAset(d.nextId ?? null))
+        .catch(() => setNextIdAset(null));
+    }
+  }, [type]);
 
   const repairReq = [repair.tanggalPengerjaan, repair.tanggalSelesai, repair.jenisKerusakan, repair.severity, repair.biayaPerbaikan];
   const repairAllFilled = repairReq.every(v => v.trim() !== "");
   const repairAnyFilled = Object.values(repair).some(v => v.trim() !== "");
 
-  const replaceReq = [replace.tanggalPengerjaan, replace.idAsetBaru, replace.merekBaru, replace.modelBaru, replace.alasanPenggantian, replace.severity, replace.biayaPenggantian];
+  const replaceReq = [replace.tanggalPengerjaan, replace.prefix, replace.alasanPenggantian, replace.biayaPenggantian];
   const replaceAllFilled = replaceReq.every(v => v.trim() !== "");
   const replaceAnyFilled = replaceReq.some(v => v.trim() !== "");
 
@@ -963,12 +1142,9 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
         ? `/api/assets/${encodeURIComponent(asset.idAset)}/replace`
         : `/api/assets/${encodeURIComponent(asset.idAset)}/komplain`;
       const replaceBody = isReplace ? {
-        idAsetBaru: replace.idAsetBaru,
-        merekBaru: replace.merekBaru,
-        modelBaru: replace.modelBaru,
+        prefix: replace.prefix,
         tanggalPenggantian: replace.tanggalPengerjaan,
         alasanPenggantian: replace.alasanPenggantian,
-        severity: SEVERITY_EN_TO_ID[replace.severity] ?? replace.severity,
         biayaPenggantian: parseBiaya(replace.biayaPenggantian),
       } : null;
 
@@ -977,8 +1153,9 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(isReplace ? replaceBody : body),
       });
-      if (!res.ok) throw new Error((await res.json()).message ?? "Failed to save");
-      onSave();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? "Failed to save");
+      onSave(isReplace ? { newIdAset: json.newIdAset, newNama: json.newNama } : undefined);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -992,8 +1169,8 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-medium text-zinc-800">Add Maintenance Log</p>
           {type === "replace" && (
-            <button onClick={onCancel}
-              className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors">
+            <button onClick={onCancel} aria-label="Cancel"
+              className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 hover:text-zinc-600 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           )}
@@ -1005,31 +1182,45 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
 
         <div className="mb-4">
           <p className="text-xs font-medium text-zinc-600 mb-2">Maintenance Type</p>
-          <div className="inline-flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5">
-            {(["repair", "replace"] as const).map(t => (
-              <button key={t} onClick={() => setType(t)}
-                className={`px-4 py-1.5 rounded-md text-xs font-medium transition-colors duration-100 ${
-                  type === t ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
-                }`}>
-                {t === "repair" ? "Repair" : "Replace"}
-              </button>
-            ))}
+          <div className="relative inline-flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5">
+            {pill.ready && (
+              <span
+                className="absolute inset-y-0.5 rounded-md bg-white shadow-sm pointer-events-none"
+                style={{
+                  left: `${pill.left}px`,
+                  width: `${pill.width}px`,
+                  ...(pill.animate && { transition: "left 200ms cubic-bezier(0.23, 1, 0.32, 1), width 200ms cubic-bezier(0.23, 1, 0.32, 1)" }),
+                }}
+              />
+            )}
+            <button ref={repairBtnRef} onClick={() => setType("repair")}
+              className={`relative z-10 px-4 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 ${
+                type === "repair" ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
+              }`}>
+              Repair
+            </button>
+            <button ref={replaceBtnRef} onClick={() => setType("replace")}
+              className={`relative z-10 px-4 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 ${
+                type === "replace" ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
+              }`}>
+              Replace
+            </button>
           </div>
         </div>
 
         {type === "repair"
           ? <RepairFormFields form={repair} setForm={setRepair} />
-          : <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} />
+          : <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} nextIdAset={nextIdAset} />
         }
       </div>
 
       <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
         <button onClick={onCancel}
-          className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors">
+          className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           Cancel
         </button>
         <button onClick={handleSave} disabled={saving}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           {saving && <Loader2 className="w-3 h-3 animate-spin" />}
           Save Log
         </button>
@@ -1058,13 +1249,13 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
   const sevEn = severityToEn(entry.severity);
 
   const issueText = isReplace
-    ? `Replaced with ${[entry.merekBaru, entry.modelBaru].filter(Boolean).join(" ") || (entry.idAsetBaru ?? "—")}`
+    ? `Replaced → ${entry.namaAsetBaru ?? (entry.idAsetBaru != null ? String(entry.idAsetBaru) : "—")}`
     : (entry.jenisKerusakan ?? "No Issue");
   const issueColor = isReplace
     ? "text-indigo-600"
     : entry.jenisKerusakan
     ? "text-red-500"
-    : "text-zinc-400";
+    : "text-zinc-500";
 
   return (
     <div>
@@ -1073,7 +1264,7 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="text-xs font-semibold text-zinc-800">{fmtLogDate(entry.tanggalPengerjaan)}</p>
-            <p className="text-[11px] text-zinc-400 mt-0.5">{entry.maintenanceType} · {fmtCost(entry.biaya)}</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5">{entry.maintenanceType} · {fmtCost(entry.biaya)}</p>
           </div>
           <p className={`text-[11px] font-medium ${issueColor} text-right leading-tight shrink-0 max-w-[45%]`}>
             {issueText}
@@ -1081,8 +1272,12 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
         </div>
       </button>
 
-      {expanded && (
-        <div className="my-2 p-3 rounded-xl border border-zinc-100 bg-zinc-50/60 space-y-3">
+      <div
+        className={`grid transition-[grid-template-rows,opacity] duration-200 ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 pointer-events-none"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+      >
+        <div className="overflow-hidden">
+          <div className="my-2 p-3 rounded-xl border border-zinc-100 bg-zinc-50/60 space-y-3">
           {isReplace ? (
             <>
               {sevEn && (
@@ -1092,20 +1287,25 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
               )}
               <div className="flex items-stretch gap-2">
                 <div className="flex-1 rounded-lg bg-zinc-800 text-white p-2.5">
-                  <p className="text-[11px] font-semibold">{asset.idAset}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">{[asset.merek, asset.model].filter(Boolean).join(" ") || "—"}</p>
+                  <p className="text-[11px] font-semibold">{entry.namaAsetLama ?? asset.nama ?? "—"}</p>
+                  <p className="text-[10px] text-zinc-500 mt-0.5">{[asset.merek, asset.model].filter(Boolean).join(" ") || "—"}</p>
                 </div>
                 <div className="flex items-center shrink-0">
-                  <ArrowRight className="w-4 h-4 text-zinc-400" />
+                  <ArrowRight className="w-4 h-4 text-zinc-500" />
                 </div>
                 <div className="flex-1 rounded-lg border border-zinc-200 bg-white p-2.5">
-                  <p className="text-[11px] font-semibold text-zinc-800">{entry.idAsetBaru ?? "—"}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">{[entry.merekBaru, entry.modelBaru].filter(Boolean).join(" ") || "—"}</p>
+                  <p className="text-[10px] text-indigo-500 font-medium mb-0.5">New Asset</p>
+                  <p className="text-[11px] font-semibold text-zinc-800">
+                    {entry.namaAsetBaru ?? (entry.idAsetBaru != null ? String(entry.idAsetBaru) : "—")}
+                  </p>
+                  <p className="text-[10px] text-zinc-500 mt-0.5">
+                    {[entry.merekAsetBaru, entry.modelAsetBaru].filter(Boolean).join(" ") || "—"}
+                  </p>
                 </div>
               </div>
               {entry.alasanPenggantian && (
                 <div>
-                  <p className="text-[10px] text-zinc-400 mb-1">Cause of Replacement</p>
+                  <p className="text-[10px] text-zinc-500 mb-1">Cause of Replacement</p>
                   <p className="text-xs text-zinc-700">{entry.alasanPenggantian}</p>
                 </div>
               )}
@@ -1121,11 +1321,11 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
                   </div>
                   <div className="flex justify-between mt-1">
                     <div>
-                      <p className="text-[9px] text-zinc-400">Start</p>
+                      <p className="text-[10px] text-zinc-500">Start</p>
                       <p className="text-[10px] font-medium text-zinc-700">{fmtLogDate(entry.tanggalPengerjaan)}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] text-zinc-400">Done</p>
+                      <p className="text-[10px] text-zinc-500">Done</p>
                       <p className="text-[10px] font-medium text-zinc-700">{fmtLogDate(entry.tanggalSelesai)}</p>
                     </div>
                   </div>
@@ -1139,31 +1339,32 @@ function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
               {(entry.jenisKerusakan || entry.penyebab) && (
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div>
-                    <p className="text-[10px] text-zinc-400 mb-1">What&apos;s Fixed</p>
+                    <p className="text-[10px] text-zinc-500 mb-1">What&apos;s Fixed</p>
                     <p className="text-xs text-zinc-700">{entry.jenisKerusakan ?? "—"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-zinc-400 mb-1">Cause</p>
+                    <p className="text-[10px] text-zinc-500 mb-1">Cause</p>
                     <p className="text-xs text-zinc-700">{entry.penyebab ?? "—"}</p>
                   </div>
                 </div>
               )}
               {entry.sparePartDigunakan && (
                 <div className="flex items-start gap-2">
-                  <Wrench className="w-3.5 h-3.5 text-zinc-400 mt-0.5 shrink-0" />
+                  <Wrench className="w-3.5 h-3.5 text-zinc-500 mt-0.5 shrink-0" />
                   <p className="text-xs text-zinc-600">{entry.sparePartDigunakan}</p>
                 </div>
               )}
               {entry.teknisiPelaksana && (
                 <div className="flex items-start gap-2">
-                  <User className="w-3.5 h-3.5 text-zinc-400 mt-0.5 shrink-0" />
+                  <User className="w-3.5 h-3.5 text-zinc-500 mt-0.5 shrink-0" />
                   <p className="text-xs text-zinc-600">{entry.teknisiPelaksana}</p>
                 </div>
               )}
             </>
           )}
         </div>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1182,7 +1383,19 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
   const filtered = typeFilter ? entries.filter(e => e.maintenanceType === typeFilter) : entries;
 
   if (loading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-zinc-400" /></div>;
+    return (
+      <div className="animate-pulse motion-reduce:animate-none">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="py-3 border-b border-zinc-100 flex items-start justify-between">
+            <div>
+              <div className="h-3 w-28 rounded bg-zinc-200" />
+              <div className="h-2.5 w-20 rounded bg-zinc-100 mt-1.5" />
+            </div>
+            <div className="h-2.5 w-16 rounded bg-zinc-100" />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -1196,10 +1409,10 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
             <option value="Replace">Replace</option>
             <option value="Preventive">Preventive</option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-400" />
+          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-zinc-400" />
+          <Filter className="w-3.5 h-3.5 text-zinc-500" />
           {typeFilter && (
             <button onClick={() => onTypeFilterChange("")} className="text-[11px] text-indigo-600 hover:underline">
               Clear All
@@ -1209,7 +1422,7 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-10 text-center text-xs text-zinc-400">
+        <p className="py-10 text-center text-xs text-zinc-500">
           {typeFilter ? "No records for this type." : "No maintenance history found."}
         </p>
       ) : (
@@ -1232,23 +1445,46 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
 
 // Searchable Combobox Filter                                                
 
-function FilterCombobox({ value, onChange, options, placeholder }: {
+function FilterCombobox({ value, onChange, options, placeholder, disabled = false, block = false }: {
   value: string; onChange: (v: string) => void; options: string[]; placeholder: string;
+  disabled?: boolean; block?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [dropVis, setDropVis] = useState(false);
   const [query, setQuery] = useState("");
+  const [rect, setRect] = useState<{ left: number; top: number; width: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const updateRect = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setRect({ left: r.left, top: r.bottom + 4, width: r.width });
+  }, []);
+
+  // Close on outside click — ignore clicks inside the portaled dropdown
   useEffect(() => {
     function onDown(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false); setQuery("");
-      }
+      const t = e.target as Node;
+      if (containerRef.current?.contains(t) || dropdownRef.current?.contains(t)) return;
+      setOpen(false); setQuery("");
     }
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
+
+  // Keep the fixed dropdown anchored to the input while open
+  useEffect(() => {
+    if (!open) return;
+    updateRect();
+    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", updateRect);
+    return () => {
+      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, [open, updateRect]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setDropVis(open));
@@ -1256,39 +1492,43 @@ function FilterCombobox({ value, onChange, options, placeholder }: {
   }, [open]);
 
   const filtered = query ? options.filter(o => o.toLowerCase().includes(query.toLowerCase())) : options;
+  const listId = `cb-${placeholder.replace(/\s+/g, "-").toLowerCase()}`;
 
   function pick(v: string) { onChange(v); setOpen(false); setQuery(""); }
   function clear(e: React.MouseEvent) { e.stopPropagation(); onChange(""); setOpen(false); setQuery(""); }
 
   return (
-    <div ref={containerRef} className="relative">
-      <div className={`flex items-center rounded-lg border bg-white shadow-sm transition-[border-color,box-shadow,background-color] duration-150 ${
-        open ? "border-indigo-300 ring-2 ring-indigo-100" : value ? "border-indigo-200 bg-indigo-50/50" : "border-zinc-200 hover:border-zinc-300"
+    <div ref={containerRef} className={`relative ${block ? "w-full" : ""}`}>
+      <div className={`flex items-center rounded-lg border shadow-sm transition-[border-color,box-shadow,background-color] duration-150 ${
+        disabled ? "border-zinc-200 bg-zinc-50 cursor-not-allowed" : open ? "border-indigo-300 ring-2 ring-indigo-100 bg-white" : value ? "border-indigo-200 bg-indigo-50/50" : "border-zinc-200 bg-white hover:border-zinc-300"
       }`}>
-        <input type="text" value={open ? query : value} placeholder={placeholder}
+        <input type="text" value={open ? query : value} placeholder={placeholder} disabled={disabled}
+          role="combobox" aria-expanded={open} aria-controls={listId} aria-label={placeholder} aria-autocomplete="list"
           onChange={e => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
-          className={`min-w-0 w-28 bg-transparent pl-3 py-2 text-xs focus:outline-none placeholder:text-zinc-400 ${value && !open ? "text-indigo-600 font-medium" : "text-zinc-700"}`} />
-        {value && !open
-          ? <button onClick={clear} className="px-2 text-zinc-400 hover:text-zinc-600 transition-colors"><X className="w-3 h-3" /></button>
-          : <ChevronDown className={`mr-2 w-3.5 h-3.5 text-zinc-400 shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+          className={`min-w-0 bg-transparent pl-3 py-2 text-xs focus:outline-none placeholder:text-zinc-500 disabled:text-zinc-400 disabled:cursor-not-allowed ${block ? "flex-1" : "w-28"} ${value && !open ? "text-indigo-600 font-medium" : "text-zinc-700"}`} />
+        {value && !open && !disabled
+          ? <button onClick={clear} aria-label={`Clear ${placeholder}`} className="px-2 text-zinc-500 hover:text-zinc-600 transition-colors"><X className="w-3 h-3" /></button>
+          : <ChevronDown className={`mr-2 w-3.5 h-3.5 text-zinc-500 shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
         }
       </div>
-      {open && (
-        <div className={`absolute top-[calc(100%+4px)] left-0 z-50 min-w-full w-max max-w-56 rounded-xl border border-zinc-100 bg-white shadow-lg origin-top transition-[opacity,transform] duration-150 ${dropVis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-          style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}>
+      {open && rect && createPortal(
+        <div ref={dropdownRef} id={listId} role="listbox"
+          style={{ position: "fixed", left: rect.left, top: rect.top, minWidth: rect.width, transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+          className={`z-[100] w-max ${block ? "max-w-[20rem]" : "max-w-56"} rounded-xl border border-zinc-100 bg-white shadow-lg origin-top transition-[opacity,transform] duration-150 ${dropVis ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
           <div className="max-h-52 overflow-y-auto py-1">
             {filtered.length === 0
-              ? <p className="px-3 py-2.5 text-xs text-zinc-400 italic">No matches</p>
+              ? <p className="px-3 py-2.5 text-xs text-zinc-500 italic">No matches</p>
               : filtered.map(o => (
-                <button key={o} onMouseDown={e => e.preventDefault()} onClick={() => pick(o)}
+                <button key={o} role="option" aria-selected={value === o} onMouseDown={e => e.preventDefault()} onClick={() => pick(o)}
                   className={`w-full text-left px-3 py-1.5 text-xs transition-colors duration-100 ${value === o ? "bg-indigo-50 text-indigo-600 font-medium" : "text-zinc-600 hover:bg-zinc-50"}`}>
                   {o}
                 </button>
               ))
             }
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
@@ -1299,7 +1539,7 @@ function FilterCombobox({ value, onChange, options, placeholder }: {
 export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [total, setTotal] = useState(0);
-  const [counts, setCounts] = useState({ all: 0, Critical: 0, Major: 0, Minor: 0, Healthy: 0 });
+  const [severityCounts, setSeverityCounts] = useState({ all: 0, Fatal: 0, AtRisk: 0, Healthy: 0 });
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Filters>({ kategori: [], tipe: [], lokasi: [], jadwal: [] });
   const [selectedKategori, setSelectedKategori] = useState("");
@@ -1307,6 +1547,7 @@ export default function AssetsPage() {
   const [selectedLokasi, setSelectedLokasi] = useState("");
   const [selectedJadwal, setSelectedJadwal] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [predicting, setPredicting] = useState(false);
   const [predMsg, setPredMsg] = useState<string | null>(null);
   const [lastPredictedAt, setLastPredictedAt] = useState<string | null>(null);
@@ -1314,9 +1555,14 @@ export default function AssetsPage() {
   const [komplainLogs, setKomplainLogs] = useState<KomplainLog[]>([]);
   const [replaceLogs, setReplaceLogs] = useState<ReplaceLog[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
-  const [riskFilter, setRiskFilter] = useState("All");
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
+  const [severityFilter, setSeverityFilter] = useState("All Assets");
+  const [activeStatus, setActiveStatus] = useState<"Active" | "Inactive">("Active");
+  const [searchInput, setSearchInput] = useState(() =>
+    typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("search") ?? "") : ""
+  );
+  const [search, setSearch] = useState(() =>
+    typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("search") ?? "") : ""
+  );
 
   // Panel state
   const [panelView, setPanelView] = useState<PanelView>("overview");
@@ -1332,9 +1578,15 @@ export default function AssetsPage() {
   // Animation refs
   const riskTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [riskIndicator, setRiskIndicator] = useState({ left: 0, width: 0, ready: false });
+  const statusBtnRefs = useRef<Record<"Active" | "Inactive", HTMLButtonElement | null>>({ Active: null, Inactive: null });
+  const [statusPill, setStatusPill] = useState<{ left: number; width: number; ready: boolean; animate: boolean }>({ left: 0, width: 0, ready: false, animate: false });
   const panelTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [panelIndicator, setPanelIndicator] = useState({ left: 0, width: 0, ready: false });
   const [panelVis, setPanelVis] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const panelCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [panelContentVis, setPanelContentVis] = useState(true);
+  const panelContentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const router = useRouter();
   const LIMIT = 50;
@@ -1358,25 +1610,33 @@ export default function AssetsPage() {
 
   const buildParams = useCallback(
     () => new URLSearchParams({
-      page: String(page), limit: String(LIMIT), status: "Aktif",
+      page: String(page),
+      limit: String(LIMIT),
+      status: activeStatus === "Inactive" ? "inactive" : "Aktif",
       ...(selectedKategori && { kategori: selectedKategori }),
       ...(selectedTipe && { tipe: selectedTipe }),
       ...(selectedLokasi && { lokasi: selectedLokasi }),
       ...(selectedJadwal && { jadwal: FREQ_TO_JADWAL[selectedJadwal] ?? selectedJadwal }),
       ...(search && { search }),
-      ...(riskFilter !== "All" && { kekritisan: riskFilter }),
+      ...(activeStatus === "Active" && severityFilter !== "All Assets" && {
+        severity: severityFilter === "At Risk" ? "AtRisk" : severityFilter,
+      }),
     }),
-    [page, selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search, riskFilter],
+    [page, selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search, severityFilter, activeStatus],
   );
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await fetch(`/api/assets?${buildParams()}`);
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
         const json = await res.json();
         if (!cancelled) { setAssets(json.data ?? []); setTotal(json.total ?? 0); }
+      } catch (err) {
+        if (!cancelled) { setAssets([]); setTotal(0); setLoadError(err instanceof Error ? err.message : "Failed to load assets"); }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -1387,10 +1647,15 @@ export default function AssetsPage() {
 
   const fetchAssets = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch(`/api/assets?${buildParams()}`);
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
       const json = await res.json();
       setAssets(json.data ?? []); setTotal(json.total ?? 0);
+    } catch (err) {
+      setAssets([]); setTotal(0);
+      setLoadError(err instanceof Error ? err.message : "Failed to load assets");
     } finally {
       setLoading(false);
     }
@@ -1399,21 +1664,21 @@ export default function AssetsPage() {
   // Per-risk-level counts (ignores the active risk tab so each tab shows its own total)
   const buildCountParams = useCallback(
     () => new URLSearchParams({
-      status: "Aktif",
+      status: activeStatus === "Inactive" ? "inactive" : "Aktif",
       ...(selectedKategori && { kategori: selectedKategori }),
       ...(selectedTipe && { tipe: selectedTipe }),
       ...(selectedLokasi && { lokasi: selectedLokasi }),
       ...(selectedJadwal && { jadwal: FREQ_TO_JADWAL[selectedJadwal] ?? selectedJadwal }),
       ...(search && { search }),
     }),
-    [selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search],
+    [selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search, activeStatus],
   );
 
   const fetchCounts = useCallback(async () => {
     try {
       const res = await fetch(`/api/assets/counts?${buildCountParams()}`);
       const json = await res.json();
-      setCounts(json);
+      setSeverityCounts(json);
     } catch {
       /* counts are non-critical */
     }
@@ -1425,7 +1690,7 @@ export default function AssetsPage() {
       try {
         const res = await fetch(`/api/assets/counts?${buildCountParams()}`);
         const json = await res.json();
-        if (!cancelled) setCounts(json);
+        if (!cancelled) setSeverityCounts(json);
       } catch {
         /* counts are non-critical */
       }
@@ -1433,19 +1698,38 @@ export default function AssetsPage() {
     return () => { cancelled = true; };
   }, [buildCountParams]);
 
-  // Risk tab indicator
+  // Severity tab indicator — re-measures on tab change, count change, and when the
+  // Active/Inactive toggle collapses or expands the tab row.
   useEffect(() => {
-    const idx = RISK_TABS.indexOf(riskFilter);
+    const idx = SEVERITY_TABS.indexOf(severityFilter);
     const el = riskTabRefs.current[idx];
     if (!el) return;
     setRiskIndicator({ left: el.offsetLeft + 12, width: el.offsetWidth - 24, ready: true });
-  }, [riskFilter, counts]);
+  }, [severityFilter, severityCounts, activeStatus]);
 
-  // Panel entry animation
+  // Sliding pill for the Active/Inactive toggle (matches the Maintenance Type toggle)
   useEffect(() => {
-    const id = requestAnimationFrame(() => setPanelVis(!!modalAsset));
+    const btn = statusBtnRefs.current[activeStatus];
+    if (!btn) return;
+    setStatusPill(prev => ({ left: btn.offsetLeft, width: btn.offsetWidth, ready: true, animate: prev.ready }));
+  }, [activeStatus]);
+
+  // Panel entry animation — exit is handled by closePanel
+  useEffect(() => {
+    if (!modalAsset) return;
+    const id = requestAnimationFrame(() => { setPanelVis(true); panelRef.current?.focus(); });
     return () => cancelAnimationFrame(id);
   }, [modalAsset]);
+
+  // Close the detail panel on Escape (guards unsaved edits)
+  useEffect(() => {
+    if (!modalAsset) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") guardedNav(closePanel);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [modalAsset, panelView, maintenanceDirty, editDirty]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Panel tab sliding indicator
   useEffect(() => {
@@ -1461,7 +1745,7 @@ export default function AssetsPage() {
       const res = await fetch("/api/assets/predict", { method: "POST" });
       const json = await res.json();
       if (!res.ok) {
-        setPredMsg(`Prediction failed: ${json.message ?? "Server error"}`);
+        setPredMsg(`Prediction failed: ${json.message ?? "Server error"}${json.detail ? ` — ${json.detail}` : ""}`);
       } else {
         setLastPredictedAt(new Date().toLocaleString("en-US"));
         setPredMsg(`Prediction complete — ${json.total_diproses ?? 0} assets updated`);
@@ -1496,10 +1780,12 @@ export default function AssetsPage() {
       tanggalPengerjaan: r.tanggalPenggantian,
       tanggalSelesai: null,
       biaya: r.biayaPenggantian,
-      severity: r.severity,
+      severity: null,
       idAsetBaru: r.idAsetBaru,
-      merekBaru: r.merekBaru,
-      modelBaru: r.modelBaru,
+      namaAsetLama: r.namaAsetLama,
+      namaAsetBaru: r.namaAsetBaru,
+      merekAsetBaru: r.merekAsetBaru,
+      modelAsetBaru: r.modelAsetBaru,
       alasanPenggantian: r.alasanPenggantian,
     }));
     return [...fromKomplain, ...fromReplace].sort((a, b) => {
@@ -1510,6 +1796,9 @@ export default function AssetsPage() {
   }
 
   async function openModal(asset: Asset) {
+    if (panelCloseTimer.current) { clearTimeout(panelCloseTimer.current); panelCloseTimer.current = null; }
+    if (panelContentTimer.current) { clearTimeout(panelContentTimer.current); panelContentTimer.current = null; }
+    setPanelContentVis(true);
     setModalAsset(asset);
     setPanelView("overview");
     setExpandedLogId(null);
@@ -1531,9 +1820,24 @@ export default function AssetsPage() {
   }
 
   function closePanel() {
-    setModalAsset(null);
-    setPanelView("overview");
-    setPanelIndicator({ left: 0, width: 0, ready: false });
+    if (panelCloseTimer.current) clearTimeout(panelCloseTimer.current);
+    setPanelVis(false);
+    panelCloseTimer.current = setTimeout(() => {
+      setModalAsset(null);
+      setPanelView("overview");
+      setPanelIndicator({ left: 0, width: 0, ready: false });
+      panelCloseTimer.current = null;
+    }, 320);
+  }
+
+  function animateToPanelView(view: PanelView) {
+    if (panelContentTimer.current) clearTimeout(panelContentTimer.current);
+    setPanelContentVis(false);
+    panelContentTimer.current = setTimeout(() => {
+      setPanelView(view);
+      setPanelContentVis(true);
+      panelContentTimer.current = null;
+    }, 100);
   }
 
   // Run `action` immediately, or defer it behind the unsaved-changes warning when
@@ -1561,13 +1865,24 @@ export default function AssetsPage() {
     fetchAssets();
   }
 
-  async function handleMaintenanceSave() {
+  function handleEditDelete() {
+    setEditDirty(false);
+    closePanel();
+    fetchAssets();
+    fetchCounts();
+  }
+
+  async function handleMaintenanceSave(result?: { newIdAset?: number; newNama?: string }) {
     if (!modalAsset) return;
+    const effectiveId = result?.newIdAset ?? modalAsset.idAset;
+    if (result?.newIdAset) {
+      setModalAsset(prev => prev ? { ...prev, idAset: result.newIdAset!, nama: result.newNama ?? prev.nama } : null);
+    }
     setModalLoading(true);
     try {
       const [resK, resR] = await Promise.all([
-        fetch(`/api/assets/${encodeURIComponent(modalAsset.idAset)}/komplain`),
-        fetch(`/api/assets/${encodeURIComponent(modalAsset.idAset)}/replace`),
+        fetch(`/api/assets/${encodeURIComponent(effectiveId)}/komplain`),
+        fetch(`/api/assets/${encodeURIComponent(effectiveId)}/replace`),
       ]);
       const [jsonK, jsonR] = await Promise.all([resK.json(), resR.json()]);
       setKomplainLogs(jsonK.data ?? []);
@@ -1577,6 +1892,8 @@ export default function AssetsPage() {
     }
     setMaintenanceDirty(false);
     setPanelView("maintenance-history");
+    fetchAssets();
+    fetchCounts();
   }
 
   const handleFilterChange = (type: "kategori" | "tipe" | "lokasi" | "jadwal", value: string) => {
@@ -1587,11 +1904,11 @@ export default function AssetsPage() {
     setPage(1);
   };
 
-  const hasActiveFilters = selectedKategori !== "" || selectedTipe !== "" || selectedLokasi !== "" || selectedJadwal !== "" || search !== "" || riskFilter !== "All";
+  const hasActiveFilters = selectedKategori !== "" || selectedTipe !== "" || selectedLokasi !== "" || selectedJadwal !== "" || search !== "" || severityFilter !== "All Assets";
 
   function resetFilters() {
     setSelectedKategori(""); setSelectedTipe(""); setSelectedLokasi(""); setSelectedJadwal("");
-    setSearchInput(""); setSearch(""); setRiskFilter("All"); setPage(1);
+    setSearchInput(""); setSearch(""); setSeverityFilter("All Assets"); setPage(1);
   }
 
   const totalPages = Math.ceil(total / LIMIT);
@@ -1617,37 +1934,73 @@ export default function AssetsPage() {
       {/*    Left: Table    */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0 p-4 md:p-6">
 
-        {/* Risk tabs */}
+        {/* Severity tabs + Active/Inactive toggle */}
         <div className="relative flex items-end gap-0 border-b border-zinc-100 mb-4 shrink-0">
-          {RISK_TABS.map((tab, i) => {
-            const tabCount = tab === "All" ? counts.all : counts[tab as keyof typeof counts];
-            const isActive = riskFilter === tab;
+          {SEVERITY_TABS.map((tab, i) => {
+            const isAllAssets = tab === "All Assets";
+            const countKey = tab === "At Risk" ? "AtRisk" : tab;
+            const tabCount = isAllAssets ? severityCounts.all : severityCounts[countKey as keyof typeof severityCounts] ?? 0;
+            const isActive = severityFilter === tab;
+            const hideTab = !isAllAssets && activeStatus === "Inactive";
             return (
-              <button key={tab} ref={el => { riskTabRefs.current[i] = el; }}
-                onClick={() => { setRiskFilter(tab); setPage(1); }}
-                className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${isActive ? "text-indigo-600" : "text-zinc-400 hover:text-zinc-600"}`}>
-                {tab === "All" ? "All Assets" : tab}
-                {isActive && (
-                  <span className="ml-1.5 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] text-indigo-600">
-                    {tabCount.toLocaleString()}
-                  </span>
-                )}
-              </button>
+              <div
+                key={tab}
+                className={`overflow-hidden transition-[max-width,opacity] duration-300 ${hideTab ? "max-w-0 opacity-0 pointer-events-none" : "max-w-[160px] opacity-100"}`}
+                style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+              >
+                <button
+                  ref={el => { riskTabRefs.current[i] = el; }}
+                  onClick={() => { setSeverityFilter(tab); setPage(1); }}
+                  className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${isActive ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"}`}
+                >
+                  {tab}
+                  {isActive && <TabCountBadge count={tabCount} />}
+                </button>
+              </div>
             );
           })}
           {riskIndicator.ready && (
-            <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-200"
+            <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-300"
               style={{ transform: `translateX(${riskIndicator.left}px)`, width: `${riskIndicator.width}px`, transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }} />
           )}
+          {/* Active / Inactive toggle — sliding pill (same as the Maintenance Type toggle) */}
+          <div className="ml-auto mb-1 relative inline-flex rounded-full border border-zinc-200 bg-zinc-50 p-0.5">
+            {statusPill.ready && (
+              <span
+                className="absolute inset-y-0.5 rounded-full bg-white shadow-sm pointer-events-none"
+                style={{
+                  left: `${statusPill.left}px`,
+                  width: `${statusPill.width}px`,
+                  ...(statusPill.animate && { transition: "left 200ms cubic-bezier(0.23, 1, 0.32, 1), width 200ms cubic-bezier(0.23, 1, 0.32, 1)" }),
+                }}
+              />
+            )}
+            {(["Active", "Inactive"] as const).map(s => (
+              <button
+                key={s}
+                ref={el => { statusBtnRefs.current[s] = el; }}
+                onClick={() => {
+                  setActiveStatus(s);
+                  setSeverityFilter("All Assets");
+                  setPage(1);
+                }}
+                className={`relative z-10 px-3 py-1 rounded-full text-xs font-medium transition-colors duration-150 ${
+                  activeStatus === s ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2 mb-4 shrink-0">
           <div className="relative flex-1 min-w-40">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 pointer-events-none" />
             <input type="text" value={searchInput} onChange={e => setSearchInput(e.target.value)}
-              placeholder="Search..."
-              className="w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 py-2 text-xs text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-[border-color,box-shadow]" />
+              placeholder="Search..." aria-label="Search assets by name, type, or ID"
+              className="w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 py-2 text-xs text-zinc-700 shadow-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-[border-color,box-shadow]" />
           </div>
           <FilterCombobox value={selectedLokasi} onChange={v => handleFilterChange("lokasi", v)} options={filters.lokasi} placeholder="Location" />
           <FilterCombobox value={selectedJadwal} onChange={v => handleFilterChange("jadwal", v)} options={FREQ_OPTIONS} placeholder="Frequency" />
@@ -1669,7 +2022,7 @@ export default function AssetsPage() {
         {predMsg && (
           <div className={`mb-3 shrink-0 flex items-center justify-between rounded-lg px-3 py-2 text-xs border ${predMsg.includes("complete") ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
             <span>{predMsg}</span>
-            <button onClick={() => setPredMsg(null)} className="ml-2 hover:opacity-70"><X className="w-3.5 h-3.5" /></button>
+            <button onClick={() => setPredMsg(null)} aria-label="Dismiss message" className="ml-2 hover:opacity-70"><X className="w-3.5 h-3.5" /></button>
           </div>
         )}
 
@@ -1679,33 +2032,71 @@ export default function AssetsPage() {
             <table className="w-full text-sm min-w-[600px]">
               <thead className="sticky top-0 z-10">
                 <tr className="border-b border-zinc-100 bg-zinc-50 text-left">
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Asset</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Category</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Asset</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Category</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">
                     {showCurrentLife ? "Current Life" : "Installation Date"}
                   </th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Location</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Risk Level</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">Frequency</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Location</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Priority</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Health Status</th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Frequency</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-50">
                 {loading ? (
-                  <tr><td colSpan={6} className="py-16 text-center text-zinc-400">
-                    <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
-                    <p className="text-xs">Loading assets…</p>
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <tr key={`sk-${i}`} className="animate-pulse motion-reduce:animate-none">
+                      <td className="px-4 py-3">
+                        <div className="h-3 w-24 rounded bg-zinc-200" />
+                        <div className="h-2.5 w-16 rounded bg-zinc-100 mt-1.5" />
+                      </td>
+                      <td className="px-4 py-3"><div className="h-3 w-20 rounded bg-zinc-200" /></td>
+                      <td className="px-4 py-3"><div className="h-3 w-24 rounded bg-zinc-200" /></td>
+                      <td className="px-4 py-3"><div className="h-3 w-28 rounded bg-zinc-200" /></td>
+                      <td className="px-4 py-3"><div className="h-5 w-16 rounded-full bg-zinc-200" /></td>
+                      <td className="px-4 py-3"><div className="h-5 w-16 rounded-full bg-zinc-200" /></td>
+                      <td className="px-4 py-3"><div className="h-3 w-14 rounded bg-zinc-200" /></td>
+                    </tr>
+                  ))
+                ) : loadError ? (
+                  <tr><td colSpan={7} className="py-16 text-center">
+                    <AlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-zinc-700">Couldn&apos;t load assets</p>
+                    <p className="text-xs text-zinc-500 mt-1">{loadError}</p>
+                    <button onClick={fetchAssets}
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-95 transition-[background-color,transform] duration-150">
+                      <RefreshCw className="w-3.5 h-3.5" /> Retry
+                    </button>
                   </td></tr>
                 ) : assets.length === 0 ? (
-                  <tr><td colSpan={6} className="py-16 text-center text-sm text-zinc-400">No assets found.</td></tr>
+                  <tr><td colSpan={7} className="py-16 text-center">
+                    <Search className="w-6 h-6 text-zinc-300 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-zinc-600">No assets found</p>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      {hasActiveFilters ? "Try adjusting or clearing your filters." : "There are no assets to show yet."}
+                    </p>
+                    {hasActiveFilters && (
+                      <button onClick={resetFilters}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-95 transition-[background-color,transform] duration-150">
+                        <X className="w-3.5 h-3.5" /> Reset filters
+                      </button>
+                    )}
+                  </td></tr>
                 ) : (
                   assets.map(a => {
                     const selected = modalAsset?.id === a.id;
+                    const healthStatus = getHealthStatusDisplay(a.latestSeverity ?? null);
                     return (
                       <tr key={a.id} onClick={() => guardedNav(() => openModal(a))}
-                        className={`cursor-pointer transition-colors duration-100 ${selected ? "bg-indigo-50 border-l-2 border-indigo-500" : "hover:bg-indigo-50/50"}`}>
-                        <td className="px-4 py-3">
-                          <p className="text-xs font-semibold text-indigo-600">{a.idAset}</p>
-                          <p className="text-[11px] text-zinc-400 mt-0.5">{a.tipe ?? "—"}</p>
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`Open details for ${a.nama ?? a.idAset}`}
+                        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); guardedNav(() => openModal(a)); } }}
+                        className={`group cursor-pointer transition-colors duration-100 outline-none ${selected ? "bg-indigo-50" : "hover:bg-indigo-50/50 focus-visible:bg-indigo-50"}`}>
+                        <td className={`px-4 py-3 transition-shadow duration-100 ${selected ? "shadow-[inset_3px_0_0_0_#6366f1]" : "group-focus-visible:shadow-[inset_3px_0_0_0_#818cf8]"}`}>
+                          <p className="text-xs font-semibold text-indigo-600">{a.nama ?? String(a.idAset)}</p>
+                          <p className="text-[11px] text-zinc-500 mt-0.5">{a.tipe ?? "—"}</p>
                         </td>
                         <td className="px-4 py-3 text-xs text-zinc-600">{a.kategori ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-zinc-500">
@@ -1719,9 +2110,12 @@ export default function AssetsPage() {
                           {[a.lokasiGedung, a.lokasiLantai, a.lokasiZona].filter(Boolean).join(", ") || "—"}
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${RISK_COLORS[a.kekritisan ?? ""] ?? RISK_COLORS.Healthy}`}>
-                            {a.kekritisan ?? "Healthy"}
+                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${a.kekritisan ? RISK_COLORS[a.kekritisan] : "bg-zinc-100 text-zinc-500 border border-zinc-200"}`}>
+                            {a.kekritisan ?? "—"}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${healthStatus.css}`}>{healthStatus.label}</span>
                         </td>
                         <td className="px-4 py-3 text-xs font-semibold text-zinc-700">{freqLabel(a.statusJadwal)}</td>
                       </tr>
@@ -1734,23 +2128,24 @@ export default function AssetsPage() {
 
           {/* Pagination */}
           <div className="shrink-0 flex items-center justify-between border-t border-zinc-100 px-4 py-3 bg-white">
-            <span className="text-xs text-zinc-400">Showing {showingFrom} to {showingTo} of {total.toLocaleString()} assets</span>
+            <span className="text-xs text-zinc-500">Showing {showingFrom} to {showingTo} of {total.toLocaleString()} assets</span>
             <div className="flex items-center gap-3">
               {totalPages > 1 && (
                 <div className="flex items-center gap-1">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    className="p-1 rounded hover:bg-zinc-100 disabled:opacity-30 transition-colors">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page"
+                    className="flex items-center justify-center w-9 h-9 rounded hover:bg-zinc-100 disabled:opacity-30 transition-colors">
                     <ChevronLeft className="w-4 h-4 text-zinc-500" />
                   </button>
                   {pageNums.map((n, i) => n === "…"
-                    ? <span key={`e${i}`} className="px-1 text-xs text-zinc-400">…</span>
+                    ? <span key={`e${i}`} className="px-1 text-xs text-zinc-500">…</span>
                     : <button key={n} onClick={() => setPage(n as number)}
-                        className={`w-7 h-7 rounded text-xs font-medium transition-[background-color,color] duration-150 ${page === n ? "bg-indigo-600 text-white shadow-sm" : "text-zinc-500 hover:bg-zinc-100"}`}>
+                        aria-label={`Go to page ${n}`} aria-current={page === n ? "page" : undefined}
+                        className={`w-9 h-9 rounded text-xs font-medium transition-[background-color,color] duration-150 ${page === n ? "bg-indigo-600 text-white shadow-sm" : "text-zinc-500 hover:bg-zinc-100"}`}>
                         {n}
                       </button>
                   )}
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                    className="p-1 rounded hover:bg-zinc-100 disabled:opacity-30 transition-colors">
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} aria-label="Next page"
+                    className="flex items-center justify-center w-9 h-9 rounded hover:bg-zinc-100 disabled:opacity-30 transition-colors">
                     <ChevronRight className="w-4 h-4 text-zinc-500" />
                   </button>
                 </div>
@@ -1764,29 +2159,40 @@ export default function AssetsPage() {
         </div>
 
         {lastPredictedAt && (
-          <p className="mt-2 text-[10px] text-zinc-400 shrink-0">Prediction last run: {lastPredictedAt}</p>
+          <p className="mt-2 text-[10px] text-zinc-500 shrink-0">Prediction last run: {lastPredictedAt}</p>
         )}
       </div>
 
       {/*    Right: Detail Panel    */}
       {modalAsset && (
         <div
-          className={`w-80 xl:w-96 shrink-0 border-l border-zinc-100 flex flex-col bg-white overflow-hidden transition-[transform,opacity] duration-200 motion-reduce:transition-opacity ${
-            panelVis ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+          ref={panelRef}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="false"
+          aria-label={`Details for ${modalAsset.nama ?? modalAsset.idAset}`}
+          className={`fixed inset-0 z-50 md:static md:inset-auto md:z-auto md:shrink-0 md:overflow-hidden focus:outline-none md:transition-[width] md:duration-300 md:motion-reduce:transition-none ${
+            panelVis ? "md:w-80 xl:w-96" : "md:w-0"
           }`}
-          style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+          style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
         >
+          <div
+            className={`h-full w-full md:w-80 xl:w-96 flex flex-col bg-white border-l border-zinc-100 overflow-hidden transition-[transform,opacity] duration-300 motion-reduce:transition-opacity md:translate-x-0 md:opacity-100 ${
+              panelVis ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+            }`}
+            style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
+          >
           {/* Header */}
           <div className="relative overflow-hidden p-5 bg-gradient-to-br from-white to-indigo-50/30 shrink-0">
             <GeoDeco />
             <div className="relative z-10 flex items-start justify-between">
               <div className="min-w-0 pr-2">
-                <p className="text-xs text-zinc-400 mb-0.5">{modalAsset.tipe ?? "Asset"}</p>
+                <p className="text-xs text-zinc-500 mb-0.5">{modalAsset.tipe ?? "Asset"}</p>
                 <div className="flex items-center gap-1.5">
-                  <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">{modalAsset.idAset}</h2>
+                  <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">{modalAsset.nama ?? String(modalAsset.idAset)}</h2>
                   {panelView === "overview" && (
-                    <button onClick={() => setPanelView("edit")}
-                      className="p-1 rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 transition-[background-color,color] duration-150">
+                    <button onClick={() => setPanelView("edit")} aria-label="Edit asset"
+                      className="p-1 rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-600 transition-[background-color,color] duration-150">
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -1795,8 +2201,8 @@ export default function AssetsPage() {
                   {[modalAsset.kategori, modalAsset.lokasiGedung].filter(Boolean).join(" · ") || "—"}
                 </p>
               </div>
-              <button onClick={() => guardedNav(closePanel)}
-                className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 active:scale-95 transition-[background-color,color,transform] duration-150 shrink-0">
+              <button onClick={() => guardedNav(closePanel)} aria-label="Close panel"
+                className="p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-600 active:scale-95 transition-[background-color,color,transform] duration-150 shrink-0">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1805,16 +2211,16 @@ export default function AssetsPage() {
           {/* Tabs */}
           <div className="relative flex border-b border-zinc-100 px-4 shrink-0">
             <button ref={el => { panelTabRefs.current[0] = el; }}
-              onClick={() => guardedNav(() => setPanelView("overview"))}
+              onClick={() => guardedNav(() => animateToPanelView("overview"))}
               className={`px-3 py-2.5 text-xs font-medium transition-colors duration-150 ${
-                (panelView === "overview" || panelView === "edit") ? "text-indigo-600" : "text-zinc-400 hover:text-zinc-600"
+                (panelView === "overview" || panelView === "edit") ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
               }`}>
               Overview
             </button>
             <button ref={el => { panelTabRefs.current[1] = el; }}
-              onClick={() => guardedNav(() => setPanelView("maintenance-history"))}
+              onClick={() => guardedNav(() => animateToPanelView("maintenance-history"))}
               className={`px-3 py-2.5 text-xs font-medium transition-colors duration-150 ${
-                (panelView === "maintenance-history" || panelView === "add-maintenance") ? "text-indigo-600" : "text-zinc-400 hover:text-zinc-600"
+                (panelView === "maintenance-history" || panelView === "add-maintenance") ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
               }`}>
               {panelView === "add-maintenance" ? "Maintenance" : "Maintenance History"}
             </button>
@@ -1825,7 +2231,7 @@ export default function AssetsPage() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-h-0 overflow-hidden">
+          <div className={`flex-1 min-h-0 overflow-hidden transition-opacity duration-100 ${panelContentVis ? "opacity-100" : "opacity-0"}`}>
             {panelView === "overview" && (
               <div className="h-full overflow-y-auto p-4">
                 <OverviewContent asset={modalAsset} logs={komplainLogs} loading={modalLoading} />
@@ -1838,6 +2244,7 @@ export default function AssetsPage() {
                 filters={filters}
                 onSave={handleEditSave}
                 onCancel={() => { setEditDirty(false); setPanelView("overview"); }}
+                onDelete={handleEditDelete}
                 onGoToReplace={() => goToAddMaintenance("replace")}
                 onDirtyChange={setEditDirty}
               />
@@ -1858,7 +2265,8 @@ export default function AssetsPage() {
                 </div>
                 <div className="shrink-0 border-t border-zinc-100 px-4 py-3 bg-white">
                   <button onClick={() => goToAddMaintenance("repair")}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 transition-[background-color] duration-150 active:scale-[0.98]">
+                    disabled={modalAsset.status === "Diganti" || modalAsset.status === "Dihapus"}
+                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 transition-[background-color] duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:bg-indigo-600">
                     <Plus className="w-3.5 h-3.5" /> Add Maintenance
                   </button>
                 </div>
@@ -1874,6 +2282,7 @@ export default function AssetsPage() {
                 onDirtyChange={setMaintenanceDirty}
               />
             )}
+          </div>
           </div>
         </div>
       )}

@@ -50,7 +50,7 @@ export async function POST() {
     const hargaMap = new Map(hargaRows.map((h) => [h.tipe, h.hargaBeli ?? 0]));
 
     // 4. Group complaints by asset id
-    const komplainByAsset = new Map<string, typeof komplainRows>();
+    const komplainByAsset = new Map<number, typeof komplainRows>();
     for (const row of komplainRows) {
       const bucket = komplainByAsset.get(row.idAset) ?? [];
       bucket.push(row);
@@ -65,7 +65,7 @@ export async function POST() {
       // Cold start: no complaints → inject 0 for all historical features
       if (logs.length === 0) {
         return {
-          id_aset: asset.idAset,
+          id_aset: String(asset.idAset),
           Kekritisan_Score: KEKRITISAN_SCORE[asset.kekritisan ?? ""] ?? 1,
           Avg_Maintenance_Delay: 0,
           Max_Maintenance_Delay: 0,
@@ -97,7 +97,7 @@ export async function POST() {
       const peakSeverity = Math.max(...logs.map((l) => l.severityScore ?? 0));
 
       return {
-        id_aset: asset.idAset,
+        id_aset: String(asset.idAset),
         Kekritisan_Score: KEKRITISAN_SCORE[asset.kekritisan ?? ""] ?? 1,
         Avg_Maintenance_Delay: maintenanceDelays.reduce((s, v) => s + v, 0) / maintenanceDelays.length,
         Max_Maintenance_Delay: Math.max(...maintenanceDelays),
@@ -129,17 +129,21 @@ export async function POST() {
 
     const aiJson = (await aiRes.json()) as {
       total: number;
-      hasil: { id_aset: string; rekomendasi_jadwal: string }[];
+      hasil: { id_aset: string; rekomendasi_jadwal: string; confidence?: number }[];
     };
 
-    // 7. Bulk-update statusJadwal + lastPredictedAt in master_aset
+    // 7. Bulk-update statusJadwal + confidence + lastPredictedAt in master_aset
     const now = new Date();
     await Promise.all(
       aiJson.hasil.map((item) =>
         db
           .update(masterAset)
-          .set({ statusJadwal: item.rekomendasi_jadwal, lastPredictedAt: now })
-          .where(eq(masterAset.idAset, item.id_aset)),
+          .set({
+            statusJadwal: item.rekomendasi_jadwal,
+            confidence: item.confidence ?? null,
+            lastPredictedAt: now,
+          })
+          .where(eq(masterAset.idAset, Number(item.id_aset))),
       ),
     );
 

@@ -25,13 +25,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Invalid CSV format" }, { status: 400 });
   }
 
-  const created: string[] = [];
+  const created: number[] = [];
   const errors: string[] = [];
 
+  function parseDate(val: string | undefined): Date | null {
+    if (!val) return null;
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   for (const row of records) {
-    const idAset = row["ID_Aset"]?.trim();
-    if (!idAset) {
-      errors.push("Row missing ID_Aset — skipped");
+    const idAsetRaw = row["ID_Aset"]?.trim();
+    const idAset = parseInt(idAsetRaw ?? "", 10);
+    if (!idAsetRaw || isNaN(idAset)) {
+      errors.push(`Row with ID_Aset="${idAsetRaw}" is not a valid integer — skipped`);
       continue;
     }
 
@@ -42,7 +49,7 @@ export async function POST(req: NextRequest) {
         subKategori: row["Sub_Kategori"] || null,
         tipe: row["Tipe"] || null,
         lokasiGedung: row["Lokasi"] || null,
-        tglInstalasi: row["Tanggal_Instalasi"] || null,
+        tglInstalasi: parseDate(row["Tanggal_Instalasi"]),
         kekritisan: row["Tingkat_Kekritisan"] || null,
         status: "Aktif",
       });
@@ -53,10 +60,10 @@ export async function POST(req: NextRequest) {
 
       if (jenisKerusakan || !isNaN(biayaPerbaikan) || tanggalPerbaikan) {
         await db.insert(asetKomplain).values({
-          idAset,
+          idAset: idAset,
           jenisKerusakan,
           biayaPerbaikan: !isNaN(biayaPerbaikan) ? biayaPerbaikan : null,
-          tanggalPengerjaan: tanggalPerbaikan,
+          tanggalPengerjaan: parseDate(tanggalPerbaikan ?? undefined),
         });
       }
 

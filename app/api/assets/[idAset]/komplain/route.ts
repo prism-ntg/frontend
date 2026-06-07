@@ -8,11 +8,13 @@ export async function GET(
   { params }: { params: Promise<{ idAset: string }> },
 ) {
   const { idAset } = await params;
+  const idAsetInt = parseInt(decodeURIComponent(idAset), 10);
+  if (isNaN(idAsetInt)) return NextResponse.json({ total: 0, data: [] });
 
   const logs = await db
     .select()
     .from(asetKomplain)
-    .where(eq(asetKomplain.idAset, decodeURIComponent(idAset)))
+    .where(eq(asetKomplain.idAset, idAsetInt))
     .orderBy(desc(asetKomplain.tanggalPengerjaan));
 
   return NextResponse.json({ total: logs.length, data: logs });
@@ -23,7 +25,10 @@ export async function POST(
   { params }: { params: Promise<{ idAset: string }> },
 ) {
   const { idAset } = await params;
-  const decoded = decodeURIComponent(idAset);
+  const idAsetInt = parseInt(decodeURIComponent(idAset), 10);
+  if (isNaN(idAsetInt)) {
+    return NextResponse.json({ message: "Invalid asset ID" }, { status: 400 });
+  }
   const body = await req.json();
   const {
     maintenanceType,
@@ -41,7 +46,7 @@ export async function POST(
 
   try {
     await db.insert(asetKomplain).values({
-      idAset: decoded,
+      idAset: idAsetInt,
       maintenanceType: maintenanceType || null,
       tanggalPerencanaan: tanggalPerencanaan || null,
       tanggalPengerjaan: tanggalPengerjaan || null,

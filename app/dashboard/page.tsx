@@ -9,16 +9,20 @@ import { CalendarDays, ChevronDown, ChevronRight, Loader2, PlusSquare, Sparkles,
 interface MonthCount { month: string; total: number }
 interface CategoryCount { name: string; count: number }
 interface TopAsset {
-  idAset: string;
+  idAset: number;
+  nama: string | null;
   tipe: string | null;
   lokasiGedung: string | null;
   kekritisan: string | null;
   statusJadwal: string | null;
+  complaintCount: number;
+  latestSeverity: string | null;
 }
 interface Stats {
   total: number;
   recentlyAdded: number;
-  byKekritisan: { critical: number; atRisk: number; healthy: number };
+  bySeverity: { critical: number; atRisk: number; healthy: number };
+  byKekritisan: { critical: number; major: number; minor: number };
   byJadwal: { Harian: number; Mingguan: number; Bulanan: number; Tahunan: number; Reactive: number };
   byKategori: CategoryCount[];
   topAssets: TopAsset[];
@@ -27,10 +31,6 @@ interface Stats {
 
 // Helpers                                                                   
 
-const FREQ_EN: Record<string, string> = {
-  Harian: "Daily", Mingguan: "Weekly", Bulanan: "Monthly", Tahunan: "Yearly",
-};
-function freqLabel(j: string | null): string { return j ? (FREQ_EN[j] ?? j) : "Reactive"; }
 function fmtMonth(m: string): string {
   return new Date(m + "-01").toLocaleString("en-US", { month: "short", year: "2-digit" });
 }
@@ -62,24 +62,29 @@ function AnimatedNumber({ value, duration = 600 }: { value: number; duration?: n
   return <>{display.toLocaleString()}</>;
 }
 
-// Health Badge                                                              
+// Severity Badge (maps aset_komplain severity: Fatal/Berat/Sedang/Ringan)
 
-function HealthBadge({ status }: { status: string | null }) {
-  const styles: Record<string, string> = {
-    Critical: "bg-red-100 text-red-600 border-red-200",
-    Major:    "bg-amber-50 text-amber-600 border-amber-200",
-    Minor:    "bg-yellow-50 text-yellow-600 border-yellow-200",
-  };
-  const cls = status && styles[status] ? styles[status] : "bg-green-50 text-green-600 border-green-200";
-  const label = status === "Major" || status === "Minor" ? "At Risk" : (status ?? "Healthy");
+const SEV_ID_TO_EN: Record<string, string> = {
+  Fatal: "Fatal", Berat: "Serious", Sedang: "Medium", Ringan: "Mild",
+};
+const SEV_BADGE: Record<string, string> = {
+  Fatal:   "bg-red-100 text-red-700 border-red-200",
+  Serious: "bg-orange-100 text-orange-700 border-orange-200",
+  Medium:  "bg-yellow-100 text-yellow-700 border-yellow-200",
+  Mild:    "bg-green-100 text-green-700 border-green-200",
+};
+
+function SeverityBadge({ severity }: { severity: string | null }) {
+  const en = severity ? (SEV_ID_TO_EN[severity] ?? severity) : null;
+  const cls = en && SEV_BADGE[en] ? SEV_BADGE[en] : "bg-zinc-100 text-zinc-500 border-zinc-200";
   return (
     <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium border ${cls} whitespace-nowrap`}>
-      {label}
+      {en ?? "—"}
     </span>
   );
 }
 
-// Date Range Filter                                                         
+// Date Range Filter
 
 function fmtMonthFull(m: string) {
   return new Date(m + "-01").toLocaleString("en-US", { month: "short", year: "numeric" });
@@ -475,11 +480,11 @@ function DonutChart({ categories, total }: { categories: CategoryCount[]; total:
   );
 }
 
-//  Horizontal Bars Chart                                                    
+//  Horizontal Bars Chart (Kekritisan: Critical / Major / Minor)
 
 function HorizontalBarsChart({
-  healthy, atRisk, critical, total,
-}: { healthy: number; atRisk: number; critical: number; total: number }) {
+  critical, major, minor,
+}: { critical: number; major: number; minor: number }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -488,21 +493,21 @@ function HorizontalBarsChart({
   }, []);
 
   const bars = [
-    { label: "Healthy",  value: healthy,  color: "#4ade80", bg: "#f0fdf4" },
-    { label: "At Risk",  value: atRisk,   color: "#fbbf24", bg: "#fffbeb" },
     { label: "Critical", value: critical, color: "#f87171", bg: "#fef2f2" },
+    { label: "Major",    value: major,    color: "#fb923c", bg: "#fff7ed" },
+    { label: "Minor",    value: minor,    color: "#facc15", bg: "#fefce8" },
   ];
-  const scale = Math.max(total, 1200);
+  const scale = Math.max(critical, major, minor, 1);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {bars.map((bar, i) => {
-        const widthPct = bar.value > 0 ? Math.max((bar.value / scale) * 100, 1) : 0;
+        const widthPct = bar.value > 0 ? Math.max((bar.value / scale) * 100, 2) : 0;
         const isHov = hovered === i;
         return (
           <div
             key={bar.label}
-            className="space-y-1 cursor-pointer"
+            className="space-y-1.5 cursor-pointer"
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
           >
@@ -512,8 +517,8 @@ function HorizontalBarsChart({
                 className="text-xs font-semibold tabular-nums"
                 style={{
                   color: bar.color,
-                  opacity: isHov ? 1 : 0,
-                  transform: isHov ? "translateX(0)" : "translateX(6px)",
+                  opacity: isHov ? 1 : 0.5,
+                  transform: isHov ? "translateX(0)" : "translateX(4px)",
                   transition: "opacity 0.2s ease, transform 0.2s ease",
                 }}
               >
@@ -521,18 +526,18 @@ function HorizontalBarsChart({
               </span>
             </div>
             <div
-              className="h-9 rounded overflow-hidden"
+              className="h-12 rounded-lg overflow-hidden"
               style={{
                 backgroundColor: isHov ? bar.bg : "#f1f5f9",
                 transition: "background-color 0.2s ease",
               }}
             >
               <div
-                className="h-full rounded"
+                className="h-full rounded-lg"
                 style={{
                   width: mounted ? `${widthPct}%` : "0%",
                   backgroundColor: bar.color,
-                  opacity: hovered !== null && !isHov ? 0.35 : 1,
+                  opacity: hovered !== null && !isHov ? 0.3 : 1,
                   transition: `width 0.8s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.12}s, opacity 0.2s ease`,
                 }}
               />
@@ -540,9 +545,6 @@ function HorizontalBarsChart({
           </div>
         );
       })}
-      <div className="flex justify-between text-[10px] text-slate-400 pt-0.5">
-        {[0, 300, 600, 900, 1200].map(v => <span key={v}>{v}</span>)}
-      </div>
     </div>
   );
 }
@@ -605,15 +607,18 @@ export default function Dashboard() {
     );
   }
 
-  const total         = stats?.total ?? 0;
-  const critical      = stats?.byKekritisan.critical ?? 0;
-  const atRisk        = stats?.byKekritisan.atRisk ?? 0;
-  const healthy       = stats?.byKekritisan.healthy ?? 0;
-  const jadwal        = stats?.byJadwal ?? { Harian: 0, Mingguan: 0, Bulanan: 0, Tahunan: 0, Reactive: 0 };
-  const categories    = stats?.byKategori ?? [];
-  const topAssets     = stats?.topAssets ?? [];
-  const allMaintenance = stats?.maintenanceByMonth ?? [];
-  const recentlyAdded = stats?.recentlyAdded ?? 0;
+  const total              = stats?.total ?? 0;
+  const critical           = stats?.bySeverity.critical ?? 0;
+  const atRisk             = stats?.bySeverity.atRisk ?? 0;
+  const healthy            = stats?.bySeverity.healthy ?? 0;
+  const kekritisanCritical = stats?.byKekritisan.critical ?? 0;
+  const kekritisanMajor    = stats?.byKekritisan.major ?? 0;
+  const kekritisanMinor    = stats?.byKekritisan.minor ?? 0;
+  const jadwal             = stats?.byJadwal ?? { Harian: 0, Mingguan: 0, Bulanan: 0, Tahunan: 0, Reactive: 0 };
+  const categories         = stats?.byKategori ?? [];
+  const topAssets          = stats?.topAssets ?? [];
+  const allMaintenance     = stats?.maintenanceByMonth ?? [];
+  const recentlyAdded      = stats?.recentlyAdded ?? 0;
 
   const maintenanceMap = new Map(allMaintenance.map(d => [d.month, d.total]));
   const maintenance = buildMonthRange(fromMonth, 12).map(month => ({
@@ -657,21 +662,21 @@ export default function Dashboard() {
         <div className="col-span-12 md:col-span-6 grid grid-cols-3 gap-3">
           <div className="group rounded-xl border border-red-200 bg-red-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-red-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-            <p className="text-xs font-medium text-red-500 mb-2">Critical</p>
+            <p className="text-xs font-medium text-red-500 mb-2">Fatal</p>
             <p className="text-3xl font-bold text-red-600 tabular-nums"><AnimatedNumber value={critical} /></p>
-            <p className="text-[11px] text-red-400 mt-1.5">Need attention</p>
+            <p className="text-[11px] text-red-400 mt-1.5">Fatal Complaints</p>
           </div>
           <div className="group rounded-xl border border-amber-200 bg-amber-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-amber-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-amber-500 mb-2">At Risk</p>
             <p className="text-3xl font-bold text-amber-600 tabular-nums"><AnimatedNumber value={atRisk} /></p>
-            <p className="text-[11px] text-amber-400 mt-1.5">Past 1 Week</p>
+            <p className="text-[11px] text-amber-400 mt-1.5">Serious &amp; Medium Complaints</p>
           </div>
           <div className="group rounded-xl border border-blue-200 bg-blue-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-blue-500 mb-2">Healthy</p>
             <p className="text-3xl font-bold text-blue-600 tabular-nums"><AnimatedNumber value={healthy} /></p>
-            <p className="text-[11px] text-blue-400 mt-1.5">Past 1 Week</p>
+            <p className="text-[11px] text-blue-400 mt-1.5">Mild Complaints</p>
           </div>
         </div>
 
@@ -744,14 +749,14 @@ export default function Dashboard() {
       {/* Row 3: Health Bars + Donut + Top Assets */}
       <div className="grid grid-cols-3 gap-4">
 
-        {/* Asset Health Overview */}
+        {/* Kekritisan */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold text-slate-700 mb-1">Asset Health Overview</p>
-          {critical > 0 && (
-            <p className="text-xs text-red-500 mb-4">{critical} critical asset{critical !== 1 ? "s" : ""} need attention</p>
+          <p className="text-sm font-semibold text-slate-700 mb-1">Priority Assets</p>
+          {kekritisanCritical > 0 && (
+            <p className="text-xs text-red-500 mb-4">{kekritisanCritical.toLocaleString()} Critical assets need attention</p>
           )}
-          <div className={critical > 0 ? "" : "mt-4"}>
-            <HorizontalBarsChart healthy={healthy} atRisk={atRisk} critical={critical} total={total} />
+          <div className={kekritisanCritical > 0 ? "" : "mt-4"}>
+            <HorizontalBarsChart critical={kekritisanCritical} major={kekritisanMajor} minor={kekritisanMinor} />
           </div>
         </div>
 
@@ -766,10 +771,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Top Assets by Severity */}
+        {/* Top Assets by Komplain */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-semibold text-slate-700">Top Assets by Severity</p>
+            <p className="text-sm font-semibold text-slate-700">Top Assets by Complaint</p>
             <button
               onClick={() => router.push("/assets")}
               className="p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
@@ -781,33 +786,33 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-12 gap-1 mb-2 px-0.5">
             <p className="col-span-4 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Asset</p>
-            <p className="col-span-3 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Health</p>
+            <p className="col-span-3 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Severity</p>
             <p className="col-span-3 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Location</p>
-            <p className="col-span-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Freq</p>
+            <p className="col-span-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Complain</p>
           </div>
 
           <div className="divide-y divide-slate-50">
             {topAssets.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No critical assets found</p>
+              <p className="text-xs text-slate-400 py-6 text-center">No complaint data found</p>
             ) : (
               topAssets.map(asset => (
                 <div
                   key={asset.idAset}
-                  onClick={() => router.push("/assets")}
+                  onClick={() => router.push(`/assets?search=${encodeURIComponent(asset.nama ?? String(asset.idAset))}`)}
                   className="grid grid-cols-12 gap-1 py-2.5 cursor-pointer hover:bg-slate-50 rounded-lg transition-colors px-0.5"
                 >
                   <div className="col-span-4">
-                    <p className="text-[11px] font-semibold text-indigo-600 truncate">{asset.idAset}</p>
+                    <p className="text-[11px] font-semibold text-indigo-600 truncate">{asset.nama ?? String(asset.idAset)}</p>
                     <p className="text-[10px] text-slate-400 truncate">{asset.tipe ?? "—"}</p>
                   </div>
                   <div className="col-span-3 flex items-center">
-                    <HealthBadge status={asset.kekritisan} />
+                    <SeverityBadge severity={asset.latestSeverity} />
                   </div>
                   <div className="col-span-3 flex items-center">
                     <p className="text-[11px] text-slate-500 truncate">{asset.lokasiGedung ?? "—"}</p>
                   </div>
                   <div className="col-span-2 flex items-center">
-                    <p className="text-[11px] font-semibold text-slate-700">{freqLabel(asset.statusJadwal)}</p>
+                    <p className="text-[11px] font-bold text-slate-700 tabular-nums">{asset.complaintCount}</p>
                   </div>
                 </div>
               ))

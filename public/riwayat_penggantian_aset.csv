@@ -1,0 +1,2059 @@
+id_aset_lama,nama_aset_lama,kategori,tipe,id_aset_baru,tanggal_penggantian,alasan_penggantian,biaya_penggantian
+653,MON-B7QM-0653,Sistem Telekomunikasi Gedung,Monitor/Layar,93440,2020-01-01,Tidak ada spare part,62190000
+16743,CON-HE6U-16743,Electrical,Control Panel Penerangan,79248,2020-01-01,Usia pakai habis,85490000
+17417,INA-4Y65-17417,Plumbing,Wastafel,90218,2021-01-01,Efisiensi energi,94470000
+57200,DAI-WCF6-57200,Mechanical,AC Split,53728,2024-01-01,Standar keamanan baru,34690000
+33187,PLA-F1ZF-33187,Arsitektur,Plafon,71321,2025-01-01,Tidak ada spare part,12400000
+56661,PIN-OPE8-56661,Arsitektur,Pintu Kaca Hidrolik,91093,2025-01-01,Efisiensi energi,60930000
+47076,DIN-M4TC-47076,Civil,"Dinding Partisi, GRC / Gypsum",66253,2025-01-01,Efisiensi energi,18370000
+55623,PEM-37N9-55623,Plumbing,Pemipaan Air Bersih,60799,2024-02-01,Kontrak maintenance habis,17430000
+46286,LAM-9Q9I-46286,Electrical,Lampu LED,96387,2024-02-01,Upgrade kapasitas,81880000
+14782,SHA-OQU8-14782,Mechanical,AC Split,84026,2024-02-01,Standar keamanan baru,91070000
+60997,UNI-LJON-60997,Electrical,Uninterruptible Power Supply,56995,2024-02-01,Tidak ada spare part,84830000
+43783,DIN-F2IL-43783,Civil,Dinding Tembok/Mansonry,51662,2025-02-01,Standar keamanan baru,37320000
+37616,MIT-CD7W-37616,Mechanical,AC Split,79139,2023-03-01,Kerusakan fatal tidak ekonomis diperbaiki,31050000
+32585,LAM-GSN2-32585,Electrical,Lampu Downlight,93111,2024-03-01,Usia pakai habis,66610000
+56037,AXI-FM5H-56037,Security Sistem,Kamera CCTV,86850,2024-03-01,Kontrak maintenance habis,93630000
+40261,PAN-32RS-40261,Electrical,Panel PP-ME,65716,2024-03-01,Upgrade kapasitas,9970000
+40257,LAM-99IF-40257,Electrical,Lampu Downlight,96455,2025-03-01,Kontrak maintenance habis,89840000
+33749,LAM-ZN1Y-33749,Electrical,Lampu Downlight,62680,2025-03-01,Sudah obsolete,88350000
+50985,PLA-OPTB-50985,Arsitektur,Plafon Gypsum / GRC,76175,2025-03-01,Tidak ada spare part,23300000
+53970,ROL-3WOF-53970,Arsitektur,Rolling Door,77026,2025-03-01,Standar keamanan baru,68110000
+31772,LAM-EJ5K-31772,Electrical,Lampu LED Strip,93594,2025-03-01,Usia pakai habis,73700000
+16178,BRE-796E-16178,Electrical,Breker Panel,56205,2025-03-01,Sudah obsolete,47220000
+15139,LAM-M4UB-15139,Electrical,Lampu Downlight,59258,2025-03-01,Efisiensi energi,85730000
+20594,LAM-EQ7X-20594,Electrical,Lampu Downlight,55673,2024-04-01,Kerusakan fatal tidak ekonomis diperbaiki,72940000
+25856,JET-XGFT-25856,Plumbing,Jet Shower,75146,2024-04-01,Usia pakai habis,9420000
+43791,PIN-VJM5-43791,Arsitektur,Pintu Biasa Berdaun Tunggal,90745,2024-04-01,Sudah obsolete,26790000
+24613,FCU-VFAK-24613,Mechanical,FCU,80877,2025-04-01,Sudah obsolete,26650000
+36474,APA-G00Y-36474,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,67351,2025-04-01,Tidak ada spare part,12720000
+24591,FCU-OX9Q-24591,Mechanical,FCU,73734,2025-04-01,Kontrak maintenance habis,21350000
+31170,LAM-BFGF-31170,Electrical,Lampu Downlight,74629,2025-05-01,Usia pakai habis,38090000
+55395,WIR-RMW3-55395,Electrical,Wiring System (Sistem Instalasi Kabel),73125,2021-06-01,Standar keamanan baru,96180000
+23215,FCU-ZBKK-23215,Mechanical,FCU,68332,2023-06-01,Standar keamanan baru,6590000
+38551,PAN-TBIW-38551,Mechanical,AC Split,70126,2024-06-01,Kontrak maintenance habis,2870000
+17423,APA-56YW-17423,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,80843,2024-06-01,Kerusakan fatal tidak ekonomis diperbaiki,89520000
+39229,PAB-MBAI-39229,Sistem Telekomunikasi Gedung,PABX,54499,2025-06-01,Kontrak maintenance habis,89650000
+39760,LAN-5ZFY-39760,Civil,Lantai Keramik,61604,2025-06-01,Efisiensi energi,15040000
+50933,BOS-HLFX-50933,Security Sistem,Kamera CCTV,85608,2024-07-01,Usia pakai habis,9770000
+41484,SDP-4KAW-41484,Electrical,SDP,70577,2024-07-01,Standar keamanan baru,89710000
+29828,DIN-UI8R-29828,Civil,Dinding Tembok/Mansonry,72021,2020-08-01,Sudah obsolete,29750000
+61048,LAM-22OJ-61048,Electrical,Lampu LED Bulb,89784,2024-08-01,Sudah obsolete,39210000
+16603,SHA-HWAJ-16603,Mechanical,AC Split,54196,2024-08-01,Usia pakai habis,45330000
+21220,SHA-6SQD-21220,Mechanical,AC Split,70089,2024-08-01,Standar keamanan baru,97330000
+41780,LAM-WKV1-41780,Electrical,Lampu TL LED,88727,2025-08-01,Kerusakan fatal tidak ekonomis diperbaiki,64300000
+54556,PIN-M8LZ-54556,Arsitektur,Pintu Kaca Hidrolik,94492,2025-08-01,Kontrak maintenance habis,12400000
+43871,PLA-MYWR-43871,Arsitektur,Plafon Gypsum / GRC,93036,2025-08-01,Kerusakan fatal tidak ekonomis diperbaiki,37350000
+60205,JET-O5AI-60205,Plumbing,Jet Shower,69342,2025-08-01,Sudah obsolete,69750000
+30179,NOH-USYA-30179,Sistem Proteksi Kebakaran Aktif,Smoke Detector,79939,2019-09-01,Tidak ada spare part,36660000
+25741,ROR-8O27-25741,Security Sistem,Ror Rate Of Rise Heat Detector,71294,2021-09-01,Kontrak maintenance habis,23210000
+14875,GRE-K3BA-14875,Mechanical,AC Split,60455,2023-09-01,Tidak ada spare part,87530000
+60492,POM-5SEB-60492,Mechanical,Pompa Sampit,81274,2024-09-01,Sudah obsolete,76770000
+31529,LAM-JHZZ-31529,Electrical,Lampu LED,51911,2022-10-01,Standar keamanan baru,37770000
+15061,PAB-RTRA-15061,Sistem Telekomunikasi Gedung,PABX,65805,2023-10-01,Kerusakan fatal tidak ekonomis diperbaiki,54670000
+22923,APA-FV2E-22923,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,95373,2024-10-01,Efisiensi energi,24120000
+1134,PAN-WPJC-1134,Mechanical,AC Cassette,58374,2025-10-01,Upgrade kapasitas,8950000
+12550,LAM-5NK4-12550,Electrical,Lampu Downlight,67140,2018-11-01,Kerusakan fatal tidak ekonomis diperbaiki,33590000
+5699,PLA-OFDW-5699,Arsitektur,Plafon Gypsum / GRC,93834,2023-11-01,Efisiensi energi,77950000
+13186,PAN-C39M-13186,Mechanical,AC Cassette,64452,2025-11-01,Kontrak maintenance habis,11430000
+30461,LG-QGSZ-30461,Mechanical,AC Split,92611,2025-11-01,Efisiensi energi,12740000
+52224,PUS-GZUO-52224,Security Sistem,Push Button,92044,2025-11-01,Standar keamanan baru,45870000
+32322,LAM-R92K-32322,Electrical,Lampu Wall sign,79933,2025-11-01,Standar keamanan baru,45520000
+26532,WAS-I4H4-26532,Plumbing,Kran Air,53659,2020-12-01,Kerusakan fatal tidak ekonomis diperbaiki,78880000
+33558,POM-9ZIB-33558,Mechanical,Pompa Chiller Water Sekunder,86823,2023-12-01,Tidak ada spare part,96140000
+52062,PIN-HBM3-52062,Arsitektur,Pintu Kaca Hidrolik,52764,2025-12-01,Kontrak maintenance habis,45330000
+57692,HYD-L83Q-57692,Sistem Pemadam Kebakaran,Hydrant Box ,79726,2025-12-01,Standar keamanan baru,29490000
+29610,SHA-WDVH-29610,Mechanical,AC Split,98261,2025-12-01,Tidak ada spare part,54090000
+50934,AXI-KV9O-50934,Security Sistem,Kamera CCTV,54679,2019-01-02,Standar keamanan baru,44380000
+37907,GRE-OV7W-37907,Mechanical,AC Split,94328,2024-01-02,Standar keamanan baru,31980000
+25367,SHA-9LZT-25367,Mechanical,AC Split,82050,2025-01-02,Upgrade kapasitas,39690000
+59933,DIN-46FF-59933,Civil,"Dinding Partisi, GRC / Gypsum",96913,2025-01-02,Kerusakan fatal tidak ekonomis diperbaiki,25870000
+12054,PER-P64N-12054,Mechanical,Genset Diesel,89291,2025-01-02,Tidak ada spare part,25540000
+3447,APA-EGPN-3447,Sistem Pemadam Kebakaran,APAB Dry Powder,96081,2022-02-02,Sudah obsolete,24300000
+51960,APA-MH1Y-51960,Sistem Pemadam Kebakaran,APAR CO2,88951,2023-02-02,Kerusakan fatal tidak ekonomis diperbaiki,70360000
+39942,LAM-0G4K-39942,Electrical,Lampu Downlight,95783,2024-02-02,Usia pakai habis,78930000
+6290,LAM-REDG-6290,Electrical,Lampu Downlight,92821,2024-02-02,Usia pakai habis,53910000
+25157,KDK-WITK-25157,Ventilasi Sistem,Exhaust Fan,91518,2024-02-02,Kontrak maintenance habis,40950000
+30478,APA-NJOB-30478,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,64180,2025-02-02,Standar keamanan baru,7060000
+18791,UNI-QIIW-18791,Electrical,Uninterruptible Power Supply,70948,2025-02-02,Efisiensi energi,67840000
+35108,KLO-33I4-35108,Plumbing,Kloset,76207,2025-02-02,Efisiensi energi,24460000
+7377,UNI-PE7R-7377,Electrical,Uninterruptible Power Supply,79325,2021-03-02,Standar keamanan baru,37390000
+30687,SHA-8UHJ-30687,Mechanical,AC Split,98519,2022-03-02,Upgrade kapasitas,58370000
+39603,TOT-TDDQ-39603,Plumbing,Wastafel,76308,2024-03-02,Kerusakan fatal tidak ekonomis diperbaiki,3130000
+11609,LVM-EOI4-11609,Electrical,LVMDP,88072,2024-03-02,Kontrak maintenance habis,16620000
+46622,APA-CO85-46622,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,76928,2024-03-02,Kontrak maintenance habis,65930000
+3696,DAI-C3IY-3696,Mechanical,AC Split,72378,2025-03-02,Upgrade kapasitas,63010000
+31280,APA-2KOM-31280,Sistem Pemadam Kebakaran,APAR CO2,50386,2025-03-02,Standar keamanan baru,8200000
+37550,PLA-08B6-37550,Arsitektur,Plafon Gypsum / GRC,68800,2025-03-02,Standar keamanan baru,96260000
+5909,AXI-870J-5909,Security Sistem,Kamera CCTV,99976,2021-04-02,Usia pakai habis,41840000
+53262,APA-W0XI-53262,Sistem Pemadam Kebakaran,APAR CO2,82350,2021-04-02,Kerusakan fatal tidak ekonomis diperbaiki,11490000
+35100,SEL-0WYG-35100,Sistem Pemadam Kebakaran,Selang Hidrant,86612,2023-04-02,Sudah obsolete,26940000
+42591,DAH-5DRM-42591,Security Sistem,Kamera CCTV,73158,2024-04-02,Upgrade kapasitas,70590000
+8954,JET-KUPF-8954,Plumbing,Jet Shower,88746,2024-04-02,Usia pakai habis,61590000
+46194,DIN-1ZBM-46194,Civil,Dinding Kaca Non Tempered,76018,2024-04-02,Upgrade kapasitas,59800000
+56095,KLO-JNIK-56095,Plumbing,Kloset,79401,2024-05-02,Efisiensi energi,98040000
+36274,PIN-VOKG-36274,Arsitektur,Pintu Kaca Hidrolik,89972,2024-05-02,Sudah obsolete,97460000
+12705,LAM-1GJ0-12705,Electrical,Lampu Downlight,71376,2019-06-02,Sudah obsolete,59770000
+4835,LAN-SKM3-4835,Civil,Lantai Keramik,92573,2024-06-02,Tidak ada spare part,66690000
+49236,LAM-8T01-49236,Electrical,Lampu Wall sign,56608,2025-06-02,Upgrade kapasitas,37970000
+59657,FAS-94RF-59657,Civil,Fasade Gedung,81674,2025-06-02,Sudah obsolete,73040000
+33082,LAM-E439-33082,Electrical,Lampu LED Bulb,79126,2022-07-02,Tidak ada spare part,7030000
+22788,DAI-0132-22788,Mechanical,AC Split,78709,2022-07-02,Sudah obsolete,70810000
+59884,PAG-4VVE-59884,Arsitektur,Pagar Besi,84846,2023-07-02,Usia pakai habis,52610000
+26802,UNI-NGUV-26802,Electrical,Uninterruptible Power Supply,94785,2024-07-02,Usia pakai habis,48440000
+24980,LAM-8CXB-24980,Electrical,Lampu Downlight,73639,2024-07-02,Efisiensi energi,81120000
+37647,FIN-YZ58-37647,Security Sistem,Fingerprint,81037,2024-07-02,Standar keamanan baru,89190000
+38429,KLO-4ED8-38429,Plumbing,Kloset,98183,2024-07-02,Kontrak maintenance habis,8990000
+57553,PAN-Q582-57553,Mechanical,AC Split,71890,2025-07-02,Usia pakai habis,72610000
+33015,LAN-D74E-33015,Civil,Lantai Keramik,72960,2022-08-02,Kontrak maintenance habis,40370000
+50186,LAN-JVJD-50186,Arsitektur,Lantai Parkir Beton,97149,2024-08-02,Standar keamanan baru,77490000
+6377,PEM-XGQI-6377,Plumbing,Pemipaan Air Bersih,99669,2025-08-02,Efisiensi energi,33610000
+2273,DAI-4450-2273,Mechanical,AC Split,61401,2025-08-02,Usia pakai habis,57610000
+35234,KLO-6Y0T-35234,Plumbing,Kloset,93716,2022-09-02,Tidak ada spare part,33040000
+45152,LAM-HAGF-45152,Electrical,Lampu LED Strip,76878,2022-09-02,Kerusakan fatal tidak ekonomis diperbaiki,6660000
+59325,TOT-9G3L-59325,Plumbing,Wastafel,92168,2024-09-02,Standar keamanan baru,72830000
+48879,TOT-EW9J-48879,Plumbing,Kran Air,91271,2025-09-02,Upgrade kapasitas,77270000
+54648,FLO-RDAI-54648,Plumbing,Floor Drain,87200,2022-10-02,Kerusakan fatal tidak ekonomis diperbaiki,96620000
+20941,SHA-RJT5-20941,Mechanical,AC Split,55655,2023-10-02,Kontrak maintenance habis,53600000
+16930,AME-E2JB-16930,Plumbing,Wastafel,97721,2024-10-02,Kerusakan fatal tidak ekonomis diperbaiki,93230000
+32453,JET-T3QM-32453,Plumbing,Jet Shower,51354,2024-10-02,Tidak ada spare part,7710000
+38422,PUS-16KM-38422,Security Sistem,Push Button,83114,2025-10-02,Sudah obsolete,94980000
+54201,DAI-MEZ2-54201,Mechanical,AC Split,83590,2025-10-02,Kerusakan fatal tidak ekonomis diperbaiki,73940000
+40473,PEM-5XC0-40473,Plumbing,Pemipaan Air Bersih,91019,2025-10-02,Upgrade kapasitas,54140000
+4191,DEU-9CU1-4191,Mechanical,Genset Diesel,86232,2023-11-02,Kontrak maintenance habis,74070000
+58272,APA-YOSO-58272,Sistem Pemadam Kebakaran,APAR CO2,76863,2024-11-02,Kerusakan fatal tidak ekonomis diperbaiki,22030000
+57460,LAM-O4GY-57460,Electrical,Lampu Downlight,71036,2024-11-02,Tidak ada spare part,8030000
+60006,DIN-4OIK-60006,Civil,Dinding Kaca Tempered,57739,2024-11-02,Tidak ada spare part,4950000
+54722,JET-CJRL-54722,Plumbing,Jet Shower,88795,2020-12-02,Upgrade kapasitas,95310000
+32140,LAM-DWX8-32140,Electrical,Lampu TL LED,84205,2023-12-02,Tidak ada spare part,12720000
+5067,GRE-VAUJ-5067,Mechanical,AC Split,79374,2023-12-02,Kontrak maintenance habis,74990000
+35306,SHA-OLK8-35306,Mechanical,AC Split,67668,2024-12-02,Kontrak maintenance habis,43750000
+50606,JET-984K-50606,Plumbing,Jet Shower,83910,2024-12-02,Usia pakai habis,99010000
+2293,KRI-H764-2293,Ventilasi Sistem,Exhaust Fan,55480,2025-12-02,Tidak ada spare part,64330000
+58239,PEM-5P10-58239,Plumbing,Pemipaan Air Kotor,96955,2025-12-02,Upgrade kapasitas,28840000
+55104,INA-0W2B-55104,Plumbing,Wastafel,56015,2025-12-02,Standar keamanan baru,88260000
+37556,PLA-3EPZ-37556,Arsitektur,Plafon Gypsum / GRC,85400,2023-01-03,Efisiensi energi,91380000
+56626,PLA-RSDC-56626,Arsitektur,Plafon Gypsum / GRC,79394,2024-01-03,Kontrak maintenance habis,7970000
+27405,SHI-R67G-27405,Mechanical,Pompa Air Tanah,59348,2021-02-03,Kerusakan fatal tidak ekonomis diperbaiki,97000000
+34195,APA-W77J-34195,Sistem Pemadam Kebakaran,APAB Dry Powder,82552,2022-02-03,Efisiensi energi,80700000
+4321,LG-6D6Z-4321,Mechanical,AC Cassette,57085,2023-02-03,Efisiensi energi,11910000
+38615,MIX-BF1O-38615,Sistem Telekomunikasi Gedung,Mixer Audio,70689,2024-02-03,Usia pakai habis,60960000
+28918,SHA-IDEL-28918,Mechanical,AC Split,88250,2025-02-03,Usia pakai habis,4590000
+50637,TOT-1ARD-50637,Plumbing,Wastafel,64474,2025-02-03,Standar keamanan baru,80760000
+52292,DIN-GH7E-52292,Civil,Dinding Tembok/Mansonry,51311,2023-03-03,Upgrade kapasitas,24040000
+22624,SHA-R1RW-22624,Mechanical,AC Split,75825,2024-03-03,Upgrade kapasitas,74910000
+32859,LAM-ZPSL-32859,Electrical,Lampu LED Bulb,95115,2024-03-03,Standar keamanan baru,29930000
+17768,LAN-GWJP-17768,Civil,Lantai Granit,95818,2024-03-03,Standar keamanan baru,24060000
+35771,MET-U4US-35771,Pencatatan Meter,Meter PDAM,50538,2024-04-03,Standar keamanan baru,48840000
+16640,DIN-IJ4G-16640,Civil,Dinding Tembok/Mansonry,60887,2024-04-03,Tidak ada spare part,42510000
+6875,LG-CF2Z-6875,Mechanical,AC Split,57001,2024-04-03,Tidak ada spare part,68150000
+35633,JET-OHCR-35633,Plumbing,Jet Shower,61937,2025-04-03,Kontrak maintenance habis,38150000
+12091,SHA-8NUP-12091,Mechanical,AC Split,56322,2024-05-03,Kerusakan fatal tidak ekonomis diperbaiki,88020000
+30854,LAM-F9YZ-30854,Electrical,Lampu TL,85250,2024-05-03,Upgrade kapasitas,27330000
+26807,GRE-5LAM-26807,Mechanical,AC Split,66633,2024-05-03,Upgrade kapasitas,70350000
+53888,LAM-U6N0-53888,Electrical,Lampu Downlight,82092,2024-05-03,Standar keamanan baru,22770000
+18342,HOC-D5XT-18342,Sistem Proteksi Kebakaran Aktif,Heat Detector,97731,2025-05-03,Kerusakan fatal tidak ekonomis diperbaiki,22750000
+60016,CON-X5IS-60016,Electrical,Control Panel Pompa Transfer,87143,2025-05-03,Sudah obsolete,67900000
+31824,PIN-JZV8-31824,Arsitektur,Pintu Kayu/HPL,53487,2025-05-03,Efisiensi energi,10230000
+43737,BEL-XNCH-43737,Sistem Proteksi Kebakaran Aktif,Bell Alarm,52200,2025-05-03,Efisiensi energi,13900000
+45405,PAB-FGUX-45405,Sistem Telekomunikasi Gedung,PABX,55995,2025-05-03,Standar keamanan baru,36840000
+23682,PAN-K3TH-23682,Electrical,Panel PP-ME,65486,2025-05-03,Standar keamanan baru,15800000
+41467,LAM-G6N6-41467,Electrical,Lampu TL,51759,2022-06-03,Standar keamanan baru,82840000
+28172,LAN-DGU6-28172,Civil,Lantai Beton,56274,2024-06-03,Sudah obsolete,49620000
+1694,DAH-3HBA-1694,Security Sistem,Kamera CCTV,62222,2024-06-03,Kerusakan fatal tidak ekonomis diperbaiki,4690000
+54577,PAN-2WIL-54577,Ventilasi Sistem,Exhaust Fan,85410,2025-06-03,Standar keamanan baru,18540000
+16822,KRI-GN9J-16822,Ventilasi Sistem,Exhaust Fan,78349,2020-07-03,Usia pakai habis,78060000
+33416,VAL-F7K7-33416,Sistem Pemadam Kebakaran,Valve Control,88049,2021-07-03,Standar keamanan baru,41110000
+41301,LAM-HG2X-41301,Electrical,Lampu LED Downlight,96583,2021-07-03,Kerusakan fatal tidak ekonomis diperbaiki,25150000
+60692,LEM-PF28-60692,Arsitektur,Lemari/Loker,87282,2021-07-03,Kontrak maintenance habis,61860000
+12000,KRI-I469-12000,Ventilasi Sistem,Exhaust Fan,55302,2025-07-03,Tidak ada spare part,2380000
+27502,LAM-F2JW-27502,Electrical,Lampu LED,97836,2024-08-03,Kontrak maintenance habis,81000000
+21995,DAH-8NCV-21995,Security Sistem,Kamera CCTV,88685,2025-08-03,Kontrak maintenance habis,15480000
+2429,SAM-8S9E-2429,Mechanical,AC Split,88642,2025-08-03,Usia pakai habis,8420000
+6099,PAN-92D3-6099,Mechanical,AC Split,66771,2019-09-03,Kontrak maintenance habis,80260000
+57317,INA-MQTX-57317,Plumbing,Wastafel,88532,2020-09-03,Kontrak maintenance habis,98530000
+39600,LAM-PWLR-39600,Electrical,Lampu Downlight,56823,2025-09-03,Tidak ada spare part,4730000
+41490,CON-V33C-41490,Electrical,Control Panel AC,98488,2025-09-03,Tidak ada spare part,3840000
+1653,LG-DK9X-1653,Mechanical,AC Split,61755,2025-09-03,Upgrade kapasitas,39740000
+34793,LAM-03LR-34793,Electrical,Lampu LED Downlight,77646,2025-09-03,Tidak ada spare part,63270000
+50360,PLA-DHWN-50360,Arsitektur,Plafon Gypsum / GRC,88926,2021-10-03,Upgrade kapasitas,66550000
+7753,LAM-F5J4-7753,Electrical,Lampu Downlight,57181,2023-10-03,Kerusakan fatal tidak ekonomis diperbaiki,74120000
+38072,LG-YMBP-38072,Mechanical,AC Cassette,62431,2024-10-03,Sudah obsolete,22160000
+60030,DIN-WR5E-60030,Civil,"Dinding Partisi, GRC / Gypsum",58963,2024-10-03,Tidak ada spare part,32340000
+28057,LAM-5BAX-28057,Electrical,Lampu TL,73482,2025-10-03,Efisiensi energi,25610000
+35320,SHA-II3B-35320,Mechanical,AC Split,83039,2022-11-03,Usia pakai habis,19030000
+5278,MON-PY75-5278,Sistem Telekomunikasi Gedung,Monitor/Layar,75157,2023-11-03,Efisiensi energi,34570000
+26720,FLO-3V80-26720,Plumbing,Floor Drain,74154,2024-11-03,Efisiensi energi,2970000
+31431,PIN-0I29-31431,Arsitektur,Pintu Kayu/HPL,81512,2025-11-03,Kerusakan fatal tidak ekonomis diperbaiki,37600000
+31208,APA-U6HT-31208,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,56880,2024-12-03,Usia pakai habis,61890000
+35083,VID-7AZO-35083,Sistem Telekomunikasi Gedung,Video Wall,72159,2025-12-03,Tidak ada spare part,30300000
+47649,APA-4EJ5-47649,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,86318,2022-01-04,Kontrak maintenance habis,86330000
+6009,LAM-DGB9-6009,Electrical,Lampu Downlight,89207,2024-01-04,Upgrade kapasitas,44080000
+54484,AME-4H6I-54484,Plumbing,Wastafel,69101,2024-01-04,Standar keamanan baru,4690000
+4294,DIN-5H7W-4294,Civil,Dinding Tembok/Mansonry,75875,2025-01-04,Tidak ada spare part,25560000
+21517,KLO-6M48-21517,Plumbing,Kloset,61593,2022-02-04,Usia pakai habis,17140000
+56974,LAM-9JY1-56974,Electrical,Lampu LED,63041,2024-02-04,Upgrade kapasitas,36840000
+6636,LAM-JJHB-6636,Electrical,Lampu Downlight,61777,2024-02-04,Tidak ada spare part,96630000
+39945,PES-RX89-39945,Sistem Telekomunikasi Gedung,Pesawat Telepon,50631,2024-02-04,Usia pakai habis,34470000
+47195,HON-JHPT-47195,Security Sistem,DVR CCTV,76877,2024-02-04,Standar keamanan baru,71220000
+47022,DAI-M6FF-47022,Mechanical,AC Split,94411,2025-02-04,Upgrade kapasitas,98280000
+49361,PLA-HJTR-49361,Arsitektur,Plafon Gypsum / GRC,51322,2025-02-04,Upgrade kapasitas,77680000
+20730,JET-SH15-20730,Plumbing,Jet Shower,90138,2025-02-04,Kerusakan fatal tidak ekonomis diperbaiki,69490000
+56698,APA-O5QL-56698,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,85530,2025-02-04,Usia pakai habis,94620000
+33306,LAM-0HZ6-33306,Electrical,Lampu T5,88805,2020-03-04,Standar keamanan baru,71770000
+46483,PES-ACKR-46483,Sistem Telekomunikasi Gedung,Pesawat Telepon,91947,2023-03-04,Sudah obsolete,82860000
+55894,PIN-WV5R-55894,Arsitektur,Pintu Kaca Hidrolik,54146,2025-03-04,Sudah obsolete,43850000
+28065,LAM-LAMQ-28065,Electrical,Lampu LED Downlight,64514,2025-03-04,Kerusakan fatal tidak ekonomis diperbaiki,4270000
+21135,LAM-4VW5-21135,Electrical,Lampu Downlight,67136,2022-04-04,Usia pakai habis,29020000
+13474,GRE-7DTG-13474,Mechanical,AC Split,51039,2022-04-04,Sudah obsolete,33960000
+7259,MIT-9ESX-7259,Mechanical,AC Split,54274,2024-04-04,Kontrak maintenance habis,48010000
+11417,AXI-21UN-11417,Security Sistem,Kamera CCTV,78979,2024-04-04,Tidak ada spare part,18830000
+2504,PES-Y11Q-2504,Sistem Telekomunikasi Gedung,Pesawat Telepon,83119,2024-05-04,Efisiensi energi,28290000
+47091,APA-FQLQ-47091,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,69801,2024-05-04,Efisiensi energi,37570000
+14998,CUM-Z1CU-14998,Mechanical,Genset Diesel,66256,2024-05-04,Usia pakai habis,4280000
+50483,PLA-NVQA-50483,Arsitektur,Plafon Gypsum / GRC,72167,2024-05-04,Efisiensi energi,53670000
+56104,LAN-88MA-56104,Sistem Telekomunikasi Gedung,LAN (Local Area Network),90511,2024-05-04,Tidak ada spare part,33610000
+28339,SHA-O3ZH-28339,Mechanical,AC Split,74396,2024-05-04,Upgrade kapasitas,61870000
+17359,DIN-3L7J-17359,Civil,Dinding Tembok/Mansonry,82776,2022-06-04,Kerusakan fatal tidak ekonomis diperbaiki,72970000
+48151,DAI-2TRT-48151,Mechanical,AC Split,54205,2023-06-04,Sudah obsolete,54760000
+29849,PAN-PCWK-29849,Ventilasi Sistem,Exhaust Fan,96106,2023-06-04,Usia pakai habis,40750000
+16205,UNI-GYIW-16205,Electrical,Uninterruptible Power Supply,50833,2023-06-04,Kontrak maintenance habis,66080000
+30133,OND-6G57-30133,Plumbing,Kran Air,81136,2024-06-04,Efisiensi energi,74840000
+2713,KLO-D07D-2713,Plumbing,Kloset,74104,2024-06-04,Standar keamanan baru,9630000
+55874,DAI-PID3-55874,Mechanical,AC Cassette,80471,2025-06-04,Kerusakan fatal tidak ekonomis diperbaiki,68480000
+589,MIT-EXKG-0589,Mechanical,AC Cassette,67690,2025-06-04,Usia pakai habis,98000000
+1229,WAS-RR1V-1229,Plumbing,Kran Air,86914,2025-06-04,Standar keamanan baru,48890000
+54072,TOT-BFWP-54072,Plumbing,Kran Air,66594,2021-07-04,Upgrade kapasitas,34210000
+28731,APA-AOC4-28731,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,93775,2022-07-04,Standar keamanan baru,60370000
+51070,UNI-E5Y2-51070,Electrical,Uninterruptible Power Supply,98736,2024-07-04,Sudah obsolete,32010000
+46497,PAN-YQQP-46497,Mechanical,AC Standing,78027,2025-07-04,Upgrade kapasitas,25500000
+24496,FCU-J6UI-24496,Mechanical,FCU,73215,2025-07-04,Kerusakan fatal tidak ekonomis diperbaiki,41290000
+52105,SHA-ORX6-52105,Mechanical,AC Split,78698,2025-07-04,Usia pakai habis,64400000
+48135,DIN-8M7E-48135,Civil,"Dinding Partisi, GRC / Gypsum",78584,2022-08-04,Efisiensi energi,55060000
+40625,LG-AF4M-40625,Mechanical,AC Split,66905,2024-08-04,Upgrade kapasitas,82270000
+27066,APA-8AD7-27066,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,78039,2025-08-04,Sudah obsolete,91720000
+31253,GRE-SIDR-31253,Mechanical,AC Split,52953,2019-09-04,Efisiensi energi,69710000
+5683,LG-LMJ9-5683,Security Sistem,Monitor CCTV,83970,2020-09-04,Kerusakan fatal tidak ekonomis diperbaiki,50740000
+58810,LAM-WE8P-58810,Electrical,Lampu Downlight,86501,2023-09-04,Usia pakai habis,22060000
+2649,PAN-9MQ1-2649,Mechanical,AC Cassette,62502,2023-09-04,Kontrak maintenance habis,77300000
+34157,APA-V4N2-34157,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,61930,2024-09-04,Upgrade kapasitas,49960000
+13544,DAI-KC3D-13544,Mechanical,AC Cassette,73089,2024-09-04,Kerusakan fatal tidak ekonomis diperbaiki,41830000
+41483,PAN-H3BG-41483,Electrical,Panel UPS,99002,2020-10-04,Tidak ada spare part,66830000
+26149,DIN-2JWO-26149,Civil,Dinding Batu Alam,99451,2021-10-04,Standar keamanan baru,77340000
+38863,PLA-EA56-38863,Arsitektur,Plafon Gypsum / GRC,50856,2021-10-04,Sudah obsolete,80950000
+1347,KLO-ZSOO-1347,Plumbing,Kloset,76786,2022-10-04,Upgrade kapasitas,4560000
+2307,HOC-83JQ-2307,Sistem Proteksi Kebakaran Aktif,Heat Detector,58381,2022-10-04,Sudah obsolete,52300000
+15553,DIE-SG6W-15553,Sistem Pemadam Kebakaran,Diesel Fire Pump,71855,2023-10-04,Sudah obsolete,87970000
+33824,SAM-7IWO-33824,Mechanical,AC Split,70979,2023-10-04,Kerusakan fatal tidak ekonomis diperbaiki,8970000
+25782,DAI-11I1-25782,Mechanical,AC Split,85145,2024-10-04,Sudah obsolete,25430000
+23134,LAM-O8KJ-23134,Electrical,Lampu Downlight,54713,2024-10-04,Usia pakai habis,17620000
+31481,PEM-9RGP-31481,Plumbing,Pemipaan Air Bersih,56225,2025-10-04,Kerusakan fatal tidak ekonomis diperbaiki,2710000
+34772,AXI-B9X5-34772,Security Sistem,Kamera CCTV,68792,2020-11-04,Kontrak maintenance habis,61070000
+44705,DAH-VIDW-44705,Security Sistem,Kamera CCTV,63036,2022-11-04,Kontrak maintenance habis,30030000
+27446,SAM-2FCL-27446,Mechanical,AC Split,60771,2023-11-04,Standar keamanan baru,73290000
+42785,LAN-LLMM-42785,Civil,Lantai Keramik,65757,2023-11-04,Upgrade kapasitas,19620000
+55834,KAB-9D61-55834,Sistem Telekomunikasi Gedung,Kabel UTP,53472,2024-11-04,Standar keamanan baru,87580000
+12672,DAI-0QQM-12672,Mechanical,AC Split,69013,2024-11-04,Efisiensi energi,94490000
+56070,SHA-936X-56070,Mechanical,AC Split,57496,2024-11-04,Kerusakan fatal tidak ekonomis diperbaiki,52820000
+37206,LAM-0UFO-37206,Electrical,Lampu UV,59776,2025-11-04,Upgrade kapasitas,90740000
+41454,BOS-2CXL-41454,Security Sistem,Kamera CCTV,90308,2023-12-04,Usia pakai habis,52750000
+33531,POM-VDXM-33531,Mechanical,Pompa Chiller Water Primer,87411,2023-12-04,Standar keamanan baru,90910000
+34514,DIN-WI2B-34514,Civil,Dinding Tembok/Mansonry,92283,2024-12-04,Upgrade kapasitas,38830000
+22616,LAN-2W3I-22616,Civil,Lantai Karpet,87078,2024-12-04,Kerusakan fatal tidak ekonomis diperbaiki,84400000
+1890,APA-2KQC-1890,Sistem Pemadam Kebakaran,APAR CO2,61358,2024-12-04,Tidak ada spare part,89810000
+18323,LAM-AK9D-18323,Electrical,Lampu TL,52068,2024-12-04,Kontrak maintenance habis,22320000
+35802,LAM-YZNP-35802,Electrical,Lampu LED Bulb,69064,2024-12-04,Standar keamanan baru,71240000
+52848,DIN-ZGY9-52848,Civil,"Dinding Partisi, GRC / Gypsum",68347,2025-12-04,Efisiensi energi,85560000
+43305,FLO-UZFR-43305,Plumbing,Floor Drain,96250,2025-12-04,Sudah obsolete,27940000
+12989,GRE-RT1V-12989,Mechanical,AC Split,81520,2025-01-05,Sudah obsolete,89330000
+54943,PEM-41QF-54943,Plumbing,Pemipaan Air Bersih,60019,2025-01-05,Tidak ada spare part,34530000
+6587,DIN-L8OS-6587,Civil,Dinding Tembok/Mansonry,67871,2024-02-05,Kontrak maintenance habis,90650000
+50339,PIN-UBLP-50339,Arsitektur,Pintu Kayu/HPL,58034,2024-02-05,Upgrade kapasitas,87070000
+21788,SAM-MZ6K-21788,Mechanical,AC Split,63027,2024-02-05,Tidak ada spare part,93560000
+32388,DIN-JF4W-32388,Civil,Dinding Tembok/Mansonry,64265,2024-02-05,Sudah obsolete,17060000
+31183,APA-W98U-31183,Sistem Pemadam Kebakaran,APAR CO2,52355,2024-02-05,Sudah obsolete,12010000
+1307,GRE-28OR-1307,Mechanical,AC Split,61159,2019-03-05,Kontrak maintenance habis,73460000
+49963,DIN-2PTX-49963,Civil,Dinding Tembok/Mansonry,99378,2023-03-05,Efisiensi energi,21300000
+5925,BRE-XLTK-5925,Electrical,Breker Panel,71587,2024-03-05,Tidak ada spare part,3620000
+3049,DAI-33BQ-3049,Mechanical,AC Cassette,95693,2020-04-05,Tidak ada spare part,84370000
+52050,KLO-16FP-52050,Plumbing,Kloset,95584,2023-04-05,Efisiensi energi,2660000
+50108,PER-UD7P-50108,Mechanical,Genset Diesel,54215,2024-04-05,Tidak ada spare part,7450000
+58846,AXI-LI4P-58846,Security Sistem,Kamera CCTV,88775,2024-04-05,Upgrade kapasitas,45500000
+12273,MET-RG14-12273,Pencatatan Meter,Meter PDAM,62249,2024-04-05,Sudah obsolete,36070000
+2454,SHA-IKM8-2454,Mechanical,AC Split,91537,2024-04-05,Efisiensi energi,42410000
+57663,HOS-31J5-57663,Sistem Pemadam Kebakaran,Hose Rack,87757,2025-04-05,Sudah obsolete,42650000
+56629,PLA-8CG4-56629,Arsitektur,Plafon Gypsum / GRC,68192,2025-04-05,Upgrade kapasitas,87730000
+43058,INA-30CV-43058,Plumbing,Wastafel,54175,2021-05-05,Tidak ada spare part,71850000
+20409,PAN-HHPY-20409,Mechanical,AC Split,79735,2023-05-05,Sudah obsolete,52450000
+46741,APA-LESJ-46741,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,50641,2024-05-05,Standar keamanan baru,94320000
+53014,KLO-B92I-53014,Plumbing,Kloset,56126,2024-05-05,Standar keamanan baru,47390000
+40931,TOT-9NGE-40931,Plumbing,Kran Air,92430,2024-05-05,Kerusakan fatal tidak ekonomis diperbaiki,93330000
+30848,UNI-RITY-30848,Electrical,Uninterruptible Power Supply,98288,2025-05-05,Sudah obsolete,10480000
+3045,AIR-ZMV4-3045,Mechanical,Air Purifier,92580,2025-05-05,Upgrade kapasitas,83480000
+31804,INA-X7SY-31804,Plumbing,Wastafel,56665,2023-06-05,Sudah obsolete,63030000
+51909,BOS-AOF2-51909,Security Sistem,Kamera CCTV,84591,2024-06-05,Kontrak maintenance habis,83110000
+6133,AC -CA7Y-6133,Mechanical,AC VRV,96723,2024-06-05,Upgrade kapasitas,56770000
+9097,PAN-JX23-9097,Mechanical,AC Split,69793,2024-06-05,Kontrak maintenance habis,92790000
+7566,MON-68TZ-7566,Sistem Telekomunikasi Gedung,Monitor/Layar,87488,2024-06-05,Standar keamanan baru,66220000
+13520,PAN-IF5V-13520,Mechanical,AC Cassette,55897,2024-06-05,Upgrade kapasitas,80470000
+52446,SAM-6IP3-52446,Security Sistem,Monitor CCTV,96131,2022-07-05,Tidak ada spare part,88980000
+24054,FLO-9S45-24054,Plumbing,Floor Drain,77449,2024-07-05,Efisiensi energi,77650000
+12980,DAI-QRW6-12980,Mechanical,AC Cassette,84798,2024-07-05,Kontrak maintenance habis,86300000
+38535,PIN-FFSD-38535,Arsitektur,Pintu Kayu/HPL,62359,2025-07-05,Efisiensi energi,55110000
+52910,PUS-EGRV-52910,Security Sistem,Push Button,54677,2020-08-05,Usia pakai habis,60690000
+42774,FLO-32ZP-42774,Plumbing,Floor Drain,56962,2022-08-05,Sudah obsolete,9770000
+53277,MEJ-8FD3-53277,Arsitektur,Meja kerja,79486,2023-08-05,Kerusakan fatal tidak ekonomis diperbaiki,19210000
+12178,PAN-FDUA-12178,Mechanical,AC Cassette,58446,2024-08-05,Usia pakai habis,65820000
+45030,MET-ED8I-45030,Pencatatan Meter,Meter PLN,85867,2024-08-05,Kerusakan fatal tidak ekonomis diperbaiki,65110000
+2482,SHA-6Y1O-2482,Mechanical,AC Split,72554,2025-08-05,Standar keamanan baru,88820000
+6205,DAI-ULW8-6205,Mechanical,AC Cassette,56929,2023-09-05,Kerusakan fatal tidak ekonomis diperbaiki,24520000
+21663,AXI-NAZT-21663,Security Sistem,Kamera CCTV,90130,2024-09-05,Usia pakai habis,27900000
+25429,URI-4X16-25429,Plumbing,Urinal,58195,2025-09-05,Kerusakan fatal tidak ekonomis diperbaiki,94340000
+30949,LAM-6BCH-30949,Electrical,Lampu LED Strip,85731,2025-09-05,Sudah obsolete,76900000
+56026,AXI-NZYV-56026,Security Sistem,Kamera CCTV,56399,2025-09-05,Kerusakan fatal tidak ekonomis diperbaiki,30110000
+30731,PLA-X1XC-30731,Arsitektur,Plafon Gypsum / GRC,69649,2025-09-05,Sudah obsolete,39900000
+32004,DIN-5TMU-32004,Civil,Dinding Tembok/Mansonry,70762,2025-09-05,Tidak ada spare part,56940000
+18197,MAN-K63L-18197,Electrical,Manual Transfer Switch (MTS Panel),93748,2021-10-05,Standar keamanan baru,60720000
+53648,ROL-9QKX-53648,Arsitektur,Rolling Door,76506,2021-10-05,Efisiensi energi,54520000
+36317,WIR-JUU5-36317,Electrical,Wiring System (Sistem Instalasi Kabel),58513,2022-10-05,Efisiensi energi,83350000
+15437,PAM-PUIH-15437,Distribusi Air,PAM,96667,2022-10-05,Upgrade kapasitas,19750000
+51434,PIN-5WH5-51434,Arsitektur,Pintu Kaca Hidrolik,67021,2024-10-05,Usia pakai habis,23490000
+3062,MIT-3HPF-3062,Mechanical,AC Split,91928,2024-10-05,Upgrade kapasitas,46240000
+24582,FLO-0FF9-24582,Plumbing,Floor Drain,64554,2024-10-05,Usia pakai habis,20040000
+59596,MEJ-101Q-59596,Arsitektur,Meja kerja,99177,2024-10-05,Tidak ada spare part,28810000
+51319,PAN-0HHC-51319,Ventilasi Sistem,Exhaust Fan,90723,2024-10-05,Efisiensi energi,99950000
+33123,KUR-RPLS-33123,Arsitektur,Kursi,94075,2025-10-05,Usia pakai habis,21870000
+44414,MET-H4UA-44414,Pencatatan Meter,Meter PDAM,54901,2025-10-05,Usia pakai habis,94360000
+38458,DAI-JXW8-38458,Mechanical,AC Split,53936,2025-10-05,Tidak ada spare part,88690000
+37012,GRE-C62L-37012,Mechanical,AC Split,67438,2022-11-05,Upgrade kapasitas,99160000
+57284,AUT-617S-57284,Electrical,Automatic Transfer Switch (ATS Panel),98439,2024-11-05,Sudah obsolete,91390000
+34840,APA-0G0C-34840,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,91377,2025-11-05,Sudah obsolete,26130000
+52567,PEM-4VU2-52567,Plumbing,Pemipaan Air Bersih,55791,2021-12-05,Usia pakai habis,77860000
+2181,DAI-RXC4-2181,Mechanical,AC Cassette,97959,2023-12-05,Kontrak maintenance habis,43480000
+44971,GRE-K7G0-44971,Mechanical,AC Split,63116,2024-12-05,Upgrade kapasitas,48110000
+35979,ROO-EYO6-35979,Distribusi Air,Roof Tank,57338,2024-12-05,Efisiensi energi,50050000
+21447,HON-2WLF-21447,Security Sistem,DVR CCTV,63613,2024-12-05,Standar keamanan baru,86090000
+42049,AXI-35LH-42049,Security Sistem,Kamera CCTV,95210,2025-12-05,Kontrak maintenance habis,57850000
+57374,KAN-4IXE-57374,Arsitektur,Kanstin,64544,2021-01-06,Standar keamanan baru,89300000
+28988,LG-RUBK-28988,Mechanical,AC Split,68977,2023-01-06,Usia pakai habis,82720000
+35629,JET-UD85-35629,Plumbing,Jet Shower,77642,2024-01-06,Efisiensi energi,75710000
+42489,PIN-RP19-42489,Arsitektur,Pintu Kaca Hidrolik,71784,2025-01-06,Usia pakai habis,54740000
+59120,TOT-3AQG-59120,Plumbing,Wastafel,62756,2021-02-06,Tidak ada spare part,73660000
+32755,LAM-6GKD-32755,Electrical,Lampu LED Bulb,53630,2022-02-06,Kerusakan fatal tidak ekonomis diperbaiki,56010000
+60050,LAM-1J6C-60050,Electrical,Lampu LED,93464,2023-02-06,Usia pakai habis,29320000
+5605,DAI-845W-5605,Mechanical,AC Split,92747,2024-02-06,Efisiensi energi,88080000
+47388,SPE-33WU-47388,Sistem Telekomunikasi Gedung,Speaker,91441,2024-02-06,Usia pakai habis,80310000
+1585,TOT-N9S8-1585,Plumbing,Wastafel,96733,2025-02-06,Efisiensi energi,18960000
+60261,LED-T3JV-60261,Electrical,LED Dimmer,72565,2025-02-06,Sudah obsolete,27780000
+53139,PAN-E4XW-53139,Ventilasi Sistem,Exhaust Fan,87472,2025-02-06,Upgrade kapasitas,67020000
+50369,GRO-4YTO-50369,Distribusi Air,Ground Water Tank,70543,2025-02-06,Usia pakai habis,36660000
+17988,LG-1QYC-17988,Mechanical,AC Split,82967,2023-03-06,Kerusakan fatal tidak ekonomis diperbaiki,47170000
+1508,PAN-YV16-1508,Ventilasi Sistem,Exhaust Fan,73741,2024-03-06,Kerusakan fatal tidak ekonomis diperbaiki,90640000
+51874,HIK-9CH6-51874,Security Sistem,DVR CCTV,92093,2024-03-06,Tidak ada spare part,23020000
+17986,LAN-9YBX-17986,Civil,Lantai Karpet,59216,2022-04-06,Tidak ada spare part,77120000
+29975,SAM-IHOY-29975,Mechanical,AC Split,52757,2023-04-06,Usia pakai habis,78790000
+57693,NOZ-LFH5-57693,Sistem Pemadam Kebakaran,Nozzle,99543,2024-04-06,Tidak ada spare part,47090000
+37749,AXI-Q38R-37749,Security Sistem,Kamera CCTV,72686,2024-04-06,Kerusakan fatal tidak ekonomis diperbaiki,26890000
+11618,PAN-37AI-11618,Mechanical,AC Split,83234,2024-04-06,Kontrak maintenance habis,3880000
+31054,LAM-D886-31054,Electrical,Lampu Downlight,62603,2024-04-06,Upgrade kapasitas,31860000
+27132,JET-X1ZO-27132,Plumbing,Jet Shower,59532,2024-04-06,Tidak ada spare part,58150000
+778,SAM-8J9Z-0778,Mechanical,AC Split,61025,2024-04-06,Efisiensi energi,93530000
+5075,APA-HE1G-5075,Sistem Pemadam Kebakaran,APAR Wet Chemical,73923,2024-04-06,Tidak ada spare part,40200000
+27968,PAN-XURD-27968,Mechanical,AC Split,76052,2025-04-06,Efisiensi energi,40490000
+29929,LG-1ESU-29929,Mechanical,AC Split,51296,2025-04-06,Tidak ada spare part,51520000
+48603,PAG-9IJX-48603,Arsitektur,Pagar Besi,66946,2022-05-06,Usia pakai habis,53760000
+29087,PAN-WSJY-29087,Mechanical,AC Split,70181,2023-05-06,Standar keamanan baru,16130000
+61004,PAG-88Y6-61004,Arsitektur,Pagar Besi,88715,2024-05-06,Standar keamanan baru,22760000
+31589,PEM-GI0I-31589,Plumbing,Pemipaan Air Kotor,54437,2024-05-06,Kerusakan fatal tidak ekonomis diperbaiki,42020000
+4357,LG-IW5L-4357,Mechanical,AC Split,93475,2025-05-06,Kerusakan fatal tidak ekonomis diperbaiki,96810000
+21312,HOC-UTJ1-21312,Sistem Proteksi Kebakaran Aktif,Smoke Detector,50841,2020-06-06,Tidak ada spare part,12240000
+55631,WAS-VP20-55631,Plumbing,Kran Air,91232,2022-06-06,Efisiensi energi,39430000
+30967,LET-D1J6-30967,Electrical,Lettersign,87669,2023-06-06,Efisiensi energi,79590000
+52715,DIN-VYQT-52715,Civil,Dinding Tembok/Mansonry,80716,2024-06-06,Upgrade kapasitas,48220000
+40897,WAS-KDUI-40897,Plumbing,Kran Air,51220,2024-06-06,Efisiensi energi,71070000
+31605,LAM-I5WI-31605,Electrical,Lampu Downlight,98926,2025-06-06,Sudah obsolete,48520000
+31701,GRE-CLUE-31701,Mechanical,AC Split,69242,2025-06-06,Tidak ada spare part,80110000
+11960,AXI-JL48-11960,Security Sistem,Kamera CCTV,90839,2025-06-06,Efisiensi energi,21610000
+60765,LAM-3HRY-60765,Electrical,Lampu TL,57722,2025-06-06,Standar keamanan baru,19940000
+54586,ROO-C2YQ-54586,Distribusi Air,Roof Tank,81530,2021-07-06,Usia pakai habis,26330000
+18629,PES-79IU-18629,Sistem Telekomunikasi Gedung,Pesawat Telepon,96551,2024-07-06,Kontrak maintenance habis,89240000
+2413,HIK-LTOB-2413,Security Sistem,DVR CCTV,74061,2024-07-06,Sudah obsolete,79830000
+39772,PLA-QZC8-39772,Arsitektur,Plafon,96364,2024-07-06,Kontrak maintenance habis,82010000
+31063,PES-G9YP-31063,Sistem Telekomunikasi Gedung,Pesawat Telepon,52135,2025-07-06,Kontrak maintenance habis,71740000
+58688,DAH-5ZLM-58688,Security Sistem,Kamera CCTV,68916,2025-07-06,Sudah obsolete,88550000
+28305,LAN-8LX2-28305,Civil,Lantai Keramik,76560,2025-07-06,Upgrade kapasitas,98800000
+13102,HON-A904-13102,Security Sistem,DVR CCTV,84615,2023-08-06,Sudah obsolete,8680000
+6202,UNI-P33T-6202,Electrical,Uninterruptible Power Supply,60249,2024-08-06,Sudah obsolete,21920000
+20674,DAI-3IS7-20674,Mechanical,AC Split,54619,2024-08-06,Efisiensi energi,88010000
+656,PAN-R921-0656,Mechanical,AC Split,77735,2024-08-06,Upgrade kapasitas,46160000
+27767,KLO-IJUT-27767,Plumbing,Kloset,55607,2024-08-06,Standar keamanan baru,30210000
+47947,TOT-17H3-47947,Plumbing,Kran Air,78676,2025-08-06,Kontrak maintenance habis,18970000
+33219,LAM-7QZK-33219,Electrical,Lampu LED Bulb,72501,2021-09-06,Kerusakan fatal tidak ekonomis diperbaiki,55230000
+48226,LAM-30GM-48226,Electrical,Lampu LED,91033,2023-09-06,Sudah obsolete,39510000
+25722,SAM-AI69-25722,Mechanical,AC Split,96662,2025-09-06,Kontrak maintenance habis,50280000
+45365,DIN-AOOW-45365,Civil,Dinding Tembok/Mansonry,90076,2018-10-06,Sudah obsolete,99000000
+26949,APA-E0XP-26949,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,74649,2021-10-06,Standar keamanan baru,51230000
+197,LG-N1R4-0197,Mechanical,AC Split,98840,2024-10-06,Upgrade kapasitas,65380000
+58524,SAM-CBE3-58524,Security Sistem,Monitor CCTV,53895,2025-10-06,Usia pakai habis,46090000
+37133,LAM-YNV5-37133,Electrical,Lampu TL,56210,2025-10-06,Upgrade kapasitas,53640000
+18024,SAM-5ATW-18024,Mechanical,AC Split,84201,2025-10-06,Sudah obsolete,68030000
+26672,GRE-UVVW-26672,Mechanical,AC Split,62839,2019-11-06,Standar keamanan baru,76310000
+46472,KUR-YVZ3-46472,Arsitektur,Kursi,58585,2024-11-06,Kontrak maintenance habis,19930000
+53680,DIN-UVBW-53680,Civil,Dinding beton ekspos,50683,2024-11-06,Upgrade kapasitas,96030000
+61056,UNI-QSIZ-61056,Electrical,Uninterruptible Power Supply,71044,2025-11-06,Efisiensi energi,42670000
+40092,HIK-87GW-40092,Security Sistem,DVR CCTV,92383,2025-11-06,Kontrak maintenance habis,51370000
+6068,MIT-4KFG-6068,Mechanical,AC Split,59675,2020-12-06,Kerusakan fatal tidak ekonomis diperbaiki,56000000
+32415,DIN-JJXU-32415,Civil,Dinding Tembok/Mansonry,60283,2021-12-06,Upgrade kapasitas,89730000
+3584,MIT-C11U-3584,Mechanical,AC Cassette,69302,2022-12-06,Kerusakan fatal tidak ekonomis diperbaiki,11390000
+41883,LAM-609Z-41883,Electrical,Lampu Downlight,67988,2023-12-06,Efisiensi energi,12180000
+41507,SDP-ZFE0-41507,Electrical,SDP,80192,2023-12-06,Kerusakan fatal tidak ekonomis diperbaiki,45600000
+161,HOC-NYXT-0161,Sistem Proteksi Kebakaran Aktif,Smoke Detector,83609,2024-12-06,Sudah obsolete,83160000
+685,LAM-XF1P-0685,Electrical,Lampu LED,54179,2025-12-06,Kontrak maintenance habis,32340000
+58582,PIN-930W-58582,Arsitektur,Pintu Kaca Hidrolik,93792,2025-12-06,Sudah obsolete,35030000
+52565,BOS-PJ08-52565,Security Sistem,Kamera CCTV,56702,2025-12-06,Kerusakan fatal tidak ekonomis diperbaiki,17610000
+59264,KUR-4PV1-59264,Arsitektur,Kursi,69934,2024-01-07,Tidak ada spare part,22140000
+45257,DOO-U3XY-45257,Arsitektur,Door Closer,52187,2024-01-07,Sudah obsolete,41040000
+50266,LAM-8T5V-50266,Electrical,Lampu LED Downlight,84850,2019-02-07,Sudah obsolete,41010000
+16884,SHA-BQPR-16884,Mechanical,AC Split,97978,2021-02-07,Sudah obsolete,5720000
+51637,PIN-B0GJ-51637,Arsitektur,Pintu Kaca Hidrolik,85436,2024-02-07,Kontrak maintenance habis,89040000
+58313,LAM-WONT-58313,Electrical,Lampu Esensial,54438,2024-02-07,Kerusakan fatal tidak ekonomis diperbaiki,51010000
+31362,LAM-2O7B-31362,Electrical,Lampu Wall sign,63443,2024-02-07,Usia pakai habis,99940000
+50387,PLA-9BM6-50387,Arsitektur,Plafon,96617,2025-02-07,Tidak ada spare part,17080000
+41836,DAI-5FQT-41836,Mechanical,AC Split,89647,2025-02-07,Usia pakai habis,37410000
+21315,KDK-6141-21315,Ventilasi Sistem,Exhaust Fan,75733,2025-02-07,Upgrade kapasitas,93890000
+59775,DIN-AUR1-59775,Civil,Dinding Tembok/Mansonry,79228,2025-02-07,Upgrade kapasitas,90070000
+19880,LAM-L9ZM-19880,Electrical,Lampu Pylon Sign,55750,2024-03-07,Kerusakan fatal tidak ekonomis diperbaiki,60590000
+49209,DIN-PTTN-49209,Civil,Dinding Tembok/Mansonry,66568,2024-03-07,Standar keamanan baru,14890000
+36684,DAH-N0QJ-36684,Security Sistem,Kamera CCTV,74901,2025-03-07,Efisiensi energi,48110000
+34142,MIT-Y1D1-34142,Mechanical,AC Split,89636,2024-04-07,Usia pakai habis,8860000
+16108,MIT-U2XN-16108,Mechanical,AC Split,74355,2024-04-07,Standar keamanan baru,11610000
+36982,ATA-D92L-36982,Civil,Atap Seng,72803,2025-04-07,Tidak ada spare part,10170000
+5121,BOS-YWJO-5121,Security Sistem,Kamera CCTV,93017,2025-04-07,Tidak ada spare part,91240000
+43905,LAM-SLIF-43905,Electrical,Lampu Wall sign,84862,2025-04-07,Standar keamanan baru,88140000
+1817,LAN-8K0H-1817,Civil,Lantai Karpet,73915,2021-05-07,Tidak ada spare part,61380000
+28146,PAN-SD4W-28146,Mechanical,AC Split,58580,2021-05-07,Upgrade kapasitas,28180000
+17454,VAL-T0O4-17454,Sistem Pemadam Kebakaran,Valve Control,58977,2023-05-07,Usia pakai habis,22990000
+15774,ROO-4JR8-15774,Distribusi Air,Roof Tank,78553,2023-05-07,Tidak ada spare part,81180000
+38781,AIR-69CY-38781,Mechanical,Air Purifier,87008,2024-05-07,Sudah obsolete,48560000
+29117,GRE-C2OG-29117,Mechanical,AC Split,68676,2025-05-07,Tidak ada spare part,70610000
+20677,SHA-L5TO-20677,Mechanical,AC Split,87988,2019-06-07,Kontrak maintenance habis,39590000
+27456,SHI-BM6J-27456,Mechanical,Pompa Air Tanah,81224,2020-06-07,Upgrade kapasitas,92310000
+1831,GRE-YHYA-1831,Mechanical,AC Split,98278,2020-06-07,Upgrade kapasitas,93310000
+46215,ROL-16BF-46215,Arsitektur,Rolling Door,79883,2021-06-07,Sudah obsolete,18190000
+32832,PLA-KLN1-32832,Arsitektur,Plafon Gypsum / GRC,70147,2022-06-07,Standar keamanan baru,29330000
+582,LAM-LVHS-0582,Electrical,Lampu Neon Sign,82194,2023-06-07,Efisiensi energi,38570000
+19941,SHA-TJZ2-19941,Mechanical,AC Split,78085,2024-06-07,Kontrak maintenance habis,6370000
+35334,LEM-5DU1-35334,Arsitektur,Lemari/Loker,83957,2024-06-07,Usia pakai habis,54340000
+35310,EBA-GNUR-35310,Mechanical,Pompa Transfer,69878,2024-06-07,Upgrade kapasitas,47370000
+21347,HIK-27IG-21347,Security Sistem,Kamera CCTV,60180,2023-07-07,Kontrak maintenance habis,24810000
+14931,PAN-3H3C-14931,Mechanical,AC Split,57438,2025-07-07,Standar keamanan baru,38420000
+34401,PIN-N5ID-34401,Arsitektur,Pintu Kayu/HPL,82912,2025-07-07,Kontrak maintenance habis,41750000
+33212,LAM-MWRM-33212,Electrical,Lampu LED Bulb,60034,2022-08-07,Usia pakai habis,74330000
+35225,KLO-CS8S-35225,Plumbing,Kloset,60220,2024-08-07,Tidak ada spare part,13130000
+26231,TRA-H28P-26231,Electrical,Trafo IT UPS,89397,2024-08-07,Sudah obsolete,35950000
+37994,GRE-QDQO-37994,Mechanical,AC Split,91358,2025-08-07,Efisiensi energi,71440000
+46790,PIN-QZM9-46790,Arsitektur,Pintu Kayu/HPL,53700,2025-08-07,Upgrade kapasitas,3330000
+29068,MON-HKAQ-29068,Sistem Telekomunikasi Gedung,Monitor/Layar,89428,2023-09-07,Usia pakai habis,76160000
+39054,MEJ-DH1K-39054,Arsitektur,Meja kerja,76391,2023-09-07,Efisiensi energi,7610000
+48762,DAH-I2D7-48762,Security Sistem,Kamera CCTV,91312,2024-09-07,Usia pakai habis,42620000
+25732,ROR-XNDD-25732,Security Sistem,Ror Rate Of Rise Heat Detector,87290,2024-09-07,Standar keamanan baru,74900000
+50679,PEM-J4IB-50679,Plumbing,Pemipaan Air Bersih,87433,2024-09-07,Usia pakai habis,3840000
+35619,JET-N470-35619,Plumbing,Jet Shower,68729,2024-09-07,Upgrade kapasitas,14710000
+30384,LG-NRRC-30384,Mechanical,AC Cassette,72851,2024-09-07,Efisiensi energi,10380000
+35559,WIR-PQFO-35559,Electrical,Wiring System (Sistem Instalasi Kabel),73382,2025-09-07,Upgrade kapasitas,78400000
+3015,JOC-DM63-3015,Sistem Pemadam Kebakaran,Jockey Pump,70880,2025-09-07,Kontrak maintenance habis,10180000
+12707,LAM-F44A-12707,Electrical,Lampu Downlight,60012,2025-10-07,Upgrade kapasitas,16280000
+57047,WIR-CRFM-57047,Electrical,Wiring System (Sistem Instalasi Kabel),78800,2025-10-07,Kerusakan fatal tidak ekonomis diperbaiki,51630000
+38538,APA-AVYN-38538,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,60284,2023-11-07,Upgrade kapasitas,91650000
+55518,WIR-9WFF-55518,Electrical,Wiring System (Sistem Instalasi Kabel),80576,2025-11-07,Efisiensi energi,49890000
+18205,PEM-32IY-18205,Plumbing,Pemipaan Air Bersih,57164,2019-12-07,Tidak ada spare part,78180000
+47468,APA-Q606-47468,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,50472,2022-12-07,Usia pakai habis,65880000
+51746,APA-FO7X-51746,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,78060,2025-12-07,Sudah obsolete,82540000
+21256,PAN-PVWM-21256,Mechanical,AC Split,91103,2025-12-07,Usia pakai habis,85090000
+49581,APA-HICZ-49581,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,81458,2025-12-07,Upgrade kapasitas,43990000
+58625,HIK-MM1F-58625,Security Sistem,Kamera CCTV,74134,2024-01-08,Sudah obsolete,47930000
+1427,LG-9D0W-1427,Mechanical,AC Split,95070,2024-01-08,Sudah obsolete,35970000
+41324,YAM-YSAP-41324,Mechanical,Genset Bensin,95904,2025-01-08,Kontrak maintenance habis,16070000
+42794,PIN-XM32-42794,Arsitektur,Pintu Kayu/HPL,93005,2025-01-08,Upgrade kapasitas,31080000
+53542,DIN-UPAG-53542,Civil,Dinding Tembok/Mansonry,56984,2022-02-08,Upgrade kapasitas,70460000
+40016,DIN-Y3HS-40016,Civil,Dinding Tembok/Mansonry,93384,2024-02-08,Standar keamanan baru,25420000
+44750,MDP-BPB7-44750,Electrical,MDP,71049,2024-02-08,Kerusakan fatal tidak ekonomis diperbaiki,46560000
+11421,LG-3CT9-11421,Mechanical,AC Split,75860,2024-02-08,Efisiensi energi,61860000
+25512,PAB-K31H-25512,Sistem Telekomunikasi Gedung,PABX,93894,2024-02-08,Standar keamanan baru,79390000
+31465,DIN-BJ5O-31465,Civil,Dinding Tembok/Mansonry,79990,2024-02-08,Sudah obsolete,20730000
+22377,BOS-QOFE-22377,Security Sistem,Kamera CCTV,50094,2025-02-08,Sudah obsolete,69840000
+50124,PIN-LA61-50124,Arsitektur,Pintu Kayu/HPL,84149,2020-03-08,Upgrade kapasitas,82260000
+21920,UNI-W29N-21920,Electrical,Uninterruptible Power Supply,87658,2020-03-08,Standar keamanan baru,36770000
+12315,LAM-1675-12315,Electrical,Lampu LED,50549,2024-03-08,Kontrak maintenance habis,80010000
+2105,HON-W0FJ-2105,Security Sistem,DVR CCTV,59844,2024-03-08,Usia pakai habis,22200000
+35493,LEM-5KRN-35493,Arsitektur,Lemari/Loker,63139,2025-03-08,Tidak ada spare part,50510000
+8688,KDK-9SOY-8688,Ventilasi Sistem,Exhaust Fan,79096,2025-03-08,Sudah obsolete,67170000
+5011,DAI-VF8E-5011,Mechanical,AC Split,69063,2019-04-08,Usia pakai habis,30010000
+48695,DIN-9ENF-48695,Civil,Dinding Walpaper,71003,2022-04-08,Standar keamanan baru,97510000
+33842,PAN-6GQ3-33842,Ventilasi Sistem,Exhaust Fan,92857,2022-04-08,Sudah obsolete,46440000
+45687,DAH-721Q-45687,Security Sistem,Kamera CCTV,83669,2023-04-08,Kerusakan fatal tidak ekonomis diperbaiki,33940000
+37899,DAH-SX12-37899,Security Sistem,Kamera CCTV,67033,2024-04-08,Upgrade kapasitas,38580000
+48426,KUS-LQE4-48426,Arsitektur,"Kusen, Daun Pintu Berbahan Alumunium",56399,2024-04-08,Kontrak maintenance habis,22900000
+28957,GRE-IPLA-28957,Mechanical,AC Split,83316,2024-04-08,Standar keamanan baru,81150000
+30961,LAM-9MVM-30961,Electrical,Lampu LED Strip,59300,2025-04-08,Usia pakai habis,73730000
+25206,GRU-LE4C-25206,Mechanical,Pompa Boster,80981,2025-04-08,Efisiensi energi,22100000
+490,DAI-B7KR-0490,Mechanical,AC Cassette,89284,2025-04-08,Upgrade kapasitas,12380000
+47977,DIN-P566-47977,Civil,Dinding Tembok/Mansonry,52426,2024-05-08,Efisiensi energi,54760000
+50081,SHA-WO5B-50081,Mechanical,AC Split,83757,2024-05-08,Kerusakan fatal tidak ekonomis diperbaiki,86820000
+11916,HIK-ADVU-11916,Security Sistem,Kamera CCTV,98553,2025-05-08,Tidak ada spare part,80720000
+23277,LAM-R3SV-23277,Electrical,Lampu Wall sign,76622,2025-06-08,Sudah obsolete,63190000
+52618,DIN-8GJA-52618,Civil,"Dinding Partisi, GRC / Gypsum",54189,2025-06-08,Kerusakan fatal tidak ekonomis diperbaiki,8680000
+17443,ROO-EDA8-17443,Distribusi Air,Roof Tank,73069,2022-07-08,Upgrade kapasitas,73650000
+44670,OND-5A0F-44670,Plumbing,Kran Air,72378,2023-07-08,Kontrak maintenance habis,73010000
+45026,LEM-S7SR-45026,Arsitektur,Lemari/Loker,74428,2023-07-08,Efisiensi energi,19840000
+52646,APA-PJHJ-52646,Sistem Pemadam Kebakaran,APAR CO2,74906,2025-07-08,Kontrak maintenance habis,40140000
+46892,PAN-NSN0-46892,Ventilasi Sistem,Exhaust Fan,59095,2025-07-08,Usia pakai habis,73450000
+49516,UNI-HTTP-49516,Electrical,Uninterruptible Power Supply,87382,2019-08-08,Usia pakai habis,69950000
+51030,AXI-MBGI-51030,Security Sistem,Kamera CCTV,81571,2020-08-08,Tidak ada spare part,47680000
+58593,LAM-1PXR-58593,Electrical,Lampu TL LED,77507,2023-08-08,Tidak ada spare part,3120000
+40468,PEM-83BF-40468,Plumbing,Pemipaan Air Bersih,69713,2024-08-08,Tidak ada spare part,50000000
+17683,PEM-364Z-17683,Plumbing,Pemipaan Air Bersih,62401,2024-08-08,Tidak ada spare part,33890000
+47395,WI--3BNR-47395,Sistem Telekomunikasi Gedung,WI-FI,87007,2024-08-08,Tidak ada spare part,97540000
+46727,SAM-95RK-46727,Security Sistem,Monitor CCTV,54694,2024-08-08,Usia pakai habis,7230000
+49990,SIE-WUKC-49990,Sistem Proteksi Kebakaran Aktif,Smoke Detector,63466,2024-08-08,Kontrak maintenance habis,40830000
+34412,GRO-GNGQ-34412,Distribusi Air,Ground Water Tank,67666,2025-08-08,Efisiensi energi,38760000
+13636,MIT-RMQI-13636,Mechanical,AC Split,61867,2025-08-08,Efisiensi energi,21690000
+37525,PLA-2C5R-37525,Arsitektur,Plafon Gypsum / GRC,78674,2025-08-08,Kerusakan fatal tidak ekonomis diperbaiki,9640000
+59485,MET-7U9B-59485,Pencatatan Meter,Meter PLN,80876,2025-08-08,Efisiensi energi,44060000
+56739,LAT-4AS6-56739,Latihan Balakar,Latihan Balakar,62393,2025-08-08,Efisiensi energi,33830000
+27121,MIT-0HR8-27121,Mechanical,AC Split,89505,2025-08-08,Upgrade kapasitas,43430000
+48545,DIN-CFS9-48545,Civil,"Dinding Cladding (Alumunium Composit,/ACP,etc)",64877,2025-08-08,Sudah obsolete,83180000
+55173,LAN-MSDS-55173,Civil,Lantai Karpet,65009,2020-09-08,Kontrak maintenance habis,36580000
+49089,SHA-QTX6-49089,Mechanical,AC Split,63897,2023-09-08,Sudah obsolete,57410000
+30260,GRE-GZYI-30260,Mechanical,AC Split,80769,2023-09-08,Kerusakan fatal tidak ekonomis diperbaiki,57040000
+6776,SHA-U52A-6776,Mechanical,AC Split,73929,2024-09-08,Sudah obsolete,65460000
+55201,DIN-MTCP-55201,Civil,Dinding Tembok/Mansonry,73766,2024-09-08,Standar keamanan baru,73920000
+18447,PEM-HTBY-18447,Plumbing,Pemipaan Air Kotor,68719,2024-09-08,Kontrak maintenance habis,7530000
+476,GRE-QE37-0476,Mechanical,AC Split,95950,2024-09-08,Standar keamanan baru,76720000
+53107,FIN-F79W-53107,Security Sistem,Fingerprint,51366,2025-09-08,Kerusakan fatal tidak ekonomis diperbaiki,39230000
+45298,LAM-M2TT-45298,Electrical,Lampu Downlight,79140,2025-09-08,Sudah obsolete,4530000
+54207,LAM-7G6Z-54207,Electrical,Lampu LED Bulb,58716,2025-09-08,Upgrade kapasitas,53030000
+1435,OND-DWR1-1435,Plumbing,Kran Air,78445,2025-09-08,Efisiensi energi,5470000
+42634,MON-6BGP-42634,Sistem Telekomunikasi Gedung,Monitor/Layar,96349,2024-10-08,Kerusakan fatal tidak ekonomis diperbaiki,65190000
+56806,ATA-4XRO-56806,Civil,Atap Beton,76334,2024-10-08,Kontrak maintenance habis,15430000
+27134,HYU-E67G-27134,Sistem Transportasi Gedung,Lift Penumpang,68370,2024-10-08,Standar keamanan baru,8450000
+29146,SAM-BD8I-29146,Mechanical,AC Split,81641,2025-10-08,Kerusakan fatal tidak ekonomis diperbaiki,44320000
+18727,FLO-LOXX-18727,Plumbing,Floor Drain,80130,2025-10-08,Standar keamanan baru,15080000
+49151,NOT-10HX-49151,Sistem Proteksi Kebakaran Aktif,Smoke Detector,89062,2025-10-08,Kontrak maintenance habis,36250000
+18706,TOT-EHNU-18706,Plumbing,Wastafel,50744,2021-11-08,Sudah obsolete,36710000
+27885,CON-1SF6-27885,Electrical,Control Panel Penerangan,76221,2021-11-08,Upgrade kapasitas,16300000
+46445,KUS-88QA-46445,Arsitektur,Kusen Jendela Berbahan Kayu,88830,2021-11-08,Kerusakan fatal tidak ekonomis diperbaiki,65480000
+32730,LAM-XQFV-32730,Electrical,Lampu LED Bulb,81851,2025-11-08,Tidak ada spare part,83590000
+19459,DAI-HXR9-19459,Mechanical,AC Cassette,86448,2025-11-08,Standar keamanan baru,26920000
+46936,VIK-W9HR-46936,Sistem Pemadam Kebakaran,Sprinkler Otomatis,95042,2023-12-08,Kontrak maintenance habis,61090000
+36954,TRA-09JU-36954,Electrical,Trafo IT UPS,93853,2023-12-08,Tidak ada spare part,42840000
+23800,MIT-NSXX-23800,Mechanical,AC Cassette,62163,2023-12-08,Sudah obsolete,66920000
+3287,SHA-KGCI-3287,Mechanical,AC Split,87170,2024-12-08,Standar keamanan baru,33810000
+21165,PUS-H83X-21165,Security Sistem,Push Button,80191,2025-12-08,Kontrak maintenance habis,25300000
+56786,PIN-JR01-56786,Arsitektur,Pintu Biasa Berdaun Ganda,88113,2025-12-08,Kontrak maintenance habis,46470000
+5875,PEM-KAT0-5875,Plumbing,Pemipaan Air Bersih,56965,2022-01-09,Efisiensi energi,32670000
+6138,UNI-7UY0-6138,Electrical,Uninterruptible Power Supply,93904,2020-02-09,Sudah obsolete,15890000
+41395,PAB-L04C-41395,Sistem Telekomunikasi Gedung,PABX,68720,2022-02-09,Kontrak maintenance habis,48140000
+51445,PIN-HVLH-51445,Arsitektur,Pintu Kayu/HPL,78559,2022-02-09,Kontrak maintenance habis,60720000
+22939,LAM-EOH7-22939,Electrical,Lampu LED,58511,2023-02-09,Kerusakan fatal tidak ekonomis diperbaiki,62640000
+43236,AXI-15RL-43236,Security Sistem,Kamera CCTV,72637,2024-02-09,Standar keamanan baru,68710000
+16590,GRE-6JRN-16590,Mechanical,AC Split,68811,2024-02-09,Kontrak maintenance habis,94940000
+791,APA-80YI-0791,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,63035,2025-02-09,Tidak ada spare part,19510000
+28581,SAM-AHO2-28581,Mechanical,AC Split,79601,2018-03-09,Upgrade kapasitas,75630000
+53563,LAM-KE0K-53563,Electrical,Lampu TL,98210,2021-03-09,Sudah obsolete,62720000
+44701,HIK-K1VQ-44701,Security Sistem,Kamera CCTV,67245,2025-03-09,Kontrak maintenance habis,9830000
+59667,PIN-DI84-59667,Arsitektur,Pintu Kaca Hidrolik,51520,2025-03-09,Sudah obsolete,2090000
+40532,MEJ-D1NB-40532,Arsitektur,Meja kerja,99307,2023-04-09,Sudah obsolete,88300000
+2656,LAM-3VCP-2656,Electrical,Lampu Downlight,50270,2024-04-09,Usia pakai habis,3350000
+427,AXI-NRHZ-0427,Security Sistem,Kamera CCTV,71595,2024-04-09,Tidak ada spare part,78210000
+6484,KLO-3CZ6-6484,Plumbing,Kloset,64384,2025-04-09,Tidak ada spare part,21360000
+43123,DIN-IY77-43123,Civil,Dinding Kaca Non Tempered,90881,2025-04-09,Sudah obsolete,75840000
+45759,LAM-H1EM-45759,Electrical,Lampu LED Downlight,55124,2025-04-09,Kerusakan fatal tidak ekonomis diperbaiki,37520000
+39887,ACC-D8AK-39887,Security Sistem,Access Control ,60058,2025-04-09,Kerusakan fatal tidak ekonomis diperbaiki,96440000
+44096,HIK-C0NG-44096,Security Sistem,Kamera CCTV,51904,2020-05-09,Kontrak maintenance habis,65720000
+4379,GRE-F8YW-4379,Mechanical,AC Split,63035,2023-05-09,Usia pakai habis,83130000
+29296,SHA-5K8I-29296,Mechanical,AC Split,54613,2023-05-09,Standar keamanan baru,80140000
+39471,PIN-7LFI-39471,Arsitektur,Pintu Kaca Hidrolik,97457,2023-05-09,Usia pakai habis,48980000
+39888,LAM-7IKM-39888,Electrical,Lampu Downlight,85363,2023-05-09,Tidak ada spare part,40750000
+36755,OND-W99W-36755,Plumbing,Kran Air,95176,2024-05-09,Upgrade kapasitas,16450000
+47368,SAM-M36B-47368,Mechanical,AC Split,68007,2025-05-09,Usia pakai habis,70980000
+51079,EBA-6QBZ-51079,Mechanical,Pompa Transfer,71433,2020-06-09,Efisiensi energi,16300000
+24471,FCU-F7C3-24471,Mechanical,FCU,82532,2023-06-09,Tidak ada spare part,11160000
+33490,SAM-D08I-33490,Mechanical,AC Split,76170,2025-06-09,Kerusakan fatal tidak ekonomis diperbaiki,81300000
+30753,FAS-IHGZ-30753,Civil,Fasade Gedung,60409,2025-06-09,Efisiensi energi,43250000
+46723,LAN-LPQ1-46723,Sistem Telekomunikasi Gedung,LAN (Local Area Network),57755,2025-06-09,Efisiensi energi,11110000
+54628,PEM-XLBC-54628,Plumbing,Pemipaan Air Bersih,51944,2021-07-09,Kerusakan fatal tidak ekonomis diperbaiki,42330000
+3619,DAI-Y3U0-3619,Mechanical,AC Cassette,95900,2022-07-09,Efisiensi energi,80250000
+3573,GRE-YKX9-3573,Mechanical,AC Split,65758,2022-07-09,Usia pakai habis,53440000
+58043,DIN-HHY7-58043,Civil,Dinding Tembok/Mansonry,51186,2024-07-09,Tidak ada spare part,97970000
+39036,PIN-EJ2C-39036,Arsitektur,Pintu Besi,80563,2024-07-09,Upgrade kapasitas,37700000
+44391,LAM-Y2V3-44391,Electrical,Lampu Wall sign,50438,2025-07-09,Tidak ada spare part,5700000
+61095,ATA-MWYS-61095,Civil,Atap Galvalum,70817,2025-07-09,Efisiensi energi,68450000
+20653,DAI-FLHP-20653,Mechanical,AC Split,84012,2025-07-09,Kontrak maintenance habis,3850000
+22977,CUM-K37O-22977,Mechanical,Genset Diesel,93507,2018-08-09,Kerusakan fatal tidak ekonomis diperbaiki,34060000
+31575,LG-76H9-31575,Mechanical,AC Split,63603,2024-08-09,Sudah obsolete,91790000
+13550,MIT-94CL-13550,Mechanical,AC Split,73862,2024-08-09,Standar keamanan baru,49130000
+44198,DIN-4F03-44198,Civil,Dinding Tembok/Mansonry,84957,2024-08-09,Kerusakan fatal tidak ekonomis diperbaiki,34350000
+26310,PLA-88J4-26310,Arsitektur,Plafon Gypsum / GRC,63059,2023-09-09,Upgrade kapasitas,52270000
+15156,PAN-HSQ3-15156,Mechanical,AC Cassette,98448,2024-09-09,Kerusakan fatal tidak ekonomis diperbaiki,68140000
+28295,LAM-I0EK-28295,Electrical,Lampu TL,66158,2024-09-09,Kontrak maintenance habis,23310000
+55336,WIR-MOPY-55336,Electrical,Wiring System (Sistem Instalasi Kabel),67122,2025-09-09,Upgrade kapasitas,41220000
+20342,CON-P9IC-20342,Electrical,Control Panel AC,99632,2025-09-09,Sudah obsolete,84320000
+42911,DAH-0IRK-42911,Security Sistem,Kamera CCTV,56463,2024-10-09,Efisiensi energi,42620000
+44385,DIN-ZO4I-44385,Civil,Dinding Batu Alam,86327,2024-10-09,Upgrade kapasitas,58780000
+29755,PAN-HW20-29755,Ventilasi Sistem,Exhaust Fan,58122,2025-10-09,Kerusakan fatal tidak ekonomis diperbaiki,24360000
+53288,DIN-727N-53288,Civil,Dinding Tembok/Mansonry,87360,2025-10-09,Standar keamanan baru,81230000
+60814,CAT-Z6AB-60814,Mechanical,Genset Diesel,57427,2020-11-09,Upgrade kapasitas,99020000
+4230,AC -0IZE-4230,Mechanical,AC Ceiling,55244,2023-11-09,Kerusakan fatal tidak ekonomis diperbaiki,31790000
+56931,HIK-ETS6-56931,Security Sistem,Kamera CCTV,51723,2023-11-09,Tidak ada spare part,52170000
+16984,APA-XOBZ-16984,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,58048,2023-11-09,Kerusakan fatal tidak ekonomis diperbaiki,68960000
+5970,PAN-ZUID-5970,Mechanical,AC Split,67170,2024-11-09,Tidak ada spare part,90540000
+22714,DAH-RF0F-22714,Security Sistem,Kamera CCTV,96271,2024-11-09,Standar keamanan baru,30990000
+18090,GRO-TPDU-18090,Distribusi Air,Ground Water Tank,74591,2025-11-09,Tidak ada spare part,48710000
+58092,WIR-1BWJ-58092,Electrical,Wiring System (Sistem Instalasi Kabel),78424,2025-11-09,Upgrade kapasitas,13820000
+47203,PEM-AEHH-47203,Plumbing,Pemipaan Air Bersih,62387,2025-11-09,Tidak ada spare part,84460000
+39571,APA-PP01-39571,Sistem Pemadam Kebakaran,APAB CO2,55143,2018-12-09,Upgrade kapasitas,49230000
+17972,LAN-V7OV-17972,Civil,Lantai Beton,85504,2021-12-09,Standar keamanan baru,65330000
+50550,LEM-SX3V-50550,Arsitektur,Lemari/Loker,89582,2023-12-09,Usia pakai habis,45490000
+36244,GRE-KI72-36244,Mechanical,AC Split,54218,2024-12-09,Kerusakan fatal tidak ekonomis diperbaiki,70390000
+21381,SHA-RFC1-21381,Mechanical,AC Split,54318,2024-12-09,Standar keamanan baru,18590000
+53343,DIN-ZF6Y-53343,Civil,Dinding Tembok/Mansonry,64084,2025-12-09,Upgrade kapasitas,4410000
+35830,LAM-O6IU-35830,Electrical,Lampu LED Downlight,82661,2024-01-10,Efisiensi energi,58370000
+2395,UNI-4TND-2395,Electrical,Uninterruptible Power Supply,59220,2024-01-10,Usia pakai habis,34790000
+32247,AUT-UEE0-32247,Electrical,Automatic Transfer Switch (ATS Panel),89618,2024-01-10,Efisiensi energi,89900000
+27515,LAM-OREY-27515,Electrical,Lampu LED Downlight,57638,2025-01-10,Tidak ada spare part,78930000
+44487,SHA-INWA-44487,Mechanical,AC Split,73201,2024-03-10,Upgrade kapasitas,54700000
+14037,ATA-PN1Q-14037,Civil,Atap Beton,98103,2025-03-10,Standar keamanan baru,69910000
+6286,SAM-F97C-6286,Mechanical,AC Split,71004,2025-03-10,Usia pakai habis,48390000
+30580,MDB-ZU5Z-30580,Electrical,MDB,93697,2019-04-10,Standar keamanan baru,76910000
+59062,SDP-RP3Z-59062,Electrical,SDP,96380,2021-04-10,Kontrak maintenance habis,64620000
+1469,MIK-LV0G-1469,Sistem Telekomunikasi Gedung,Mikrofon,90378,2021-04-10,Kerusakan fatal tidak ekonomis diperbaiki,67170000
+18100,WIL-W6QG-18100,Mechanical,Pompa Transfer,81410,2021-04-10,Kerusakan fatal tidak ekonomis diperbaiki,73970000
+606,HIK-27H6-0606,Security Sistem,Kamera CCTV,97924,2025-04-10,Standar keamanan baru,21310000
+44648,ATA-EK4K-44648,Civil,Atap Spandek,91919,2020-05-10,Upgrade kapasitas,36350000
+31659,TOT-VDWY-31659,Plumbing,Kran Air,51611,2021-05-10,Standar keamanan baru,34940000
+43097,PIN-TWYY-43097,Arsitektur,Pintu Kaca Hidrolik,50465,2024-05-10,Kontrak maintenance habis,73810000
+49538,SAM-Q8J3-49538,Security Sistem,Monitor CCTV,98259,2024-05-10,Usia pakai habis,33350000
+22971,APA-5IDM-22971,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,64431,2024-05-10,Standar keamanan baru,89420000
+58599,PIN-0WNI-58599,Arsitektur,Pintu Besi,89307,2024-05-10,Kerusakan fatal tidak ekonomis diperbaiki,94480000
+56167,GRE-SPQK-56167,Mechanical,AC Split,67635,2021-06-10,Standar keamanan baru,79570000
+6856,LAN-ERP5-6856,Sistem Telekomunikasi Gedung,LAN (Local Area Network),59226,2022-06-10,Tidak ada spare part,40200000
+19318,GRE-9W60-19318,Mechanical,AC Split,99923,2023-06-10,Upgrade kapasitas,72040000
+49254,SHA-X543-49254,Mechanical,AC Split,86820,2023-06-10,Efisiensi energi,71950000
+50193,LAM-PUN3-50193,Electrical,Lampu Pylon Sign,60579,2024-06-10,Usia pakai habis,5270000
+31177,APA-9OIS-31177,Sistem Pemadam Kebakaran,APAR CO2,56015,2024-06-10,Sudah obsolete,14340000
+57669,HOS-Y1CT-57669,Sistem Pemadam Kebakaran,Hose Rack,94414,2025-06-10,Standar keamanan baru,68660000
+50994,LG-52HM-50994,Mechanical,AC Split,72543,2025-06-10,Standar keamanan baru,63380000
+31184,APA-QURO-31184,Sistem Pemadam Kebakaran,APAR CO2,53688,2025-06-10,Tidak ada spare part,99250000
+766,APA-NXI0-0766,Sistem Pemadam Kebakaran,APAR CO2,99105,2022-07-10,Kerusakan fatal tidak ekonomis diperbaiki,10210000
+20218,CON-T3M6-20218,Electrical,Control Panel AC,92337,2024-07-10,Kontrak maintenance habis,10510000
+26398,TOT-DBRE-26398,Plumbing,Kran Air,56738,2025-07-10,Kerusakan fatal tidak ekonomis diperbaiki,99100000
+43634,DIN-4APZ-43634,Civil,Dinding Tembok/Mansonry,80030,2025-07-10,Sudah obsolete,81480000
+44507,FAS-U1J0-44507,Civil,Fasade Gedung,60466,2018-08-10,Kerusakan fatal tidak ekonomis diperbaiki,76910000
+59478,MET-F451-59478,Pencatatan Meter,Meter PLN,59101,2018-08-10,Upgrade kapasitas,73730000
+33694,LAM-JFMO-33694,Electrical,Lampu Downlight,93610,2020-08-10,Usia pakai habis,44180000
+24459,FCU-G9UN-24459,Mechanical,FCU,88879,2022-08-10,Kontrak maintenance habis,89730000
+26393,SAM-LXM1-26393,Mechanical,AC Split,89824,2024-08-10,Efisiensi energi,33360000
+2326,PAN-LRW3-2326,Ventilasi Sistem,Exhaust Fan,87429,2025-08-10,Efisiensi energi,85640000
+49126,WIR-BRK1-49126,Electrical,Wiring System (Sistem Instalasi Kabel),59675,2025-08-10,Tidak ada spare part,36470000
+32583,LAM-LKFI-32583,Electrical,Lampu Downlight,65551,2025-08-10,Sudah obsolete,28490000
+33699,LAM-YT5C-33699,Electrical,Lampu Downlight,88998,2023-09-10,Sudah obsolete,83800000
+13862,FIN-PNFY-13862,Security Sistem,Fingerprint,92247,2024-09-10,Standar keamanan baru,93750000
+48498,PAN-SRX0-48498,Mechanical,AC Split,98152,2024-09-10,Standar keamanan baru,56270000
+22632,PIN-DCU7-22632,Arsitektur,Pintu Kayu/HPL,92729,2024-09-10,Kerusakan fatal tidak ekonomis diperbaiki,53910000
+14778,JOC-NQPO-14778,Sistem Pemadam Kebakaran,Jockey Pump,81138,2024-09-10,Sudah obsolete,35560000
+4235,SAM-XR5S-4235,Mechanical,AC Split,69061,2025-09-10,Kerusakan fatal tidak ekonomis diperbaiki,67360000
+31032,DAH-CDQM-31032,Security Sistem,Kamera CCTV,69771,2025-09-10,Upgrade kapasitas,31010000
+16025,UNI-47FM-16025,Electrical,Uninterruptible Power Supply,78304,2018-10-10,Efisiensi energi,52140000
+28745,PAB-VWC7-28745,Sistem Telekomunikasi Gedung,PABX,83639,2022-10-10,Kerusakan fatal tidak ekonomis diperbaiki,18260000
+36641,AME-6C18-36641,Plumbing,Wastafel,64848,2023-10-10,Standar keamanan baru,18930000
+6042,DAI-ZQE1-6042,Mechanical,AC Cassette,52111,2025-10-10,Sudah obsolete,45420000
+17823,PAN-44TZ-17823,Mechanical,AC Split,89075,2025-10-10,Kerusakan fatal tidak ekonomis diperbaiki,72390000
+2966,PUS-IMDD-2966,Security Sistem,Push Button,92511,2025-10-10,Efisiensi energi,96020000
+44740,MDP-AOHE-44740,Electrical,MDP,74815,2025-10-10,Standar keamanan baru,3920000
+18022,GRE-W45W-18022,Mechanical,AC Split,53190,2018-11-10,Sudah obsolete,32000000
+1491,KDK-TMV8-1491,Ventilasi Sistem,Exhaust Fan,65782,2022-11-10,Kontrak maintenance habis,89190000
+2458,MIT-U5PS-2458,Mechanical,AC Split,88257,2023-11-10,Tidak ada spare part,96050000
+11922,DAI-YM1R-11922,Mechanical,AC Split,96863,2025-11-10,Kontrak maintenance habis,26760000
+25825,GRE-GGE7-25825,Mechanical,AC Split,90642,2019-12-10,Upgrade kapasitas,37450000
+7649,PAN-07BC-7649,Mechanical,AC Split,59492,2020-12-10,Standar keamanan baru,8040000
+7370,DEU-X8PH-7370,Mechanical,Genset Diesel,58326,2020-12-10,Upgrade kapasitas,18940000
+54640,TOT-3G97-54640,Plumbing,Kran Air,69784,2021-12-10,Usia pakai habis,24920000
+42528,KUS-DLCY-42528,Arsitektur,"Kusen, Daun Pintu Berbahan Alumunium",89526,2021-12-10,Standar keamanan baru,20750000
+27098,LAM-1N01-27098,Electrical,Lampu Downlight,84000,2021-12-10,Kerusakan fatal tidak ekonomis diperbaiki,58460000
+41812,JET-4N3A-41812,Plumbing,Jet Shower,57654,2023-12-10,Sudah obsolete,84750000
+23153,PAN-5GWR-23153,Electrical,Panel PP-ME,84400,2024-12-10,Tidak ada spare part,82700000
+26299,FCU-G9QL-26299,Mechanical,FCU,81673,2024-12-10,Tidak ada spare part,53370000
+25393,BOS-KL1F-25393,Security Sistem,Kamera CCTV,97552,2025-12-10,Usia pakai habis,39980000
+796,MIT-DPZF-0796,Mechanical,AC Split,62903,2025-12-10,Kerusakan fatal tidak ekonomis diperbaiki,69350000
+47538,LAM-VCKL-47538,Electrical,Lampu Downlight,65687,2021-01-11,Kerusakan fatal tidak ekonomis diperbaiki,89810000
+30413,NOT-RZN0-30413,Sistem Proteksi Kebakaran Aktif,Smoke Detector,69767,2024-01-11,Standar keamanan baru,45570000
+33373,LAM-3DN1-33373,Electrical,Lampu LED,66042,2025-01-11,Kontrak maintenance habis,38010000
+58459,LAM-95TJ-58459,Electrical,Lampu LED Strip,99312,2025-01-11,Upgrade kapasitas,20450000
+59197,LAM-SXWV-59197,Electrical,Lampu LED Bulb,64198,2025-01-11,Upgrade kapasitas,93250000
+5763,GRO-F352-5763,Distribusi Air,Ground Water Tank,71021,2025-01-11,Standar keamanan baru,88110000
+48755,PIN-W0OR-48755,Arsitektur,Pintu Kayu/HPL,61133,2025-01-11,Efisiensi energi,32310000
+14714,DAI-XV9C-14714,Mechanical,AC Split,53124,2025-01-11,Standar keamanan baru,9970000
+50141,SAM-AC7R-50141,Mechanical,AC Split,88920,2021-02-11,Tidak ada spare part,11970000
+50113,MIT-KE4G-50113,Mechanical,AC Split,50439,2022-02-11,Sudah obsolete,63080000
+19328,ROO-I3OD-19328,Plumbing,Rooftank,91088,2025-02-11,Usia pakai habis,92540000
+38843,LAM-MNHO-38843,Electrical,Lampu TL,62847,2025-02-11,Upgrade kapasitas,39210000
+47323,MIT-KBRY-47323,Mechanical,AC Split,95570,2025-02-11,Upgrade kapasitas,4950000
+7654,SAM-Y1YE-7654,Mechanical,AC Split,81219,2021-03-11,Kontrak maintenance habis,2900000
+53708,HIK-BTEI-53708,Security Sistem,DVR CCTV,73018,2021-03-11,Kerusakan fatal tidak ekonomis diperbaiki,87850000
+45396,DIN-V6KS-45396,Civil,Dinding Tembok/Mansonry,51762,2024-03-11,Sudah obsolete,47390000
+52767,SAM-8KTR-52767,Mechanical,AC Split,62677,2025-03-11,Tidak ada spare part,34780000
+39904,OND-PWB6-39904,Plumbing,Kran Air,66953,2025-03-11,Usia pakai habis,95710000
+58744,DIN-VLWM-58744,Civil,Dinding Tembok/Mansonry,55418,2025-03-11,Upgrade kapasitas,22580000
+51525,ATA-9AG5-51525,Civil,Atap Kaca,99933,2023-04-11,Efisiensi energi,12320000
+44,MIT-ZRIX-0044,Mechanical,AC Split,90090,2024-04-11,Efisiensi energi,28200000
+35442,LEM-KBMP-35442,Arsitektur,Lemari/Loker,61318,2024-04-11,Standar keamanan baru,78850000
+46144,MEJ-4M5T-46144,Arsitektur,Meja kerja,98723,2024-04-11,Sudah obsolete,2200000
+40594,LAM-078U-40594,Electrical,Lampu Pylon Sign,63706,2025-04-11,Upgrade kapasitas,37740000
+38325,PAN-VEZJ-38325,Mechanical,AC Split,89510,2021-05-11,Kerusakan fatal tidak ekonomis diperbaiki,98160000
+5723,SHA-WPQS-5723,Mechanical,AC Split,56253,2023-05-11,Tidak ada spare part,80180000
+25226,SCH-45IJ-25226,Sistem Transportasi Gedung,Lift Executive,70442,2023-05-11,Efisiensi energi,81640000
+54109,DAH-BNDG-54109,Security Sistem,Kamera CCTV,75020,2024-05-11,Tidak ada spare part,67040000
+58312,HIK-CRTE-58312,Security Sistem,Kamera CCTV,57034,2024-05-11,Usia pakai habis,18700000
+311,GRO-2HHI-0311,Distribusi Air,Ground Water Tank,85326,2024-05-11,Tidak ada spare part,64570000
+33560,POM-BR3R-33560,Mechanical,Pompa Chiller Water Sekunder,90825,2024-05-11,Standar keamanan baru,27650000
+52915,PLA-97HL-52915,Arsitektur,Plafon Gypsum / GRC,74597,2025-05-11,Sudah obsolete,59230000
+30906,NOT-YQAP-30906,Sistem Proteksi Kebakaran Aktif,Smoke Detector,90644,2025-05-11,Kerusakan fatal tidak ekonomis diperbaiki,37280000
+21416,APA-KQ1N-21416,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,71132,2025-05-11,Tidak ada spare part,84440000
+18153,GRE-UKWO-18153,Mechanical,AC Split,58779,2025-05-11,Upgrade kapasitas,84710000
+32534,LAM-2VLQ-32534,Electrical,Lampu TL LED,67090,2025-05-11,Kontrak maintenance habis,70070000
+26887,LAM-U2D1-26887,Electrical,Lampu Downlight,78889,2025-05-11,Kontrak maintenance habis,29650000
+5009,AC -6WG6-5009,Mechanical,AC VRV,99503,2023-06-11,Upgrade kapasitas,17920000
+21102,DAI-GH4Y-21102,Mechanical,AC Split,82419,2024-06-11,Standar keamanan baru,37640000
+43753,CUM-8JTE-43753,Mechanical,Genset Diesel,95288,2024-06-11,Sudah obsolete,56580000
+44913,PIN-DY4K-44913,Arsitektur,Pintu Kaca Hidrolik,68791,2024-06-11,Kontrak maintenance habis,63420000
+28355,SAM-PMZK-28355,Security Sistem,Monitor CCTV,67575,2021-07-11,Tidak ada spare part,97690000
+52401,LAM-BUI1-52401,Electrical,Lampu Downlight,74212,2023-07-11,Efisiensi energi,39010000
+24573,FCU-B9E5-24573,Mechanical,FCU,74593,2025-07-11,Standar keamanan baru,48010000
+23570,PLA-0EU3-23570,Arsitektur,Plafon Gypsum / GRC,77778,2021-08-11,Standar keamanan baru,90390000
+18881,APA-GD4D-18881,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,80168,2022-08-11,Standar keamanan baru,11640000
+39466,UNI-UQYM-39466,Electrical,Uninterruptible Power Supply,72566,2023-08-11,Tidak ada spare part,39830000
+11907,SAM-N6C3-11907,Security Sistem,Monitor CCTV,59861,2024-08-11,Usia pakai habis,62150000
+36728,DEU-KU6G-36728,Mechanical,Genset Diesel,91107,2025-08-11,Efisiensi energi,47940000
+31167,APA-1SH2-31167,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,88766,2023-09-11,Kontrak maintenance habis,47670000
+3403,DAI-OEVZ-3403,Mechanical,AC Split,97870,2024-09-11,Sudah obsolete,27150000
+55902,LVM-JCIS-55902,Electrical,LVMDP,86009,2025-09-11,Standar keamanan baru,5900000
+3537,WIR-YN0B-3537,Electrical,Wiring System (Sistem Instalasi Kabel),80709,2025-09-11,Efisiensi energi,52860000
+40683,LG-PRZH-40683,Mechanical,AC Split,85820,2018-10-11,Sudah obsolete,43700000
+47525,MON-PSVJ-47525,Sistem Telekomunikasi Gedung,Monitor/Layar,69182,2020-10-11,Tidak ada spare part,95930000
+34035,LAM-94SC-34035,Electrical,Lampu Downlight,52859,2020-10-11,Standar keamanan baru,46830000
+31102,HIK-5YHJ-31102,Security Sistem,Kamera CCTV,81468,2020-10-11,Tidak ada spare part,45960000
+47848,SHA-BHGT-47848,Mechanical,AC Split,51505,2020-10-11,Kerusakan fatal tidak ekonomis diperbaiki,47070000
+55807,WAS-SX10-55807,Plumbing,Kran Air,74790,2021-10-11,Usia pakai habis,50960000
+59100,URI-ALA0-59100,Plumbing,Urinal,83777,2021-10-11,Tidak ada spare part,65610000
+18192,LAM-BTBG-18192,Electrical,Lampu Wall sign,96608,2023-10-11,Kerusakan fatal tidak ekonomis diperbaiki,41070000
+27755,UNI-W8X6-27755,Electrical,Uninterruptible Power Supply,80502,2023-10-11,Kontrak maintenance habis,99150000
+17774,PAN-0TM4-17774,Electrical,Panel UPS,64761,2024-10-11,Upgrade kapasitas,3690000
+35859,DAI-TGDA-35859,Mechanical,AC Split,63875,2024-10-11,Usia pakai habis,51960000
+56386,PLA-6LFO-56386,Arsitektur,Plafon Gypsum / GRC,78111,2025-10-11,Kontrak maintenance habis,15890000
+22120,WAS-W3OH-22120,Plumbing,Kran Air,79268,2021-11-11,Sudah obsolete,31090000
+31543,KLO-1NMP-31543,Plumbing,Kloset,95570,2022-11-11,Sudah obsolete,64110000
+25735,ROR-LSVR-25735,Security Sistem,Ror Rate Of Rise Heat Detector,51172,2022-11-11,Kontrak maintenance habis,76490000
+36793,MON-ANTA-36793,Sistem Telekomunikasi Gedung,Monitor/Layar,78889,2024-11-11,Upgrade kapasitas,22050000
+49181,PES-VWBX-49181,Sistem Telekomunikasi Gedung,Pesawat Telepon,59045,2025-11-11,Tidak ada spare part,29670000
+15854,LAM-6CLL-15854,Electrical,Lampu Downlight,97129,2025-11-11,Sudah obsolete,9940000
+2712,GRE-S6PF-2712,Mechanical,AC Split,87485,2023-12-11,Kerusakan fatal tidak ekonomis diperbaiki,7200000
+8952,APA-N8C2-8952,Sistem Pemadam Kebakaran,APAB Dry Powder,73598,2023-12-11,Kontrak maintenance habis,45180000
+53923,LAM-UO0T-53923,Electrical,Lampu Downlight,55303,2024-12-11,Standar keamanan baru,12050000
+32742,LAM-AIHM-32742,Electrical,Lampu LED Bulb,71885,2025-12-11,Usia pakai habis,84440000
+28579,SHA-NKUB-28579,Mechanical,AC Split,94124,2020-01-12,Tidak ada spare part,35240000
+55235,AXI-3F5O-55235,Security Sistem,Kamera CCTV,74143,2024-01-12,Standar keamanan baru,86040000
+60223,SAM-R6X7-60223,Mechanical,AC Split,64574,2024-01-12,Standar keamanan baru,45690000
+18656,MIT-3037-18656,Mechanical,AC Split,81793,2024-01-12,Kontrak maintenance habis,74050000
+8971,JET-MJOQ-8971,Plumbing,Jet Shower,83529,2024-01-12,Kontrak maintenance habis,27970000
+32451,INA-6UWA-32451,Plumbing,Wastafel,52065,2025-01-12,Standar keamanan baru,28360000
+5033,DAI-HGL0-5033,Mechanical,AC Split,87060,2025-01-12,Standar keamanan baru,21150000
+18970,CAT-ZXXX-18970,Mechanical,Genset Diesel,77342,2025-01-12,Tidak ada spare part,52140000
+23141,LAM-JG1F-23141,Electrical,Lampu Esensial,62416,2025-01-12,Kerusakan fatal tidak ekonomis diperbaiki,99940000
+18253,LAM-3N2S-18253,Electrical,Lampu Pylon Sign,85160,2024-02-12,Sudah obsolete,65980000
+55681,PAB-5E4N-55681,Sistem Telekomunikasi Gedung,PABX,89444,2025-02-12,Efisiensi energi,21150000
+1787,LG-XA8M-1787,Mechanical,AC Split,80273,2025-02-12,Upgrade kapasitas,69860000
+18128,LG-HRC8-18128,Mechanical,AC Split,92472,2020-03-12,Upgrade kapasitas,2070000
+35531,KDK-L8H4-35531,Ventilasi Sistem,Exhaust Fan,99858,2024-03-12,Tidak ada spare part,78150000
+52647,APA-LKIA-52647,Sistem Pemadam Kebakaran,APAR CO2,84296,2024-03-12,Kontrak maintenance habis,14290000
+28740,SAM-3TSW-28740,Mechanical,AC Split,87675,2024-03-12,Standar keamanan baru,93140000
+49077,ROL-A5XK-49077,Arsitektur,Rolling Door,56037,2025-03-12,Upgrade kapasitas,5970000
+45774,JET-SL5B-45774,Plumbing,Jet Shower,72752,2024-04-12,Kontrak maintenance habis,53240000
+35223,GRU-F6EA-35223,Mechanical,Pompa Air Tanah,64996,2024-04-12,Usia pakai habis,17920000
+30611,LAM-DC9E-30611,Electrical,Lampu Downlight,92738,2025-04-12,Efisiensi energi,22040000
+33532,LAM-NDJD-33532,Electrical,Lampu Downlight,61732,2025-04-12,Sudah obsolete,2000000
+5654,PEM-0NW0-5654,Plumbing,Pemipaan Air Kotor,82997,2022-05-12,Kontrak maintenance habis,76800000
+43217,ROL-7MWO-43217,Arsitektur,Rolling Door,72970,2024-05-12,Kontrak maintenance habis,21230000
+33056,PLA-CA50-33056,Arsitektur,Plafon Gypsum / GRC,79246,2025-05-12,Tidak ada spare part,2780000
+10332,MON-XNTM-10332,Sistem Telekomunikasi Gedung,Monitor/Layar,89255,2024-06-12,Kerusakan fatal tidak ekonomis diperbaiki,57640000
+29499,DIN-ECPB-29499,Civil,Dinding Tembok/Mansonry,70508,2024-06-12,Efisiensi energi,6930000
+55322,WIR-X3LB-55322,Electrical,Wiring System (Sistem Instalasi Kabel),85963,2025-06-12,Usia pakai habis,81420000
+31409,PLA-SQY0-31409,Arsitektur,Plafon,86621,2025-06-12,Standar keamanan baru,43990000
+12016,WIL-K1VL-12016,Mechanical,Pompa Transfer,52074,2025-06-12,Upgrade kapasitas,77570000
+32216,URI-DX0U-32216,Plumbing,Urinal,63728,2025-06-12,Sudah obsolete,53540000
+25146,LG-LZ8A-25146,Mechanical,AC Split,60771,2022-07-12,Kerusakan fatal tidak ekonomis diperbaiki,72190000
+25489,KDK-WY6R-25489,Ventilasi Sistem,Exhaust Fan,70606,2024-07-12,Standar keamanan baru,85770000
+60891,APA-ZZXT-60891,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,81843,2024-07-12,Tidak ada spare part,15900000
+2168,PES-AOZU-2168,Sistem Telekomunikasi Gedung,Pesawat Telepon,77301,2024-07-12,Kerusakan fatal tidak ekonomis diperbaiki,94160000
+15576,APA-9PY0-15576,Sistem Pemadam Kebakaran,APAR CO2,58976,2024-07-12,Sudah obsolete,61310000
+31442,PIN-VPPF-31442,Arsitektur,Pintu Kayu/HPL,92212,2019-08-12,Tidak ada spare part,79890000
+57641,HIK-1GMM-57641,Security Sistem,Kamera CCTV,80360,2022-08-12,Usia pakai habis,82010000
+42579,FIN-0QTA-42579,Security Sistem,Fingerprint,96066,2024-08-12,Usia pakai habis,75990000
+27875,LG-V48U-27875,Mechanical,AC Split,91558,2024-08-12,Tidak ada spare part,80310000
+8946,ELE-8ITO-8946,Sistem Pemadam Kebakaran,Electric Fire Pump,62047,2024-08-12,Kontrak maintenance habis,56530000
+35121,URI-REJJ-35121,Plumbing,Urinal,99352,2024-08-12,Kontrak maintenance habis,87850000
+40987,PAN-OJ0N-40987,Ventilasi Sistem,Exhaust Fan,55707,2025-08-12,Upgrade kapasitas,96110000
+40986,PAN-BXOA-40986,Ventilasi Sistem,Exhaust Fan,62126,2025-08-12,Sudah obsolete,56730000
+42749,DIN-C1UF-42749,Civil,Dinding Tembok/Mansonry,94009,2020-09-12,Standar keamanan baru,94210000
+18890,GRE-B3J4-18890,Mechanical,AC Split,72271,2024-09-12,Usia pakai habis,21710000
+7570,GRE-E5TM-7570,Mechanical,AC Split,57829,2024-09-12,Standar keamanan baru,69550000
+9000,LG-DISZ-9000,Mechanical,AC Split,96747,2018-10-12,Usia pakai habis,66060000
+53876,LAM-ULZN-53876,Electrical,Lampu TL,74376,2021-10-12,Tidak ada spare part,39860000
+37366,UNI-IWNR-37366,Electrical,Uninterruptible Power Supply,69816,2023-10-12,Tidak ada spare part,11730000
+28255,DIN-388H-28255,Civil,Dinding Tembok/Mansonry,52926,2023-10-12,Tidak ada spare part,36150000
+40884,LEM-GX4N-40884,Arsitektur,Lemari/Loker,69838,2023-10-12,Usia pakai habis,98880000
+18450,PLA-21YT-18450,Arsitektur,Plafon,96716,2024-10-12,Upgrade kapasitas,73280000
+17125,SAM-XMY8-17125,Mechanical,AC Split,79564,2024-10-12,Kontrak maintenance habis,22010000
+52841,DIN-K9IZ-52841,Civil,Dinding Tembok/Mansonry,78433,2025-10-12,Standar keamanan baru,67410000
+43810,KUR-ZNBX-43810,Arsitektur,Kursi,79990,2025-10-12,Kontrak maintenance habis,19620000
+59599,MEJ-6M8U-59599,Arsitektur,Meja kerja,68244,2020-11-12,Usia pakai habis,20010000
+21065,LAM-G355-21065,Electrical,Lampu LED,73818,2021-11-12,Efisiensi energi,51020000
+26684,SAM-P1VY-26684,Mechanical,AC Split,69591,2022-11-12,Standar keamanan baru,14000000
+6043,MIT-VB2O-6043,Mechanical,AC Cassette,64666,2024-11-12,Sudah obsolete,64350000
+35815,LAM-1GX2-35815,Electrical,Lampu LED Downlight,61463,2024-11-12,Kontrak maintenance habis,54230000
+55086,PAN-FROV-55086,Ventilasi Sistem,Exhaust Fan,50237,2024-11-12,Upgrade kapasitas,50860000
+35165,AME-7N6M-35165,Plumbing,Wastafel,92584,2025-11-12,Kontrak maintenance habis,16930000
+53846,LAM-4X0H-53846,Electrical,Lampu Downlight,51576,2025-11-12,Kerusakan fatal tidak ekonomis diperbaiki,19950000
+32175,LAM-X1RU-32175,Electrical,Lampu Esensial,78570,2020-12-12,Kerusakan fatal tidak ekonomis diperbaiki,13730000
+31906,GRE-DBP0-31906,Mechanical,AC Split,77808,2023-12-12,Kontrak maintenance habis,81220000
+33965,KUR-BGZV-33965,Arsitektur,Kursi,86746,2024-12-12,Efisiensi energi,43190000
+17352,CON-5WYI-17352,Electrical,Control Panel Penerangan,80499,2025-12-12,Tidak ada spare part,48550000
+30226,PIN-YSGX-30226,Arsitektur,Pintu Kayu/HPL,66468,2023-01-13,Tidak ada spare part,30430000
+39822,ROO-OX3A-39822,Distribusi Air,Roof Tank,79995,2024-01-13,Tidak ada spare part,57030000
+31953,HIK-7B43-31953,Security Sistem,Monitor CCTV,87885,2024-01-13,Kerusakan fatal tidak ekonomis diperbaiki,83990000
+41362,WIR-CLVO-41362,Electrical,Wiring System (Sistem Instalasi Kabel),53367,2025-01-13,Tidak ada spare part,68370000
+44857,MET-W6DI-44857,Pencatatan Meter,Meter PLN,97422,2019-02-13,Standar keamanan baru,52470000
+60231,AC -DJ76-60231,Mechanical,AC VRV,74068,2020-02-13,Sudah obsolete,47230000
+11880,LAM-8JI2-11880,Electrical,Lampu Pylon Sign,55865,2020-02-13,Efisiensi energi,77340000
+31165,APA-SOFJ-31165,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,66518,2022-02-13,Standar keamanan baru,49250000
+22532,GRU-P5HF-22532,Mechanical,Pompa Air Tanah,63052,2023-02-13,Standar keamanan baru,22230000
+52758,DIN-5WY5-52758,Civil,"Dinding Partisi, GRC / Gypsum",97854,2024-02-13,Kontrak maintenance habis,87880000
+16529,DIN-79T5-16529,Civil,Dinding Tembok/Mansonry,55379,2025-02-13,Usia pakai habis,43890000
+46679,LAM-HIER-46679,Electrical,Lampu LED,56039,2021-03-13,Usia pakai habis,16630000
+29821,DIN-GUCQ-29821,Civil,Dinding Tembok/Mansonry,70327,2023-03-13,Usia pakai habis,35420000
+17862,ATA-CBK1-17862,Civil,Atap Beton,93086,2024-03-13,Usia pakai habis,86410000
+7759,LAM-RU9R-7759,Electrical,Lampu Downlight,52527,2024-03-13,Tidak ada spare part,91600000
+12804,DAI-JOPD-12804,Mechanical,AC Cassette,53023,2024-03-13,Efisiensi energi,6890000
+32646,LAM-J69S-32646,Electrical,Lampu LED Bulb,64149,2025-03-13,Sudah obsolete,81190000
+48653,LAM-5DIL-48653,Electrical,Lampu LED Bulb,75149,2025-03-13,Tidak ada spare part,49450000
+50546,SAM-UZWM-50546,Security Sistem,Monitor CCTV,93609,2022-04-13,Tidak ada spare part,6250000
+4190,PAN-V3V4-4190,Ventilasi Sistem,Exhaust Fan,80679,2023-04-13,Standar keamanan baru,56470000
+32462,DIN-YUWA-32462,Civil,Dinding Tembok/Mansonry,89605,2023-04-13,Standar keamanan baru,72770000
+26967,SAM-UJXG-26967,Mechanical,AC Split,97149,2023-04-13,Upgrade kapasitas,47430000
+20713,SAM-IPI6-20713,Mechanical,AC Split,73594,2024-04-13,Kerusakan fatal tidak ekonomis diperbaiki,57220000
+21466,MIT-5FNE-21466,Mechanical,AC Split,59226,2024-04-13,Usia pakai habis,87320000
+29847,APA-2LCP-29847,Sistem Pemadam Kebakaran,APAR Foam,57151,2025-04-13,Upgrade kapasitas,22270000
+31792,MEJ-HQRD-31792,Arsitektur,Meja kerja,97460,2022-05-13,Upgrade kapasitas,67070000
+60311,MON-S8B9-60311,Sistem Telekomunikasi Gedung,Monitor/Layar,76921,2024-05-13,Sudah obsolete,15770000
+40720,LAM-28QH-40720,Electrical,Lampu LED Bulb,55012,2024-05-13,Efisiensi energi,51240000
+53198,DIN-M62R-53198,Civil,Dinding Kaca Tempered,71306,2025-05-13,Kerusakan fatal tidak ekonomis diperbaiki,8660000
+24064,LAN-29P0-24064,Civil,Lantai Karpet,94777,2025-05-13,Standar keamanan baru,46740000
+42141,LG-V69O-42141,Mechanical,AC Split,72286,2025-05-13,Kontrak maintenance habis,12710000
+53335,DIN-TIF9-53335,Civil,"Dinding Partisi, GRC / Gypsum",88203,2020-06-13,Usia pakai habis,88550000
+44843,ATA-T3SI-44843,Civil,Atap Seng,98335,2023-06-13,Usia pakai habis,67580000
+15457,LAM-WLLJ-15457,Electrical,Lampu Pylon Sign,67147,2024-06-13,Tidak ada spare part,64200000
+7394,PAN-QRH8-7394,Mechanical,AC Split,51856,2025-06-13,Efisiensi energi,48680000
+22767,NOZ-1I5R-22767,Sistem Pemadam Kebakaran,Nozzle,63523,2025-06-13,Standar keamanan baru,40910000
+25710,KIC-R5PX-25710,Security Sistem,Kick Bar,81990,2024-07-13,Upgrade kapasitas,70750000
+41399,DIN-BIC3-41399,Civil,Dinding Tembok/Mansonry,75352,2025-07-13,Kerusakan fatal tidak ekonomis diperbaiki,64490000
+53533,LAN-AI2K-53533,Civil,Lantai Karpet,77414,2025-07-13,Upgrade kapasitas,74630000
+60017,PIN-G4AD-60017,Arsitektur,Pintu Kayu/HPL,64646,2025-07-13,Efisiensi energi,21200000
+2927,APA-LZWQ-2927,Sistem Pemadam Kebakaran,APAR CO2,98814,2025-07-13,Standar keamanan baru,40520000
+30047,PAN-YAJG-30047,Ventilasi Sistem,Exhaust Fan,83475,2023-08-13,Kerusakan fatal tidak ekonomis diperbaiki,40030000
+56568,DAI-891T-56568,Mechanical,AC Split,72798,2024-08-13,Kerusakan fatal tidak ekonomis diperbaiki,38370000
+40142,LAM-HCD4-40142,Electrical,Lampu LED Bulb,69560,2024-08-13,Efisiensi energi,84060000
+26937,MIT-YGZS-26937,Mechanical,AC Split,88073,2024-08-13,Efisiensi energi,48250000
+46377,DIN-800O-46377,Civil,Dinding Tembok/Mansonry,80474,2025-08-13,Upgrade kapasitas,25370000
+3128,HOC-NH83-3128,Sistem Proteksi Kebakaran Aktif,Smoke Detector,90508,2025-08-13,Kerusakan fatal tidak ekonomis diperbaiki,99600000
+50576,ATA-WU5A-50576,Civil,Atap Aspal,54266,2019-09-13,Tidak ada spare part,49780000
+55931,LAM-06HA-55931,Electrical,Lampu TL LED,54411,2023-09-13,Upgrade kapasitas,37340000
+55193,DIN-F9YS-55193,Civil,Dinding Granit,86948,2024-09-13,Efisiensi energi,72540000
+39028,PLA-PAXQ-39028,Arsitektur,Plafon,62582,2025-09-13,Sudah obsolete,75100000
+19717,GRE-8HCK-19717,Mechanical,AC Split,72953,2025-09-13,Usia pakai habis,64650000
+35362,MEJ-8IBF-35362,Arsitektur,Meja kerja,63205,2025-09-13,Efisiensi energi,39440000
+49069,PIN-OIM3-49069,Arsitektur,Pintu Kayu/HPL,75340,2025-09-13,Kontrak maintenance habis,64940000
+26146,PEM-JAYK-26146,Plumbing,Pemipaan Air Kotor,88701,2025-09-13,Standar keamanan baru,12870000
+25231,CUM-HCYN-25231,Mechanical,Genset Diesel,66394,2025-09-13,Kerusakan fatal tidak ekonomis diperbaiki,46210000
+53158,SHA-4DO3-53158,Mechanical,AC Split,93596,2020-10-13,Sudah obsolete,71760000
+3961,LAM-9N6N-3961,Electrical,Lampu LED,70334,2022-10-13,Kontrak maintenance habis,14790000
+47264,WIR-T95T-47264,Electrical,Wiring System (Sistem Instalasi Kabel),76812,2024-10-13,Standar keamanan baru,24000000
+39988,ROO-CR1Y-39988,Plumbing,Rooftank,67167,2024-10-13,Kerusakan fatal tidak ekonomis diperbaiki,22100000
+47639,WAS-BDUK-47639,Mechanical,Pompa Air Tanah,59274,2024-10-13,Efisiensi energi,42950000
+35602,WIR-UYCS-35602,Electrical,Wiring System (Sistem Instalasi Kabel),96788,2023-11-13,Kerusakan fatal tidak ekonomis diperbaiki,60550000
+57537,LAM-P515-57537,Electrical,Lampu Downlight,98324,2025-11-13,Efisiensi energi,25640000
+22359,LAM-98X4-22359,Electrical,Lampu LED,84118,2025-11-13,Usia pakai habis,98370000
+57162,GRO-X2DB-57162,Distribusi Air,Ground Water Tank,85340,2024-12-13,Upgrade kapasitas,62200000
+51181,SAM-EKQ7-51181,Mechanical,AC Split,88682,2024-12-13,Usia pakai habis,95030000
+57073,LAM-VJIM-57073,Electrical,Lampu LED Downlight,99485,2024-12-13,Tidak ada spare part,51010000
+26911,EBA-GNTG-26911,Mechanical,Pompa Boster,69659,2024-12-13,Efisiensi energi,69410000
+18880,CON-6Q33-18880,Electrical,Control Panel Pompa Transfer,96709,2025-12-13,Standar keamanan baru,41490000
+42292,DAH-LKRR-42292,Security Sistem,Kamera CCTV,72247,2025-12-13,Sudah obsolete,95580000
+21172,KLO-HOBI-21172,Plumbing,Kloset,88354,2025-12-13,Upgrade kapasitas,73200000
+17610,HOC-EQ61-17610,Sistem Proteksi Kebakaran Aktif,Smoke Detector,70494,2022-01-14,Kerusakan fatal tidak ekonomis diperbaiki,59640000
+22419,SAM-ZPHU-22419,Mechanical,AC Split,81911,2022-01-14,Sudah obsolete,21640000
+47379,JET-HO01-47379,Plumbing,Jet Shower,82436,2023-01-14,Standar keamanan baru,46510000
+59053,MET-PL3L-59053,Pencatatan Meter,Meter PLN,97685,2023-01-14,Kerusakan fatal tidak ekonomis diperbaiki,58740000
+17503,SHA-Q35R-17503,Mechanical,AC Split,61107,2023-01-14,Kontrak maintenance habis,65080000
+56072,LEM-O5H7-56072,Arsitektur,Lemari/Loker,77657,2024-01-14,Sudah obsolete,65590000
+33203,LAM-DQYP-33203,Electrical,Lampu LED Bulb,84937,2024-01-14,Tidak ada spare part,21990000
+5225,PEM-R1JU-5225,Plumbing,Pemipaan Air Kotor,51113,2025-01-14,Standar keamanan baru,11000000
+53190,LAM-GRDS-53190,Electrical,Lampu Pylon Sign,56502,2025-01-14,Sudah obsolete,24300000
+43159,SPE-J12A-43159,Sistem Telekomunikasi Gedung,Speaker,69282,2025-01-14,Standar keamanan baru,64960000
+34329,PIN-5FR0-34329,Arsitektur,Pintu Kayu/HPL,55303,2025-01-14,Kerusakan fatal tidak ekonomis diperbaiki,10370000
+34830,DAI-BK4R-34830,Mechanical,AC Split,58073,2024-02-14,Standar keamanan baru,2530000
+56879,MEJ-23M1-56879,Arsitektur,Meja kerja,98111,2024-02-14,Standar keamanan baru,14690000
+26722,GRE-L7HF-26722,Mechanical,AC Split,82922,2024-02-14,Kontrak maintenance habis,2340000
+3146,HIK-1YNS-3146,Security Sistem,Kamera CCTV,57061,2024-02-14,Kerusakan fatal tidak ekonomis diperbaiki,75550000
+42310,LAM-HWVJ-42310,Electrical,Lampu LED Downlight,59692,2025-02-14,Tidak ada spare part,81060000
+18994,DEU-ZYUC-18994,Mechanical,Genset Diesel,52144,2025-02-14,Usia pakai habis,26620000
+29035,GRE-RZMY-29035,Mechanical,AC Split,86041,2025-02-14,Standar keamanan baru,13530000
+52939,PIN-57VP-52939,Arsitektur,Pintu Besi,73686,2025-02-14,Kontrak maintenance habis,71130000
+44678,LAM-U6NZ-44678,Electrical,Lampu Esensial,94992,2025-02-14,Sudah obsolete,35520000
+3751,MIT-O653-3751,Mechanical,AC Split,96600,2025-02-14,Efisiensi energi,20890000
+44286,GRE-X1T4-44286,Mechanical,AC Split,51664,2020-03-14,Kontrak maintenance habis,18010000
+51304,CUM-Y3XA-51304,Mechanical,Genset Diesel,51493,2020-03-14,Kontrak maintenance habis,28240000
+41543,EBA-3CQF-41543,Mechanical,Pompa Boster,80315,2022-03-14,Upgrade kapasitas,25020000
+431,HIK-QMMU-0431,Security Sistem,Kamera CCTV,65321,2022-03-14,Usia pakai habis,70960000
+19746,HIK-V0ZT-19746,Security Sistem,Kamera CCTV,75985,2023-03-14,Upgrade kapasitas,94550000
+53470,OND-TJZR-53470,Plumbing,Kran Air,82129,2024-03-14,Sudah obsolete,70770000
+39238,PIN-SG9O-39238,Arsitektur,Pintu Besi,82833,2020-04-14,Kerusakan fatal tidak ekonomis diperbaiki,45750000
+45109,PAM-BT1O-45109,Distribusi Air,PAM,78297,2021-04-14,Efisiensi energi,62770000
+3325,PAN-MZ9K-3325,Mechanical,AC Cassette,67709,2021-04-14,Kerusakan fatal tidak ekonomis diperbaiki,29820000
+42279,AHU-II48-42279,Mechanical,AHU,96888,2023-04-14,Kerusakan fatal tidak ekonomis diperbaiki,16990000
+20693,PAN-L8DR-20693,Mechanical,AC Split,68100,2024-04-14,Standar keamanan baru,18230000
+6265,APA-R7HH-6265,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,93648,2024-04-14,Sudah obsolete,85070000
+2741,DIN-TAIP-2741,Civil,Dinding Tembok/Mansonry,59605,2024-04-14,Standar keamanan baru,85300000
+43013,PAN-FHT3-43013,Mechanical,AC Split,56193,2024-04-14,Standar keamanan baru,18460000
+16831,KRI-W49B-16831,Ventilasi Sistem,Exhaust Fan,73037,2025-04-14,Sudah obsolete,59790000
+42844,GRE-YXTX-42844,Mechanical,AC Split,93948,2025-04-14,Usia pakai habis,79620000
+19182,PIN-I63A-19182,Arsitektur,Pintu Kayu/HPL,55065,2025-04-14,Kontrak maintenance habis,32860000
+23368,PAN-9G08-23368,Ventilasi Sistem,Exhaust Fan,97122,2025-04-14,Efisiensi energi,21430000
+26873,LAM-WL3M-26873,Electrical,Lampu Downlight,75951,2025-04-14,Standar keamanan baru,42130000
+52010,PIN-TRV5-52010,Arsitektur,Pintu Kaca Hidrolik,77354,2019-05-14,Standar keamanan baru,11870000
+33546,PAN-Y6U8-33546,Mechanical,AC Split,97193,2021-05-14,Efisiensi energi,97040000
+56532,MON-9V69-56532,Sistem Telekomunikasi Gedung,Monitor/Layar,59573,2022-05-14,Standar keamanan baru,75630000
+17596,PES-SRAO-17596,Sistem Telekomunikasi Gedung,Pesawat Telepon,84972,2023-05-14,Standar keamanan baru,28660000
+828,GRE-SIC4-0828,Mechanical,AC Split,77352,2023-05-14,Standar keamanan baru,24120000
+60216,GRE-0GE3-60216,Mechanical,AC Split,51991,2024-05-14,Kontrak maintenance habis,90280000
+16557,ACC-DDMV-16557,Security Sistem,Access Control ,82967,2025-05-14,Tidak ada spare part,49470000
+41530,SDP-6DCX-41530,Electrical,SDP,62815,2025-05-14,Usia pakai habis,99670000
+49956,SAM-R411-49956,Mechanical,AC Split,84160,2021-06-14,Tidak ada spare part,89040000
+40165,SAM-XNEU-40165,Mechanical,AC Split,58722,2021-06-14,Standar keamanan baru,46420000
+21409,KDK-CG63-21409,Ventilasi Sistem,Exhaust Fan,70833,2023-06-14,Efisiensi energi,57060000
+46584,APA-XM48-46584,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,78031,2024-06-14,Efisiensi energi,30390000
+41730,DAI-CC7T-41730,Mechanical,AC Split,51478,2024-06-14,Sudah obsolete,15890000
+48944,PAV-O4I5-48944,Civil,Paving Block,93424,2025-06-14,Standar keamanan baru,8670000
+585,LAM-0O4V-0585,Electrical,Lampu Backlit Sign,54766,2025-06-14,Usia pakai habis,45710000
+1660,SHA-C57P-1660,Mechanical,AC Split,76570,2019-07-14,Upgrade kapasitas,75670000
+57749,APA-SBJY-57749,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,60129,2020-07-14,Efisiensi energi,7220000
+46771,ATA-YX1V-46771,Civil,Atap Galvalum,63273,2021-07-14,Standar keamanan baru,43820000
+1085,TOT-KDNG-1085,Plumbing,Kran Air,91119,2023-07-14,Sudah obsolete,2310000
+43706,AXI-QX9L-43706,Security Sistem,Kamera CCTV,82972,2024-07-14,Kerusakan fatal tidak ekonomis diperbaiki,21370000
+50105,LAM-W28U-50105,Electrical,Lampu LED,79538,2024-07-14,Efisiensi energi,89490000
+11460,SAM-TOF1-11460,Mechanical,AC Split,84099,2024-07-14,Upgrade kapasitas,88820000
+51776,LAM-0JXG-51776,Electrical,Lampu Downlight,71074,2024-07-14,Kerusakan fatal tidak ekonomis diperbaiki,86260000
+32269,LAM-QQ0M-32269,Electrical,Lampu TL LED,57508,2024-07-14,Efisiensi energi,18490000
+15165,GRE-2MX8-15165,Mechanical,AC Split,68250,2025-07-14,Usia pakai habis,8620000
+1915,LAM-RP7B-1915,Electrical,Lampu TL,57250,2024-08-14,Kerusakan fatal tidak ekonomis diperbaiki,14290000
+60636,DIN-POOH-60636,Civil,Dinding Keramik/Mozaik,99824,2025-08-14,Kerusakan fatal tidak ekonomis diperbaiki,90970000
+46478,JET-EWDD-46478,Plumbing,Jet Shower,78883,2024-09-14,Upgrade kapasitas,84820000
+5243,LG-5FDL-5243,Mechanical,AC Split,99411,2024-09-14,Standar keamanan baru,18020000
+46911,HOC-VY4Q-46911,Sistem Proteksi Kebakaran Aktif,Smoke Detector,51334,2024-09-14,Efisiensi energi,65430000
+28662,LG-GMZP-28662,Mechanical,AC Split,64177,2025-09-14,Kerusakan fatal tidak ekonomis diperbaiki,45330000
+29159,LAM-S65I-29159,Electrical,Lampu LED Downlight,66661,2025-09-14,Tidak ada spare part,34130000
+42451,DIN-MTM8-42451,Civil,Dinding Tembok/Mansonry,65034,2025-09-14,Standar keamanan baru,56320000
+30966,LAM-AYBN-30966,Electrical,Lampu Pylon Sign,80769,2025-09-14,Tidak ada spare part,32840000
+51722,LAM-YOHH-51722,Electrical,Lampu Neon Sign,88126,2023-10-14,Usia pakai habis,46530000
+58343,APA-SWJY-58343,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,98049,2023-10-14,Usia pakai habis,7170000
+1621,MIT-FUQV-1621,Mechanical,AC Split,65409,2024-10-14,Usia pakai habis,92970000
+48235,LAM-1D50-48235,Electrical,Lampu LED,63221,2024-10-14,Kerusakan fatal tidak ekonomis diperbaiki,92770000
+56597,PLA-IM6C-56597,Arsitektur,Plafon Gypsum / GRC,76191,2024-10-14,Tidak ada spare part,71680000
+56366,PLA-T0UD-56366,Arsitektur,Plafon Gypsum / GRC,78487,2025-10-14,Kerusakan fatal tidak ekonomis diperbaiki,55510000
+14952,SAM-3BW2-14952,Mechanical,AC Split,66504,2025-10-14,Usia pakai habis,84240000
+5957,PLA-JS3F-5957,Arsitektur,Plafon,97223,2020-11-14,Tidak ada spare part,26250000
+31398,PIN-G8BS-31398,Arsitektur,Pintu Kaca Hidrolik,84739,2022-11-14,Upgrade kapasitas,33910000
+24098,SAM-K3QH-24098,Mechanical,AC Split,75717,2024-11-14,Usia pakai habis,93000000
+41331,PLA-KTO0-41331,Arsitektur,Plafon Gypsum / GRC,68346,2024-11-14,Usia pakai habis,19640000
+39596,PLA-KTL6-39596,Arsitektur,Plafon Gypsum / GRC,82901,2024-11-14,Kerusakan fatal tidak ekonomis diperbaiki,44960000
+29218,COM-374N-29218,Mechanical,Commercial STP,85325,2024-11-14,Standar keamanan baru,96360000
+42686,DIN-LBOQ-42686,Civil,Dinding Tembok/Mansonry,54729,2025-11-14,Sudah obsolete,48980000
+60178,LAN-1Z8O-60178,Sistem Telekomunikasi Gedung,LAN (Local Area Network),95581,2020-12-14,Standar keamanan baru,29230000
+45310,APA-EJ74-45310,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,91740,2021-12-14,Tidak ada spare part,70790000
+38742,DIN-LA06-38742,Civil,Dinding Tembok/Mansonry,76388,2021-12-14,Kerusakan fatal tidak ekonomis diperbaiki,87570000
+40920,SAM-HMT6-40920,Mechanical,AC Split,54767,2022-12-14,Upgrade kapasitas,18270000
+29964,DAI-5G65-29964,Mechanical,AC Split,77259,2022-12-14,Kerusakan fatal tidak ekonomis diperbaiki,4870000
+46206,PIN-QJRX-46206,Arsitektur,Pintu Kayu/HPL,94934,2024-12-14,Kerusakan fatal tidak ekonomis diperbaiki,53990000
+39902,AXI-A66Y-39902,Security Sistem,Kamera CCTV,67220,2025-12-14,Kerusakan fatal tidak ekonomis diperbaiki,10200000
+13117,HON-IRIC-13117,Security Sistem,DVR CCTV,66726,2020-01-15,Efisiensi energi,82070000
+49840,AXI-A8B8-49840,Security Sistem,Kamera CCTV,90441,2022-01-15,Upgrade kapasitas,17350000
+36619,SAM-YY6I-36619,Mechanical,AC Split,97259,2023-01-15,Sudah obsolete,4060000
+48185,SAM-4YYB-48185,Mechanical,AC Split,89622,2023-01-15,Tidak ada spare part,30190000
+19791,GRE-LMKJ-19791,Mechanical,AC Split,97731,2024-01-15,Kontrak maintenance habis,21620000
+44309,MET-DM76-44309,Pencatatan Meter,Meter PDAM,50370,2025-01-15,Kontrak maintenance habis,92230000
+20984,DEU-QG1X-20984,Mechanical,Genset Diesel,89798,2019-02-15,Standar keamanan baru,52950000
+34264,PES-KBO6-34264,Sistem Telekomunikasi Gedung,Pesawat Telepon,76114,2023-02-15,Upgrade kapasitas,44930000
+25616,FCU-M2P2-25616,Mechanical,FCU,54781,2025-02-15,Standar keamanan baru,52020000
+28794,SPE-UQCO-28794,Sistem Telekomunikasi Gedung,Speaker,78869,2024-03-15,Kerusakan fatal tidak ekonomis diperbaiki,52530000
+39452,HIK-DUWP-39452,Security Sistem,DVR CCTV,53118,2024-03-15,Upgrade kapasitas,86990000
+39575,DIN-7ERS-39575,Civil,Dinding Tembok/Mansonry,58466,2024-03-15,Upgrade kapasitas,16710000
+58108,KRI-K7B0-58108,Ventilasi Sistem,Exhaust Fan,65499,2025-03-15,Sudah obsolete,52210000
+29813,DIN-L6K4-29813,Civil,Dinding Tembok/Mansonry,85977,2024-04-15,Kontrak maintenance habis,37900000
+11678,PAN-W9A0-11678,Electrical,Panel UPS,67474,2024-04-15,Standar keamanan baru,87350000
+59192,LAN-PLVG-59192,Sistem Telekomunikasi Gedung,LAN (Local Area Network),72385,2025-04-15,Kontrak maintenance habis,37250000
+60344,GRU-BMQD-60344,Mechanical,Pompa Boster,88943,2024-05-15,Upgrade kapasitas,20370000
+28934,KRI-ZLYE-28934,Ventilasi Sistem,Exhaust Fan,99639,2024-05-15,Upgrade kapasitas,86520000
+57860,LAM-PA47-57860,Electrical,Lampu TL LED,88768,2024-05-15,Kerusakan fatal tidak ekonomis diperbaiki,88110000
+1147,GRE-SRS8-1147,Mechanical,AC Split,99744,2024-05-15,Efisiensi energi,86450000
+35045,NOZ-TL60-35045,Sistem Pemadam Kebakaran,Nozzle,89445,2021-06-15,Kerusakan fatal tidak ekonomis diperbaiki,87500000
+51012,MIT-8O75-51012,Mechanical,AC Cassette,69535,2021-06-15,Kontrak maintenance habis,23090000
+4161,SHA-26Y7-4161,Mechanical,AC Split,51241,2021-06-15,Upgrade kapasitas,17150000
+12100,PEM-JE77-12100,Plumbing,Pemipaan Air Bersih,66614,2022-06-15,Usia pakai habis,42520000
+39818,HIK-7H2E-39818,Security Sistem,Kamera CCTV,95826,2025-06-15,Tidak ada spare part,66910000
+30559,SAM-XVLU-30559,Mechanical,AC Split,74356,2025-06-15,Upgrade kapasitas,61630000
+18654,LG-3Z7A-18654,Mechanical,AC Split,95636,2024-07-15,Upgrade kapasitas,70350000
+35877,PIN-VAU0-35877,Arsitektur,Pintu Kayu/HPL,62809,2024-07-15,Kerusakan fatal tidak ekonomis diperbaiki,41630000
+36252,SHA-XN9N-36252,Mechanical,AC Split,55162,2025-07-15,Kerusakan fatal tidak ekonomis diperbaiki,71090000
+21153,APA-CA8M-21153,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,63324,2025-07-15,Kontrak maintenance habis,93450000
+59598,MEJ-VCJ1-59598,Arsitektur,Meja kerja,69193,2021-08-15,Tidak ada spare part,35060000
+164,DIE-IYQF-0164,Sistem Pemadam Kebakaran,Diesel Fire Pump,68070,2024-08-15,Standar keamanan baru,32830000
+49784,PIN-GGNM-49784,Arsitektur,Pintu Kaca Hidrolik,88839,2024-08-15,Usia pakai habis,9900000
+34867,JET-E6HT-34867,Plumbing,Jet Shower,71975,2025-08-15,Tidak ada spare part,93920000
+10658,GRE-9FLJ-10658,Mechanical,AC Split,50130,2019-09-15,Tidak ada spare part,60640000
+6595,MIT-KNJS-6595,Mechanical,AC Split,66588,2024-09-15,Tidak ada spare part,67220000
+49265,PAM-ZSK8-49265,Distribusi Air,PAM,65405,2024-09-15,Efisiensi energi,5620000
+38281,DAI-HE6G-38281,Mechanical,AC Split,71098,2025-09-15,Tidak ada spare part,45400000
+30022,ROO-JJF3-30022,Plumbing,Rooftank,75554,2020-10-15,Upgrade kapasitas,95660000
+6201,MIT-FVDQ-6201,Mechanical,AC Split,97841,2024-10-15,Sudah obsolete,85650000
+4435,PER-I0QI-4435,Mechanical,Genset Diesel,73964,2025-10-15,Upgrade kapasitas,19340000
+25133,GRE-6JKL-25133,Mechanical,AC Split,53148,2025-10-15,Efisiensi energi,84680000
+7836,DIN-S420-7836,Civil,Dinding Kaca Tempered,95506,2025-10-15,Kerusakan fatal tidak ekonomis diperbaiki,84460000
+32383,GRE-YAGU-32383,Mechanical,AC Split,88138,2022-11-15,Standar keamanan baru,49540000
+23132,LAM-RKR5-23132,Electrical,Lampu Downlight,71781,2024-11-15,Upgrade kapasitas,40500000
+897,LAN-5S21-0897,Civil,Lantai Karpet,54680,2024-11-15,Kontrak maintenance habis,30440000
+49530,NOH-PSNP-49530,Sistem Proteksi Kebakaran Aktif,Smoke Detector,76027,2024-11-15,Efisiensi energi,66880000
+3055,MIT-74VM-3055,Mechanical,AC Cassette,93194,2021-12-15,Kontrak maintenance habis,57230000
+30209,PIN-W7GO-30209,Arsitektur,Pintu Kayu/HPL,81363,2024-12-15,Efisiensi energi,31270000
+18930,HON-ZIRM-18930,Mechanical,Genset Bensin,79961,2025-12-15,Upgrade kapasitas,58880000
+53578,PLA-AX7R-53578,Arsitektur,Plafon Gypsum / GRC,75138,2024-01-16,Efisiensi energi,63960000
+49383,HOC-CVHX-49383,Sistem Proteksi Kebakaran Aktif,Smoke Detector,52894,2024-01-16,Kontrak maintenance habis,14680000
+16840,APA-1H9T-16840,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,70098,2025-01-16,Standar keamanan baru,79890000
+2960,AMP-Q3Q5-2960,Sistem Telekomunikasi Gedung,Amplifier,70011,2020-02-16,Efisiensi energi,88810000
+30657,APA-EAO3-30657,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,72996,2022-02-16,Upgrade kapasitas,70720000
+45735,LAM-I4RH-45735,Electrical,Lampu Neon Sign,54923,2023-02-16,Efisiensi energi,13240000
+35516,PAN-SENK-35516,Ventilasi Sistem,Exhaust Fan,79186,2024-02-16,Kerusakan fatal tidak ekonomis diperbaiki,20830000
+60976,DIN-999X-60976,Civil,Dinding Tembok/Mansonry,88641,2024-02-16,Tidak ada spare part,27810000
+20649,GRE-5WMH-20649,Mechanical,AC Split,79717,2024-02-16,Sudah obsolete,53290000
+25116,PAN-2Y2N-25116,Mechanical,AC Split,97448,2025-02-16,Kontrak maintenance habis,52820000
+58116,PAN-LDKE-58116,Ventilasi Sistem,Exhaust Fan,72017,2025-02-16,Kerusakan fatal tidak ekonomis diperbaiki,71260000
+5904,HIK-FUPR-5904,Security Sistem,Monitor CCTV,63859,2025-02-16,Upgrade kapasitas,10330000
+12455,AXI-XJO6-12455,Security Sistem,Kamera CCTV,77901,2021-03-16,Tidak ada spare part,8060000
+54200,DIN-F9BN-54200,Civil,Dinding Keramik/Mozaik,83714,2023-03-16,Sudah obsolete,23870000
+31787,PIN-XHZL-31787,Arsitektur,Pintu Kayu/HPL,99641,2024-03-16,Efisiensi energi,14480000
+54522,AME-FOG1-54522,Plumbing,Wastafel,58804,2025-03-16,Tidak ada spare part,70050000
+51388,MON-WYYP-51388,Sistem Telekomunikasi Gedung,Monitor/Layar,95588,2023-04-16,Sudah obsolete,2600000
+39926,LEM-QIGC-39926,Arsitektur,Lemari/Loker,53888,2023-04-16,Tidak ada spare part,50830000
+41514,MEJ-C4TK-41514,Arsitektur,Meja kerja,96748,2025-04-16,Usia pakai habis,51060000
+57019,KUS-2GF6-57019,Arsitektur,Kusen Jendela Berbahan Alumunium,52858,2022-05-16,Kerusakan fatal tidak ekonomis diperbaiki,89500000
+54513,KUS-0U5A-54513,Arsitektur,Kusen Jendela Berbahan Kayu,58369,2022-05-16,Kerusakan fatal tidak ekonomis diperbaiki,24670000
+14907,SAM-0JZY-14907,Mechanical,AC Split,58021,2024-05-16,Efisiensi energi,30980000
+28978,SDP-LOIB-28978,Electrical,SDP,92283,2024-05-16,Sudah obsolete,5880000
+56901,CAT-DLPM-56901,Mechanical,Genset Diesel,96576,2024-05-16,Usia pakai habis,85820000
+6864,SAM-FTM6-6864,Mechanical,AC Split,85316,2025-05-16,Usia pakai habis,62180000
+57363,CON-XT73-57363,Electrical,Control Panel AC,69935,2025-05-16,Kerusakan fatal tidak ekonomis diperbaiki,56340000
+52882,DIN-V6IQ-52882,Civil,Dinding Tembok/Mansonry,81614,2020-06-16,Upgrade kapasitas,81280000
+16589,LAM-L2OF-16589,Electrical,Lampu Wall sign,93155,2024-06-16,Efisiensi energi,6630000
+27084,LAM-K4UM-27084,Electrical,Lampu Downlight,76756,2024-06-16,Tidak ada spare part,41280000
+6799,HIK-ZVKF-6799,Security Sistem,DVR CCTV,90217,2024-06-16,Standar keamanan baru,3000000
+28728,LAM-EOW4-28728,Electrical,Lampu LED,61486,2025-06-16,Sudah obsolete,41070000
+22896,SAM-AGN3-22896,Mechanical,AC Split,87227,2022-07-16,Tidak ada spare part,29940000
+5967,MIT-E36E-5967,Mechanical,AC Split,56258,2022-07-16,Efisiensi energi,53170000
+46803,PAG-VC3A-46803,Arsitektur,Pagar Besi,79966,2024-07-16,Usia pakai habis,37720000
+44756,MDP-LKAU-44756,Electrical,MDP,91884,2022-08-16,Kontrak maintenance habis,67850000
+28693,DAH-IA6G-28693,Security Sistem,Kamera CCTV,59135,2024-08-16,Upgrade kapasitas,22290000
+57039,KUS-0C0G-57039,Arsitektur,Kusen Jendela Berbahan Alumunium,98696,2024-08-16,Kontrak maintenance habis,15830000
+56100,DIN-XIPC-56100,Civil,Dinding Tembok/Mansonry,79415,2024-08-16,Usia pakai habis,27310000
+51118,BOS-MYZ8-51118,Security Sistem,Kamera CCTV,96530,2022-09-16,Standar keamanan baru,23460000
+57814,PAG-1O5H-57814,Arsitektur,Pagar Besi,65482,2023-09-16,Upgrade kapasitas,73420000
+35976,HIK-V4J1-35976,Security Sistem,Kamera CCTV,58021,2024-09-16,Sudah obsolete,11890000
+49923,LAM-WGJ2-49923,Electrical,Lampu LED Downlight,94878,2025-09-16,Kontrak maintenance habis,29150000
+57754,APA-W2WJ-57754,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,85542,2025-09-16,Standar keamanan baru,7760000
+13553,LG-D2S0-13553,Mechanical,AC Split,73442,2021-10-16,Sudah obsolete,37930000
+18034,LG-S6WL-18034,Mechanical,AC Split,95190,2023-10-16,Usia pakai habis,4940000
+12563,DAH-5IGJ-12563,Security Sistem,Kamera CCTV,84129,2024-10-16,Sudah obsolete,74920000
+48083,SAM-X5RI-48083,Mechanical,AC Split,62177,2024-10-16,Sudah obsolete,11170000
+19438,HIK-4IX5-19438,Security Sistem,DVR CCTV,54257,2025-10-16,Efisiensi energi,22470000
+52797,LEM-ABM2-52797,Arsitektur,Lemari/Loker,80284,2019-11-16,Kerusakan fatal tidak ekonomis diperbaiki,15750000
+48562,LAN-041J-48562,Civil,Lantai Beton,83756,2023-11-16,Sudah obsolete,81050000
+41521,INA-E4IC-41521,Plumbing,Wastafel,92167,2024-11-16,Standar keamanan baru,77390000
+19443,PES-PFCX-19443,Sistem Telekomunikasi Gedung,Pesawat Telepon,88949,2025-11-16,Sudah obsolete,48390000
+59320,PES-YWQN-59320,Sistem Telekomunikasi Gedung,Pesawat Telepon,74238,2021-12-16,Sudah obsolete,83240000
+36974,PIN-W3G8-36974,Arsitektur,Pintu Kayu/HPL,81370,2023-12-16,Kerusakan fatal tidak ekonomis diperbaiki,27650000
+55870,LAM-K9PQ-55870,Electrical,Lampu TL LED,90597,2024-12-16,Tidak ada spare part,83310000
+4291,MIT-8DHX-4291,Mechanical,AC Split,77760,2025-12-16,Usia pakai habis,15890000
+41509,SDP-EVTQ-41509,Electrical,SDP,70235,2025-12-16,Kontrak maintenance habis,51530000
+38251,SAM-IXJI-38251,Mechanical,AC Split,56577,2025-12-16,Upgrade kapasitas,49080000
+28574,HIK-GJZ8-28574,Security Sistem,Kamera CCTV,87512,2021-01-17,Sudah obsolete,17040000
+5006,GRE-6TUX-5006,Mechanical,AC Split,65690,2024-01-17,Standar keamanan baru,51080000
+37138,LAM-1IEJ-37138,Electrical,Lampu Downlight,71764,2025-01-17,Sudah obsolete,27240000
+23366,KDK-P1XT-23366,Ventilasi Sistem,Exhaust Fan,51115,2025-01-17,Kerusakan fatal tidak ekonomis diperbaiki,89410000
+3933,WIR-PCYD-3933,Electrical,Wiring System (Sistem Instalasi Kabel),64191,2020-02-17,Sudah obsolete,16660000
+15039,APA-9ZQ0-15039,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,95345,2021-02-17,Usia pakai habis,29820000
+49180,UNI-GV0R-49180,Electrical,Uninterruptible Power Supply,96141,2022-02-17,Efisiensi energi,62590000
+35635,JET-TAPZ-35635,Plumbing,Jet Shower,62489,2025-02-17,Tidak ada spare part,13740000
+20067,LAM-97IM-20067,Electrical,Lampu LED,97694,2025-02-17,Sudah obsolete,10580000
+57289,DIN-20YS-57289,Civil,"Dinding Partisi, GRC / Gypsum",59943,2025-02-17,Sudah obsolete,83190000
+9,PER-58KX-0009,Mechanical,Genset Diesel,50120,2025-02-17,Standar keamanan baru,93770000
+9032,PAN-CVFT-9032,Ventilasi Sistem,Exhaust Fan,64138,2021-03-17,Upgrade kapasitas,63510000
+21515,AME-FWUW-21515,Plumbing,Wastafel,57120,2022-03-17,Efisiensi energi,43310000
+23433,DAI-40GW-23433,Mechanical,AC Split,80112,2024-03-17,Tidak ada spare part,38580000
+31343,DAI-RACM-31343,Mechanical,AC Split,96702,2024-03-17,Upgrade kapasitas,4910000
+25398,BOS-MTHV-25398,Security Sistem,Kamera CCTV,77783,2024-03-17,Tidak ada spare part,56040000
+7264,TOT-50HY-7264,Plumbing,Wastafel,60333,2025-03-17,Sudah obsolete,35130000
+60042,LAM-3FB8-60042,Electrical,Lampu Wall sign,97781,2025-03-17,Standar keamanan baru,82520000
+29217,LAM-Z2NT-29217,Electrical,Lampu Downlight,95021,2023-04-17,Tidak ada spare part,94550000
+58058,MEJ-P9XT-58058,Arsitektur,Meja kerja,90059,2024-04-17,Kerusakan fatal tidak ekonomis diperbaiki,79270000
+20206,PAN-1EG0-20206,Ventilasi Sistem,Exhaust Fan,81983,2024-04-17,Sudah obsolete,75070000
+42718,ROO-MEI2-42718,Distribusi Air,Roof Tank,56772,2025-04-17,Kontrak maintenance habis,83340000
+173,CON-696D-0173,Electrical,Control Panel Penerangan,60017,2019-05-17,Kerusakan fatal tidak ekonomis diperbaiki,25480000
+44564,APA-XI4Y-44564,Sistem Pemadam Kebakaran,APAR Halon,61455,2024-05-17,Tidak ada spare part,81180000
+16936,MET-PURP-16936,Pencatatan Meter,Meter PDAM,81700,2024-05-17,Upgrade kapasitas,90050000
+29080,TOT-JVNM-29080,Plumbing,Kran Air,85262,2025-05-17,Upgrade kapasitas,27090000
+21869,HON-3R4T-21869,Security Sistem,DVR CCTV,72649,2022-06-17,Upgrade kapasitas,54900000
+41539,SDP-H9RC-41539,Electrical,SDP,65127,2023-06-17,Sudah obsolete,74690000
+41682,LAN-IZ30-41682,Civil,Lantai Keramik,55850,2024-06-17,Usia pakai habis,52250000
+51296,BEL-M51K-51296,Sistem Proteksi Kebakaran Aktif,Bell Alarm,86916,2024-06-17,Usia pakai habis,52470000
+39990,SHA-OB9Q-39990,Mechanical,AC Split,69806,2024-06-17,Sudah obsolete,64230000
+56287,KUR-T7M1-56287,Arsitektur,Kursi,61486,2025-06-17,Kerusakan fatal tidak ekonomis diperbaiki,21370000
+37715,LAM-DXAS-37715,Electrical,Lampu LED Downlight,89887,2025-06-17,Kontrak maintenance habis,54240000
+21395,SDP-WLJA-21395,Electrical,SDP,76923,2021-07-17,Kontrak maintenance habis,86120000
+25405,LAN-CTZL-25405,Civil,Lantai Granit,66158,2024-07-17,Kerusakan fatal tidak ekonomis diperbaiki,5790000
+13109,APA-NEDH-13109,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,62005,2024-07-17,Efisiensi energi,57990000
+18604,TOT-4EQV-18604,Plumbing,Kran Air,83939,2024-07-17,Upgrade kapasitas,24220000
+6708,ROO-QEMD-6708,Plumbing,Rooftank,96813,2024-07-17,Sudah obsolete,41630000
+36752,SHA-7ML9-36752,Mechanical,AC Split,57647,2024-07-17,Tidak ada spare part,37390000
+38750,DIN-R101-38750,Civil,Dinding Tembok/Mansonry,91964,2025-07-17,Upgrade kapasitas,67200000
+51076,AXI-RGUY-51076,Security Sistem,Kamera CCTV,94127,2019-08-17,Usia pakai habis,72990000
+57639,LAN-3IZ4-57639,Civil,Lantai Vinyl,89166,2023-08-17,Efisiensi energi,78880000
+25344,GRE-DIAN-25344,Mechanical,AC Split,62712,2023-08-17,Usia pakai habis,91360000
+13878,LG-3CDO-13878,Security Sistem,Monitor CCTV,69940,2024-08-17,Upgrade kapasitas,20750000
+30728,DIN-T63X-30728,Civil,Dinding Tembok/Mansonry,84227,2025-08-17,Efisiensi energi,20760000
+44188,KLO-BZWQ-44188,Plumbing,Kloset,80759,2022-09-17,Kontrak maintenance habis,36000000
+56828,PLA-RM3B-56828,Arsitektur,Plafon Gypsum / GRC,69317,2023-09-17,Kerusakan fatal tidak ekonomis diperbaiki,76130000
+53497,KUR-SWJJ-53497,Arsitektur,Kursi,52905,2023-09-17,Usia pakai habis,77170000
+40350,DIN-TCGG-40350,Civil,Dinding Kaca Tempered,67945,2024-09-17,Efisiensi energi,24300000
+25426,DAH-D4O5-25426,Security Sistem,Kamera CCTV,86283,2024-09-17,Tidak ada spare part,93990000
+37386,SHA-DB19-37386,Mechanical,AC Split,62718,2025-09-17,Standar keamanan baru,65990000
+61162,LAN-4DH1-61162,Arsitektur,Lantai Parkir Beton,61986,2025-09-17,Kerusakan fatal tidak ekonomis diperbaiki,85840000
+55293,KRI-13UT-55293,Ventilasi Sistem,Exhaust Fan,68673,2025-09-17,Usia pakai habis,12470000
+3760,APA-8HSM-3760,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,98934,2025-10-17,Tidak ada spare part,56200000
+5092,SAM-VMC6-5092,Mechanical,AC Split,86464,2022-11-17,Efisiensi energi,38890000
+20221,PAN-0ZQ8-20221,Electrical,Panel UPS,59155,2024-11-17,Sudah obsolete,14560000
+51120,PIN-JTYM-51120,Arsitektur,Pintu Kayu/HPL,59179,2024-11-17,Sudah obsolete,36010000
+17424,APA-EZZP-17424,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,61724,2024-11-17,Sudah obsolete,72540000
+35382,MEJ-N9C7-35382,Arsitektur,Meja kerja,70128,2025-11-17,Kerusakan fatal tidak ekonomis diperbaiki,9080000
+49960,PEM-8MED-49960,Plumbing,Pemipaan Air Bersih,85436,2025-11-17,Sudah obsolete,98560000
+41381,LVM-JNQI-41381,Electrical,LVMDP,58473,2025-11-17,Upgrade kapasitas,8070000
+2710,LG-7QXJ-2710,Mechanical,AC Split,60285,2022-12-17,Tidak ada spare part,59530000
+47490,PAN-6N7L-47490,Mechanical,AC Split,69058,2022-12-17,Standar keamanan baru,61980000
+27807,JET-AAF5-27807,Plumbing,Jet Shower,50392,2025-12-17,Upgrade kapasitas,24260000
+27793,SDP-OI3J-27793,Electrical,SDP,62751,2022-01-18,Sudah obsolete,6170000
+13173,SDP-6DMK-13173,Electrical,SDP,98415,2023-01-18,Efisiensi energi,70580000
+33041,PLA-NRRT-33041,Arsitektur,Plafon Gypsum / GRC,85147,2023-01-18,Tidak ada spare part,75220000
+35389,MEJ-XDFF-35389,Arsitektur,Meja kerja,99472,2025-01-18,Kontrak maintenance habis,78500000
+29407,PAN-OUU7-29407,Mechanical,AC Split,60915,2025-01-18,Kerusakan fatal tidak ekonomis diperbaiki,26590000
+19022,PAB-5Q5L-19022,Sistem Telekomunikasi Gedung,PABX,80748,2020-02-18,Kerusakan fatal tidak ekonomis diperbaiki,15500000
+26851,LAM-TNE4-26851,Electrical,Lampu Downlight,50479,2020-02-18,Efisiensi energi,28970000
+3600,MIT-0QNE-3600,Mechanical,AC Split,98133,2023-02-18,Kontrak maintenance habis,17010000
+31022,SIE-8ZDS-31022,Sistem Proteksi Kebakaran Aktif,Smoke Detector,56974,2024-02-18,Efisiensi energi,45680000
+23378,LVM-GKDB-23378,Electrical,LVMDP,56488,2025-02-18,Usia pakai habis,18090000
+51747,APA-7D9I-51747,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,51060,2019-03-18,Usia pakai habis,3910000
+8715,URI-IYOJ-8715,Plumbing,Urinal,66701,2023-03-18,Kerusakan fatal tidak ekonomis diperbaiki,95340000
+34299,PIN-ZW86-34299,Arsitektur,Pintu Kaca Hidrolik,55165,2024-03-18,Standar keamanan baru,39190000
+15125,GRU-CC6R-15125,Mechanical,Pompa Transfer,92680,2024-03-18,Usia pakai habis,80740000
+57304,KUS-P3PJ-57304,Arsitektur,Kusen Jendela Berbahan Besi/Baja,95046,2025-03-18,Standar keamanan baru,82000000
+2634,DAI-VQGU-2634,Mechanical,AC Split,93116,2022-04-18,Usia pakai habis,20470000
+18240,GRO-ZPHQ-18240,Distribusi Air,Ground Water Tank,67519,2021-05-18,Standar keamanan baru,70550000
+12689,SAM-MTA6-12689,Mechanical,AC Split,84274,2022-05-18,Usia pakai habis,42790000
+33485,KLO-LVWG-33485,Plumbing,Kloset,53311,2024-05-18,Standar keamanan baru,53210000
+53884,LAM-N9Q6-53884,Electrical,Lampu Downlight,76102,2025-05-18,Usia pakai habis,84420000
+11305,MIT-A92I-11305,Mechanical,AC Split,68597,2025-05-18,Upgrade kapasitas,23940000
+29431,DAI-1V57-29431,Mechanical,AC Split,78131,2022-06-18,Usia pakai habis,67360000
+33504,SHA-2YTA-33504,Mechanical,AC Split,99651,2024-06-18,Kontrak maintenance habis,13030000
+48870,CON-1C1T-48870,Electrical,Control Panel AC,56817,2024-06-18,Usia pakai habis,22200000
+52392,DIN-Y3Z4-52392,Civil,Dinding Tembok/Mansonry,99614,2025-06-18,Usia pakai habis,38430000
+59495,MET-S76D-59495,Pencatatan Meter,Meter PLN,93322,2024-07-18,Usia pakai habis,96980000
+36220,PAN-W534-36220,Mechanical,AC Cassette,65276,2024-07-18,Upgrade kapasitas,6000000
+43666,MDP-N8LY-43666,Electrical,MDP,50490,2023-08-18,Tidak ada spare part,39780000
+1083,SAM-1630-1083,Mechanical,AC Split,62722,2023-08-18,Standar keamanan baru,79620000
+47859,PAN-4XOY-47859,Mechanical,AC Split,60694,2025-08-18,Efisiensi energi,52230000
+1639,PAN-75PS-1639,Mechanical,AC Split,95544,2019-09-18,Kontrak maintenance habis,41020000
+60887,APA-ZPJA-60887,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,72356,2019-09-18,Efisiensi energi,53220000
+34417,AUT-9NYD-34417,Electrical,Automatic Transfer Switch (ATS Panel),85053,2020-09-18,Kontrak maintenance habis,52430000
+23184,LAM-GLRW-23184,Electrical,Lampu LED,68316,2021-09-18,Efisiensi energi,98040000
+52976,MET-RLGO-52976,Pencatatan Meter,Meter PDAM,64271,2022-09-18,Efisiensi energi,59820000
+6594,DIN-7FA5-6594,Civil,Dinding Tembok/Mansonry,89777,2024-09-18,Kontrak maintenance habis,23810000
+60080,DIN-LVW6-60080,Civil,"Dinding Partisi, GRC / Gypsum",63341,2023-10-18,Standar keamanan baru,37570000
+22580,PIN-1KI2-22580,Arsitektur,Pintu Kayu/HPL,79720,2023-10-18,Efisiensi energi,60510000
+39635,ATA-UZRL-39635,Civil,Atap Genteng,81488,2024-10-18,Usia pakai habis,15690000
+39094,MEJ-DLUC-39094,Arsitektur,Meja kerja,65572,2024-10-18,Upgrade kapasitas,71290000
+20228,LG-689J-20228,Mechanical,AC Split,95307,2025-10-18,Tidak ada spare part,17650000
+34386,PIN-XRVE-34386,Arsitektur,Pintu Kayu/HPL,80272,2025-10-18,Usia pakai habis,3160000
+6032,SAM-58VP-6032,Mechanical,AC Split,69476,2021-11-18,Tidak ada spare part,47260000
+60992,LAM-ZGOM-60992,Electrical,Lampu TL LED,66400,2022-11-18,Kerusakan fatal tidak ekonomis diperbaiki,94020000
+43675,LAM-YM51-43675,Electrical,Lampu Wall sign,88043,2022-11-18,Kontrak maintenance habis,2170000
+50992,PAB-KOOV-50992,Sistem Telekomunikasi Gedung,PABX,76951,2024-11-18,Efisiensi energi,32640000
+32104,LAM-XMRW-32104,Electrical,Lampu LED Bulb,64142,2025-11-18,Upgrade kapasitas,17690000
+27398,SAM-K4NN-27398,Mechanical,AC Split,50373,2022-12-18,Tidak ada spare part,9820000
+26815,DAI-OWNV-26815,Mechanical,AC Split,76175,2023-12-18,Kontrak maintenance habis,40690000
+26473,FCU-HNSX-26473,Mechanical,FCU,68056,2024-12-18,Usia pakai habis,61530000
+4182,KDK-948I-4182,Ventilasi Sistem,Exhaust Fan,94305,2024-12-18,Standar keamanan baru,90880000
+39996,SHI-KZ7T-39996,Mechanical,Pompa Air Tanah,87776,2025-12-18,Efisiensi energi,82500000
+7830,SAM-KSPK-7830,Mechanical,AC Split,80914,2023-01-19,Standar keamanan baru,54010000
+49631,LAM-21EK-49631,Electrical,Lampu LED Bulb,76709,2024-01-19,Efisiensi energi,69620000
+52838,DIN-N4ZS-52838,Civil,"Dinding Partisi, GRC / Gypsum",57452,2024-01-19,Kontrak maintenance habis,72490000
+48505,DAI-2WWS-48505,Mechanical,AC Split,67011,2025-01-19,Kontrak maintenance habis,21670000
+33189,PLA-LRFV-33189,Arsitektur,Plafon,74357,2025-01-19,Tidak ada spare part,98820000
+38577,LG-ULV4-38577,Mechanical,AC Cassette,80227,2025-01-19,Efisiensi energi,89830000
+19837,MON-1EJR-19837,Sistem Telekomunikasi Gedung,Monitor/Layar,83296,2025-01-19,Tidak ada spare part,13620000
+26706,SHA-LTN9-26706,Mechanical,AC Split,96169,2024-02-19,Standar keamanan baru,31800000
+29086,PES-VGL7-29086,Sistem Telekomunikasi Gedung,Pesawat Telepon,55173,2025-02-19,Tidak ada spare part,21460000
+50609,JET-7AB1-50609,Plumbing,Jet Shower,75530,2025-02-19,Kontrak maintenance habis,74430000
+36191,DAH-9QNR-36191,Security Sistem,Kamera CCTV,79130,2021-03-19,Tidak ada spare part,7890000
+51276,LAN-L1Q1-51276,Civil,Lantai Granit,68462,2024-03-19,Kerusakan fatal tidak ekonomis diperbaiki,52430000
+29597,DIN-F58W-29597,Civil,Dinding Tembok/Mansonry,80432,2024-03-19,Kerusakan fatal tidak ekonomis diperbaiki,87160000
+47104,APA-6F5X-47104,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,86970,2025-03-19,Standar keamanan baru,58050000
+18702,PAN-1XQP-18702,Mechanical,AC Cassette,88807,2025-03-19,Standar keamanan baru,78010000
+58424,LAM-TE99-58424,Electrical,Lampu LED Bulb,66559,2024-04-19,Usia pakai habis,73510000
+50856,PIN-KDY6-50856,Arsitektur,Pintu Kaca Hidrolik,97000,2024-04-19,Sudah obsolete,56480000
+2888,LAM-0TMT-2888,Electrical,Lampu LED,57130,2024-04-19,Efisiensi energi,60690000
+57533,PAN-326L-57533,Electrical,Panel UPS,95169,2024-04-19,Upgrade kapasitas,31490000
+60404,LAM-00ZE-60404,Electrical,Lampu LED Downlight,97726,2024-04-19,Kerusakan fatal tidak ekonomis diperbaiki,95280000
+38585,DIN-5X1F-38585,Civil,Dinding Tembok/Mansonry,94337,2025-04-19,Tidak ada spare part,51460000
+5647,PAN-X32V-5647,Electrical,Panel UPS,84041,2023-05-19,Standar keamanan baru,24330000
+17538,FIN-1RO6-17538,Security Sistem,Fingerprint,78559,2024-05-19,Kontrak maintenance habis,50150000
+19673,ROO-324U-19673,Distribusi Air,Roof Tank,76650,2025-05-19,Tidak ada spare part,74100000
+60568,PLA-FOAD-60568,Arsitektur,Plafon,93098,2020-06-19,Efisiensi energi,46690000
+28323,TRA-8RLC-28323,Electrical,Trafo IT UPS,55964,2021-06-19,Kontrak maintenance habis,53530000
+49142,KUR-0L5D-49142,Arsitektur,Kursi,71566,2023-06-19,Standar keamanan baru,42810000
+54037,FIN-2BHH-54037,Security Sistem,Fingerprint,98602,2023-06-19,Standar keamanan baru,58530000
+31818,PIN-DBIU-31818,Arsitektur,Pintu Kaca Hidrolik,78793,2024-06-19,Efisiensi energi,92770000
+35509,LAM-687F-35509,Electrical,Lampu LED Bulb,62428,2025-06-19,Tidak ada spare part,66680000
+54908,DIN-TA6U-54908,Civil,"Dinding Partisi, GRC / Gypsum",91833,2022-07-19,Sudah obsolete,58620000
+39400,MEJ-C09F-39400,Arsitektur,Meja kerja,74850,2024-07-19,Tidak ada spare part,98410000
+30457,LG-4RBV-30457,Mechanical,AC Split,80291,2024-07-19,Efisiensi energi,42810000
+53859,LAM-VM12-53859,Electrical,Lampu Downlight,70269,2024-07-19,Efisiensi energi,50390000
+46421,DIN-5MN1-46421,Civil,"Dinding Partisi, GRC / Gypsum",63805,2025-07-19,Upgrade kapasitas,12980000
+60759,PIN-9TB8-60759,Arsitektur,Pintu Besi,66315,2025-07-19,Efisiensi energi,71850000
+56912,LAM-F0UM-56912,Electrical,Lampu LED Downlight,68792,2019-08-19,Upgrade kapasitas,77220000
+60237,PLA-XOKK-60237,Arsitektur,Plafon Gypsum / GRC,53259,2019-08-19,Tidak ada spare part,30390000
+41526,ATA-ACJC-41526,Civil,Atap Genteng,92922,2021-08-19,Standar keamanan baru,8770000
+18941,SHA-IWPK-18941,Mechanical,AC Split,56925,2022-08-19,Usia pakai habis,20070000
+41267,PES-TH6C-41267,Sistem Telekomunikasi Gedung,Pesawat Telepon,51698,2025-08-19,Efisiensi energi,22750000
+26902,LAM-N018-26902,Electrical,Lampu TL LED,59647,2025-08-19,Sudah obsolete,64410000
+59855,PLA-O79N-59855,Arsitektur,Plafon Gypsum / GRC,78754,2025-08-19,Kontrak maintenance habis,48520000
+42933,KRI-V5RQ-42933,Ventilasi Sistem,Exhaust Fan,85477,2020-09-19,Tidak ada spare part,10190000
+2229,LG-FEUY-2229,Mechanical,AC Split,56863,2020-09-19,Usia pakai habis,3480000
+32411,PAN-RBRF-32411,Mechanical,AC Split,55760,2022-09-19,Kerusakan fatal tidak ekonomis diperbaiki,91430000
+31256,PIN-B54W-31256,Arsitektur,Pintu Kayu/HPL,79144,2024-09-19,Efisiensi energi,85230000
+12236,MIT-7S76-12236,Mechanical,AC Split,83089,2024-09-19,Usia pakai habis,43050000
+19790,LAM-DKVL-19790,Electrical,Lampu Downlight,96209,2025-09-19,Upgrade kapasitas,18070000
+27990,SAM-R4N7-27990,Security Sistem,Monitor CCTV,83693,2025-09-19,Standar keamanan baru,6940000
+43196,PIN-FU4P-43196,Arsitektur,Pintu Kaca Otomatis,92463,2025-09-19,Standar keamanan baru,35760000
+4039,HIK-EH4J-4039,Security Sistem,DVR CCTV,94925,2025-09-19,Kontrak maintenance habis,64230000
+52921,LAN-OOJ7-52921,Civil,Lantai Vinyl,77806,2025-09-19,Kerusakan fatal tidak ekonomis diperbaiki,60900000
+19829,MDP-FFNA-19829,Electrical,MDP,86154,2019-10-19,Tidak ada spare part,98670000
+958,PAN-MBUZ-0958,Mechanical,AC Split,98605,2023-10-19,Standar keamanan baru,77210000
+54595,PIN-Z996-54595,Arsitektur,Pintu Besi,93634,2023-10-19,Upgrade kapasitas,39180000
+7455,MET-W8B4-7455,Pencatatan Meter,Meter PLN,66650,2024-10-19,Usia pakai habis,80190000
+27910,LAM-C9FC-27910,Electrical,Lampu Wall sign,91025,2025-10-19,Tidak ada spare part,6230000
+39854,BOS-FUV8-39854,Security Sistem,Kamera CCTV,70967,2025-10-19,Kontrak maintenance habis,59660000
+59768,DIN-ILFN-59768,Civil,Dinding Tembok/Mansonry,85294,2025-10-19,Upgrade kapasitas,2970000
+42662,JET-40B3-42662,Plumbing,Jet Shower,84851,2021-11-19,Kontrak maintenance habis,97320000
+17824,DAI-SFPU-17824,Mechanical,AC Split,60204,2024-11-19,Upgrade kapasitas,17070000
+55697,CAT-QQ5Y-55697,Mechanical,Genset Diesel,81272,2025-11-19,Kontrak maintenance habis,30960000
+22489,MIT-LNBZ-22489,Mechanical,AC Split,90954,2025-11-19,Standar keamanan baru,82380000
+60439,PIN-ZJZZ-60439,Arsitektur,Pintu Gerbang Besi,92396,2021-12-19,Kerusakan fatal tidak ekonomis diperbaiki,29350000
+5038,AC -UVG9-5038,Mechanical,AC VRV,66664,2022-12-19,Tidak ada spare part,51440000
+3674,SAM-WF5X-3674,Mechanical,AC Split,87836,2024-12-19,Kontrak maintenance habis,87950000
+17387,LAN-EI48-17387,Civil,Lantai Granit,59802,2024-12-19,Upgrade kapasitas,95760000
+10541,LVM-3E09-10541,Electrical,LVMDP,73277,2024-12-19,Tidak ada spare part,40900000
+20395,LG-RZCM-20395,Mechanical,AC Split,87581,2025-12-19,Upgrade kapasitas,22450000
+37322,LAM-MBJX-37322,Electrical,Lampu Downlight,96839,2025-12-19,Usia pakai habis,77790000
+42083,BOS-IS0E-42083,Security Sistem,Kamera CCTV,94720,2025-12-19,Sudah obsolete,59210000
+31377,LAM-5C6R-31377,Electrical,Lampu Wall sign,84129,2025-12-19,Kerusakan fatal tidak ekonomis diperbaiki,4880000
+22440,UNI-90MY-22440,Electrical,Uninterruptible Power Supply,66501,2020-01-20,Tidak ada spare part,72790000
+13605,DAI-XML4-13605,Mechanical,AC Cassette,55946,2021-01-20,Tidak ada spare part,89860000
+56267,LAM-608M-56267,Electrical,Lampu TL LED,94431,2024-01-20,Usia pakai habis,4540000
+178,MIT-G7FX-0178,Mechanical,AC Split,93773,2024-01-20,Sudah obsolete,7770000
+21805,SHA-XFQ1-21805,Mechanical,AC Split,93739,2025-01-20,Sudah obsolete,90090000
+44268,LAM-MWAQ-44268,Electrical,Lampu Hias,64123,2025-01-20,Kontrak maintenance habis,36180000
+17218,APA-FYEJ-17218,Sistem Pemadam Kebakaran,APAR CO2,94514,2020-02-20,Upgrade kapasitas,16280000
+13536,DAI-15BR-13536,Mechanical,AC Cassette,69410,2021-02-20,Upgrade kapasitas,62840000
+52903,TOT-J9XJ-52903,Plumbing,Wastafel,79424,2022-02-20,Sudah obsolete,30070000
+60033,PLA-HIV6-60033,Arsitektur,Plafon,86271,2023-02-20,Usia pakai habis,58040000
+6903,WIR-551U-6903,Electrical,Wiring System (Sistem Instalasi Kabel),51035,2025-02-20,Sudah obsolete,97900000
+58363,APA-8C3Q-58363,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,82009,2025-02-20,Kerusakan fatal tidak ekonomis diperbaiki,86510000
+30654,DAI-WY9O-30654,Mechanical,AC Split,85029,2025-02-20,Upgrade kapasitas,14240000
+1157,MIT-CDO5-1157,Mechanical,AC Split,56389,2024-03-20,Sudah obsolete,42760000
+22161,APA-A4Z8-22161,Sistem Pemadam Kebakaran,APAB Dry Powder,58869,2024-03-20,Tidak ada spare part,76770000
+38226,PAN-2CC5-38226,Mechanical,AC Split,67352,2025-03-20,Upgrade kapasitas,82610000
+45246,LAM-CQXV-45246,Electrical,Lampu LED Strip,69044,2021-04-20,Usia pakai habis,71010000
+31673,APA-4VE6-31673,Sistem Pemadam Kebakaran,APAR CO2,91050,2021-04-20,Upgrade kapasitas,78090000
+30764,CON-1T8E-30764,Electrical,Control Panel Penerangan,72097,2023-04-20,Kontrak maintenance habis,37980000
+53408,DIN-Z4CS-53408,Civil,"Dinding Partisi, GRC / Gypsum",63352,2024-04-20,Upgrade kapasitas,61070000
+32007,SDP-YFDH-32007,Electrical,SDP,66003,2025-04-20,Standar keamanan baru,47340000
+32067,UNI-O0MM-32067,Electrical,Uninterruptible Power Supply,82040,2025-04-20,Usia pakai habis,27410000
+16515,ATA-D06V-16515,Civil,Atap Beton,78185,2025-04-20,Tidak ada spare part,57890000
+34317,PIN-7VO5-34317,Arsitektur,Pintu Kayu/HPL,55099,2025-04-20,Upgrade kapasitas,45070000
+59573,MEJ-0V5D-59573,Arsitektur,Meja kerja,81562,2023-05-20,Kontrak maintenance habis,81840000
+4830,LAN-YWDS-4830,Civil,Lantai Keramik,72587,2023-05-20,Sudah obsolete,50150000
+42884,PIN-G19J-42884,Arsitektur,Pintu Kayu/HPL,85308,2024-05-20,Sudah obsolete,5470000
+32234,KRI-LY37-32234,Ventilasi Sistem,Exhaust Fan,68746,2024-05-20,Sudah obsolete,91580000
+35061,KRI-2ESB-35061,Ventilasi Sistem,Exhaust Fan,81290,2024-05-20,Usia pakai habis,17970000
+41910,AXI-7ZWP-41910,Security Sistem,Kamera CCTV,89811,2024-05-20,Tidak ada spare part,23620000
+6618,MDP-3OE9-6618,Electrical,MDP,75120,2025-05-20,Upgrade kapasitas,42610000
+45594,LG-KYJ3-45594,Mechanical,AC Split,75915,2025-05-20,Standar keamanan baru,54710000
+23590,PLA-BYVG-23590,Arsitektur,Plafon Gypsum / GRC,61036,2024-06-20,Kerusakan fatal tidak ekonomis diperbaiki,4220000
+21642,AXI-1ZLC-21642,Security Sistem,Kamera CCTV,80393,2024-06-20,Usia pakai habis,57240000
+50338,PAV-WVIT-50338,Arsitektur,Paving Block,98751,2024-06-20,Kontrak maintenance habis,98390000
+50491,MIT-Q1IN-50491,Mechanical,AC Split,62225,2025-06-20,Standar keamanan baru,43640000
+29719,DAH-IYNA-29719,Security Sistem,Kamera CCTV,67085,2025-06-20,Standar keamanan baru,4510000
+5890,PAN-BEMA-5890,Mechanical,AC Split,63764,2020-07-20,Usia pakai habis,20080000
+5671,FIN-HKAZ-5671,Security Sistem,Fingerprint,64608,2024-07-20,Sudah obsolete,34100000
+48842,HIK-53JY-48842,Security Sistem,Kamera CCTV,72542,2024-07-20,Tidak ada spare part,65710000
+55982,LAM-0UQG-55982,Electrical,Lampu LED,51125,2025-07-20,Usia pakai habis,33610000
+36654,MIX-54YK-36654,Sistem Telekomunikasi Gedung,Mixer Audio,78169,2022-08-20,Standar keamanan baru,58250000
+58904,ROO-0J8H-58904,Distribusi Air,Roof Tank,55975,2022-08-20,Kerusakan fatal tidak ekonomis diperbaiki,68400000
+16014,BOS-QW4C-16014,Security Sistem,Kamera CCTV,59503,2024-08-20,Kerusakan fatal tidak ekonomis diperbaiki,18590000
+47226,LAM-JPDD-47226,Electrical,Lampu LED,67184,2024-08-20,Tidak ada spare part,89010000
+52607,MEJ-FALW-52607,Arsitektur,Meja kerja,77321,2024-08-20,Sudah obsolete,54990000
+40768,KUR-81T4-40768,Arsitektur,Kursi,88381,2024-08-20,Tidak ada spare part,15060000
+35428,LEM-A22W-35428,Arsitektur,Lemari/Loker,91871,2020-09-20,Usia pakai habis,70520000
+8944,PAN-C99H-8944,Ventilasi Sistem,Exhaust Fan,56844,2020-09-20,Tidak ada spare part,82500000
+27981,BOS-M3BZ-27981,Security Sistem,Kamera CCTV,53267,2021-09-20,Tidak ada spare part,89980000
+51699,APA-UJLJ-51699,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,82071,2024-09-20,Tidak ada spare part,23880000
+26108,LAM-AG7F-26108,Electrical,Lampu TL LED,95359,2024-09-20,Efisiensi energi,52650000
+20970,FLO-QN3N-20970,Plumbing,Floor Drain,68025,2024-09-20,Kontrak maintenance habis,84720000
+26416,FCU-1RHY-26416,Mechanical,FCU,83788,2025-09-20,Standar keamanan baru,23920000
+39893,SAM-VETL-39893,Mechanical,AC Split,73823,2025-09-20,Tidak ada spare part,69840000
+40106,GRE-WEJO-40106,Mechanical,AC Split,86796,2023-10-20,Usia pakai habis,83830000
+32494,DIN-D83R-32494,Civil,Dinding Tembok/Mansonry,76700,2024-10-20,Upgrade kapasitas,62350000
+50202,LAM-GB65-50202,Electrical,Lampu TL LED,74179,2024-11-20,Upgrade kapasitas,12560000
+37565,PIN-HXM6-37565,Arsitektur,Pintu Kaca Hidrolik,58528,2025-11-20,Upgrade kapasitas,98290000
+47008,APA-8BLV-47008,Sistem Pemadam Kebakaran,APAR CO2,92451,2025-11-20,Kerusakan fatal tidak ekonomis diperbaiki,6750000
+4775,SAM-Y20G-4775,Mechanical,AC Split,91792,2025-11-20,Upgrade kapasitas,32960000
+15057,PAB-MGHM-15057,Sistem Telekomunikasi Gedung,PABX,59705,2020-12-20,Standar keamanan baru,65790000
+22486,PAN-YYQV-22486,Electrical,Panel UPS,75192,2021-12-20,Tidak ada spare part,85200000
+26792,LAM-FJ2N-26792,Electrical,Lampu Pylon Sign,95145,2022-12-20,Sudah obsolete,99580000
+59513,DIN-2H6B-59513,Civil,Dinding Kayu,95896,2023-12-20,Usia pakai habis,47990000
+16228,CON-0NT9-16228,Electrical,Control Panel Hydrant Diesel Pump,77964,2023-12-20,Usia pakai habis,40430000
+41077,TOT-5TVB-41077,Plumbing,Wastafel,66502,2024-12-20,Tidak ada spare part,52500000
+20106,DAI-XAQ6-20106,Mechanical,AC Split,83417,2024-12-20,Efisiensi energi,77980000
+57581,LAM-ABPC-57581,Electrical,Lampu TL,61487,2024-12-20,Kerusakan fatal tidak ekonomis diperbaiki,91360000
+30434,APA-BI30-30434,Sistem Pemadam Kebakaran,APAR CO2,52322,2024-12-20,Kontrak maintenance habis,72540000
+33346,LAM-KVEW-33346,Electrical,Lampu LED,82252,2025-12-20,Usia pakai habis,83630000
+29083,PAN-7MV0-29083,Mechanical,AC Split,85583,2025-12-20,Usia pakai habis,78960000
+23290,GRE-JHCI-23290,Mechanical,AC Split,79081,2025-12-20,Efisiensi energi,90800000
+28552,LAM-FPTS-28552,Electrical,Lampu Downlight,60275,2025-12-20,Upgrade kapasitas,23280000
+51420,HIK-QNVU-51420,Security Sistem,DVR CCTV,71838,2025-12-20,Tidak ada spare part,33540000
+36004,KRI-2PZ9-36004,Ventilasi Sistem,Exhaust Fan,54268,2023-01-21,Sudah obsolete,34640000
+13889,SHA-SIJY-13889,Mechanical,AC Split,57195,2024-01-21,Standar keamanan baru,9640000
+34639,PAB-CRBQ-34639,Sistem Telekomunikasi Gedung,PABX,76364,2025-01-21,Upgrade kapasitas,23650000
+59220,LAM-N3SF-59220,Electrical,Lampu LED,66465,2025-01-21,Tidak ada spare part,28480000
+60221,LG-XF05-60221,Mechanical,AC Split,95265,2025-01-21,Kerusakan fatal tidak ekonomis diperbaiki,55840000
+60009,DIN-E6HU-60009,Civil,Dinding Kaca Tempered,66094,2020-02-21,Kontrak maintenance habis,57230000
+1675,PAN-AG9X-1675,Electrical,Panel UPS,95781,2024-02-21,Efisiensi energi,74610000
+25938,PAN-I5Y6-25938,Electrical,Panel PP-ME,55011,2024-02-21,Kontrak maintenance habis,19010000
+44663,LAM-1RPC-44663,Electrical,Lampu Downlight,54688,2024-02-21,Standar keamanan baru,74910000
+25498,INA-QL46-25498,Plumbing,Wastafel,71102,2024-02-21,Sudah obsolete,93510000
+45910,ACC-TFWD-45910,Security Sistem,Access Control ,80523,2025-02-21,Standar keamanan baru,3450000
+39654,LAM-8IJP-39654,Electrical,Lampu Downlight,91506,2025-02-21,Upgrade kapasitas,86690000
+61009,PLA-KR5G-61009,Arsitektur,Plafon Gypsum / GRC,68548,2022-03-21,Efisiensi energi,52180000
+44496,APA-1ETV-44496,Sistem Pemadam Kebakaran,APAR CO2,64352,2022-03-21,Sudah obsolete,28680000
+59009,ATA-HWR4-59009,Civil,Atap Seng,73224,2023-03-21,Tidak ada spare part,27820000
+20697,SAM-JH9O-20697,Mechanical,AC Split,70597,2023-03-21,Tidak ada spare part,78620000
+40559,MIT-JD95-40559,Mechanical,AC Split,60318,2024-03-21,Standar keamanan baru,70520000
+44591,MEJ-NKQM-44591,Arsitektur,Meja kerja,71498,2024-03-21,Efisiensi energi,21620000
+46570,APA-VWFA-46570,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,80723,2024-03-21,Efisiensi energi,38750000
+15864,MIT-JO11-15864,Mechanical,AC Split,61019,2024-03-21,Standar keamanan baru,64230000
+20658,CUM-MI6E-20658,Mechanical,Genset Diesel,60774,2024-03-21,Standar keamanan baru,42460000
+3072,UNI-XQJI-3072,Electrical,Uninterruptible Power Supply,93129,2019-04-21,Efisiensi energi,46790000
+44675,APA-VNSL-44675,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,87637,2024-04-21,Efisiensi energi,77950000
+34782,DEU-DMM8-34782,Mechanical,Genset Diesel,53132,2024-04-21,Standar keamanan baru,93790000
+53558,LAM-RWJA-53558,Electrical,Lampu Downlight,96704,2025-04-21,Kontrak maintenance habis,23820000
+2511,GRE-QZ3G-2511,Mechanical,AC Split,86667,2025-04-21,Kerusakan fatal tidak ekonomis diperbaiki,63770000
+11333,NOT-ZXC3-11333,Sistem Proteksi Kebakaran Aktif,Smoke Detector,75540,2024-05-21,Upgrade kapasitas,90070000
+47554,APA-3Z0G-47554,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,72511,2024-05-21,Upgrade kapasitas,74750000
+59111,TOT-E36L-59111,Plumbing,Wastafel,86855,2024-05-21,Tidak ada spare part,79260000
+26217,FCU-PT86-26217,Mechanical,FCU,69943,2025-05-21,Tidak ada spare part,14330000
+54873,GRE-91YI-54873,Mechanical,AC Split,51385,2025-05-21,Sudah obsolete,62870000
+33953,KUR-GDAN-33953,Arsitektur,Kursi,69403,2021-06-21,Kerusakan fatal tidak ekonomis diperbaiki,9300000
+20215,CON-HV6M-20215,Electrical,Control Panel AC,91740,2024-06-21,Kerusakan fatal tidak ekonomis diperbaiki,64710000
+26692,PAN-8C41-26692,Mechanical,AC Split,50590,2024-06-21,Upgrade kapasitas,94100000
+28248,LAN-NYAI-28248,Civil,Lantai Keramik,62458,2024-06-21,Upgrade kapasitas,66040000
+47968,LG-VWI0-47968,Mechanical,AC Split,96901,2024-06-21,Usia pakai habis,83220000
+5136,AC -K2Q1-5136,Mechanical,AC VRV,68450,2024-06-21,Usia pakai habis,94450000
+9049,PLA-PFQQ-9049,Arsitektur,Plafon,84145,2024-06-21,Efisiensi energi,21830000
+52308,KDK-ZIL6-52308,Ventilasi Sistem,Exhaust Fan,74966,2025-06-21,Upgrade kapasitas,79240000
+39416,EBA-JXZP-39416,Mechanical,Pompa Boster,89211,2025-06-21,Tidak ada spare part,68010000
+22608,PLA-RXBF-22608,Arsitektur,Plafon,56185,2019-07-21,Efisiensi energi,7900000
+19485,DAI-9P3J-19485,Mechanical,AC Sentral,97346,2024-07-21,Standar keamanan baru,24720000
+2626,HYD-LCEZ-2626,Sistem Pemadam Kebakaran,Hydrant Box ,69775,2025-07-21,Upgrade kapasitas,39440000
+51048,GRE-GJ35-51048,Mechanical,AC Split,69850,2025-07-21,Kerusakan fatal tidak ekonomis diperbaiki,8220000
+40087,DIN-ERH6-40087,Civil,Dinding Tembok/Mansonry,69361,2020-08-21,Sudah obsolete,26740000
+17882,APA-NRTM-17882,Sistem Pemadam Kebakaran,APAB Dry Powder,94798,2024-08-21,Sudah obsolete,43890000
+3613,DAI-V5BY-3613,Mechanical,AC Split,75875,2025-08-21,Efisiensi energi,36110000
+23569,PLA-AD5U-23569,Arsitektur,Plafon Gypsum / GRC,85712,2024-09-21,Kontrak maintenance habis,79370000
+27642,LG-MZ9F-27642,Mechanical,AC Split,98675,2024-09-21,Efisiensi energi,15280000
+4238,SAM-CGRP-4238,Mechanical,AC Split,52882,2024-09-21,Sudah obsolete,52940000
+4344,PAN-RPDH-4344,Mechanical,AC Split,80701,2025-09-21,Sudah obsolete,71590000
+53260,PAN-80R6-53260,Mechanical,AC Split,96264,2021-10-21,Standar keamanan baru,44600000
+24123,SHA-0RHE-24123,Mechanical,AC Split,88297,2021-10-21,Kerusakan fatal tidak ekonomis diperbaiki,88080000
+23380,AUT-H3UF-23380,Electrical,Automatic Transfer Switch (ATS Panel),81299,2022-10-21,Upgrade kapasitas,67100000
+35441,LEM-8TGS-35441,Arsitektur,Lemari/Loker,68826,2023-10-21,Kontrak maintenance habis,36280000
+53555,PIN-646E-53555,Arsitektur,Pintu Besi,50716,2023-10-21,Usia pakai habis,18920000
+30958,PLA-PV7U-30958,Arsitektur,Plafon,92789,2024-10-21,Kerusakan fatal tidak ekonomis diperbaiki,50890000
+45050,SPE-TK25-45050,Sistem Telekomunikasi Gedung,Speaker,53420,2025-10-21,Kontrak maintenance habis,67030000
+43762,DIN-514L-43762,Civil,Dinding Tembok/Mansonry,55848,2025-10-21,Efisiensi energi,28210000
+54157,KRI-5I4O-54157,Ventilasi Sistem,Exhaust Fan,50786,2022-11-21,Tidak ada spare part,69170000
+21326,NOT-ZSKD-21326,Sistem Proteksi Kebakaran Aktif,Smoke Detector,84179,2024-11-21,Usia pakai habis,56000000
+19984,KLO-YA09-19984,Plumbing,Kloset,75886,2024-11-21,Tidak ada spare part,61280000
+44100,BOS-VVBI-44100,Security Sistem,Kamera CCTV,59761,2024-11-21,Standar keamanan baru,95340000
+32846,PLA-JH9C-32846,Arsitektur,Plafon Gypsum / GRC,74472,2024-11-21,Usia pakai habis,12940000
+5128,MIT-X7GF-5128,Mechanical,AC Split,73307,2025-11-21,Sudah obsolete,30460000
+41290,GRE-E21L-41290,Mechanical,AC Split,56266,2025-11-21,Efisiensi energi,83870000
+48442,HIK-JXBK-48442,Security Sistem,Kamera CCTV,61806,2020-12-21,Tidak ada spare part,75700000
+16281,HIK-PX5J-16281,Security Sistem,DVR CCTV,74352,2022-12-21,Tidak ada spare part,98730000
+14893,AC -9P3H-14893,Mechanical,AC VRV,78612,2023-12-21,Tidak ada spare part,56010000
+16106,DAI-C03K-16106,Mechanical,AC Split,96040,2024-12-21,Standar keamanan baru,5600000
+26029,WIR-TZVC-26029,Electrical,Wiring System (Sistem Instalasi Kabel),83232,2025-12-21,Upgrade kapasitas,81380000
+48539,MDP-TYIH-48539,Electrical,MDP,63268,2024-01-22,Standar keamanan baru,22010000
+35246,SHI-O9ED-35246,Mechanical,Pompa Air Tanah,58708,2024-02-22,Sudah obsolete,28800000
+29271,HIK-1YGH-29271,Security Sistem,Kamera CCTV,83231,2024-02-22,Sudah obsolete,96000000
+38437,JET-MO9H-38437,Plumbing,Jet Shower,52217,2024-02-22,Kontrak maintenance habis,70900000
+25,SHA-HL1C-0025,Mechanical,AC Split,88478,2025-02-22,Tidak ada spare part,38560000
+23858,PAN-3OFU-23858,Ventilasi Sistem,Air Curtain,73769,2023-03-22,Tidak ada spare part,8400000
+31994,APA-WUMU-31994,Sistem Pemadam Kebakaran,APAR CO2,75318,2024-03-22,Efisiensi energi,22760000
+26329,PAB-ZV6U-26329,Sistem Telekomunikasi Gedung,PABX,63898,2025-03-22,Kontrak maintenance habis,37230000
+28409,SAM-HF20-28409,Security Sistem,Monitor CCTV,76540,2025-03-22,Upgrade kapasitas,56060000
+11838,KRI-OM82-11838,Ventilasi Sistem,Exhaust Fan,67040,2020-04-22,Standar keamanan baru,69760000
+54521,KLO-C6TO-54521,Plumbing,Kloset,70499,2023-04-22,Upgrade kapasitas,62250000
+22574,WAS-MGK4-22574,Mechanical,Pompa Air Tanah,71913,2024-04-22,Efisiensi energi,56080000
+45619,PAN-I7O0-45619,Mechanical,AC Split,79907,2024-04-22,Efisiensi energi,25570000
+48798,WAS-P7WI-48798,Plumbing,Kran Air,55002,2024-04-22,Sudah obsolete,22520000
+29769,LAM-3RYX-29769,Electrical,Lampu TL,66766,2024-04-22,Upgrade kapasitas,49110000
+45930,BOS-6WMS-45930,Security Sistem,Kamera CCTV,64402,2025-04-22,Tidak ada spare part,46290000
+60959,APA-JNYW-60959,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,50195,2025-04-22,Kerusakan fatal tidak ekonomis diperbaiki,15310000
+30965,DIN-KXU6-30965,Civil,Dinding Keramik/Mozaik,96069,2024-05-22,Usia pakai habis,58850000
+55871,MIT-TX5O-55871,Mechanical,AC Split,95269,2025-05-22,Upgrade kapasitas,5690000
+4884,JET-UWJ4-4884,Plumbing,Jet Shower,70024,2025-05-22,Upgrade kapasitas,19470000
+23536,APA-KTSM-23536,Sistem Pemadam Kebakaran,APAB Dry Powder,70340,2025-06-22,Tidak ada spare part,19770000
+43696,DAI-5DZM-43696,Mechanical,AC Split,51018,2023-07-22,Upgrade kapasitas,28390000
+46800,LAM-SU7J-46800,Electrical,Lampu Downlight,82290,2024-07-22,Efisiensi energi,43870000
+17123,LAM-OPA9-17123,Electrical,Lampu TL,61036,2024-07-22,Kontrak maintenance habis,50650000
+26442,HIK-QI3P-26442,Security Sistem,Kamera CCTV,64077,2025-07-22,Upgrade kapasitas,45660000
+21824,MIT-4ZXP-21824,Mechanical,AC Cassette,52531,2025-07-22,Tidak ada spare part,98710000
+31320,PUS-3TPN-31320,Security Sistem,Push Button,90718,2019-08-22,Standar keamanan baru,66520000
+49924,LAM-P8YS-49924,Electrical,Lampu LED Downlight,65562,2020-08-22,Tidak ada spare part,60990000
+31360,DIN-OA34-31360,Civil,Dinding Tembok/Mansonry,84041,2022-08-22,Tidak ada spare part,51310000
+44468,LAM-FB0D-44468,Electrical,Lampu LED,61872,2024-08-22,Kerusakan fatal tidak ekonomis diperbaiki,7130000
+40633,KUR-V1PQ-40633,Arsitektur,Kursi,56675,2024-08-22,Upgrade kapasitas,78520000
+26375,GRE-W15D-26375,Mechanical,AC Split,71430,2025-08-22,Usia pakai habis,88730000
+53792,TRA-3378-53792,Electrical,Trafo IT UPS,57092,2025-08-22,Usia pakai habis,41390000
+47208,NOT-T2Y4-47208,Sistem Proteksi Kebakaran Aktif,Smoke Detector,99955,2023-09-22,Standar keamanan baru,6080000
+55093,PLA-MFWH-55093,Arsitektur,Plafon Gypsum / GRC,65767,2024-09-22,Kerusakan fatal tidak ekonomis diperbaiki,56880000
+41038,KUR-WMOM-41038,Arsitektur,Kursi,99057,2019-10-22,Usia pakai habis,82750000
+4123,ACC-Y2N3-4123,Security Sistem,Access Control ,74950,2022-10-22,Upgrade kapasitas,77770000
+44254,DIN-858K-44254,Civil,"Dinding Partisi, GRC / Gypsum",68918,2024-10-22,Kerusakan fatal tidak ekonomis diperbaiki,74220000
+53506,APA-FKSL-53506,Sistem Pemadam Kebakaran,APAR CO2,82800,2024-10-22,Usia pakai habis,71060000
+35992,FIN-07SV-35992,Security Sistem,Fingerprint,63197,2025-10-22,Standar keamanan baru,18180000
+53667,SHA-W1W5-53667,Mechanical,AC Split,81964,2025-10-22,Standar keamanan baru,51640000
+30129,SAM-33RP-30129,Mechanical,AC Split,63758,2025-10-22,Standar keamanan baru,24580000
+7565,MON-RIUX-7565,Sistem Telekomunikasi Gedung,Monitor/Layar,71627,2025-10-22,Efisiensi energi,22120000
+44825,MET-DCGZ-44825,Pencatatan Meter,Meter PLN,65263,2025-10-22,Kontrak maintenance habis,66830000
+50644,TOT-ST96-50644,Plumbing,Wastafel,94147,2020-11-22,Standar keamanan baru,58610000
+4966,PAN-TLK2-4966,Mechanical,AC Split,86876,2024-11-22,Efisiensi energi,67510000
+30044,KIC-RW1G-30044,Security Sistem,Kick Bar,73063,2024-11-22,Kerusakan fatal tidak ekonomis diperbaiki,58970000
+17371,BOS-1WDJ-17371,Security Sistem,Kamera CCTV,83736,2024-11-22,Kerusakan fatal tidak ekonomis diperbaiki,58100000
+2578,EBA-WVF3-2578,Mechanical,Pompa Boster,67828,2024-11-22,Standar keamanan baru,23400000
+55316,WIR-UKWY-55316,Electrical,Wiring System (Sistem Instalasi Kabel),56287,2025-11-22,Upgrade kapasitas,58870000
+28813,LAM-I7H3-28813,Electrical,Lampu LED,77614,2019-12-22,Kerusakan fatal tidak ekonomis diperbaiki,56270000
+18966,GRE-J8I9-18966,Mechanical,AC Split,66253,2021-12-22,Standar keamanan baru,48660000
+33651,PAB-7FO6-33651,Sistem Telekomunikasi Gedung,PABX,54373,2023-12-22,Sudah obsolete,54270000
+58876,SAM-20QH-58876,Security Sistem,Monitor CCTV,57876,2024-12-22,Usia pakai habis,94370000
+17801,MIT-9XBS-17801,Mechanical,AC Split,53808,2024-12-22,Sudah obsolete,20000000
+19493,SAM-9VWT-19493,Mechanical,AC Split,84797,2025-12-22,Tidak ada spare part,28710000
+53153,SHA-YD45-53153,Mechanical,AC Split,79524,2025-12-22,Efisiensi energi,3490000
+33120,TOT-VJN1-33120,Plumbing,Kran Air,76541,2025-12-22,Kerusakan fatal tidak ekonomis diperbaiki,22050000
+16790,PEM-RR8L-16790,Plumbing,Pemipaan Air Kotor,56930,2025-01-23,Kontrak maintenance habis,18020000
+2708,MIT-LFB4-2708,Mechanical,AC Split,77721,2025-01-23,Efisiensi energi,66710000
+19745,DAH-CFG0-19745,Security Sistem,Kamera CCTV,53880,2025-01-23,Kerusakan fatal tidak ekonomis diperbaiki,4970000
+38693,LAN-MK4B-38693,Civil,Lantai Keramik,57741,2021-02-23,Tidak ada spare part,48640000
+3331,URI-QT8E-3331,Plumbing,Urinal,65384,2024-02-23,Tidak ada spare part,12920000
+53225,LEM-ZL0B-53225,Arsitektur,Lemari/Loker,95481,2025-02-23,Kerusakan fatal tidak ekonomis diperbaiki,70490000
+40213,GRE-569P-40213,Mechanical,AC Split,51752,2025-02-23,Usia pakai habis,4270000
+29343,BOS-FMT1-29343,Security Sistem,Kamera CCTV,96954,2022-03-23,Sudah obsolete,4510000
+45541,PAN-AE3Z-45541,Ventilasi Sistem,Exhaust Fan,50734,2023-03-23,Standar keamanan baru,74470000
+29221,LAM-CQOA-29221,Electrical,Lampu LED Strip,92440,2025-03-23,Standar keamanan baru,72520000
+34272,TOT-78KC-34272,Plumbing,Wastafel,54892,2024-04-23,Standar keamanan baru,27400000
+21883,MDB-86BP-21883,Electrical,MDB,96575,2025-04-23,Kontrak maintenance habis,51000000
+55211,DIN-M5OC-55211,Civil,Dinding Kaca Tempered,95582,2024-05-23,Tidak ada spare part,19660000
+54606,LEM-5V0F-54606,Arsitektur,Lemari/Loker,63437,2024-05-23,Standar keamanan baru,9530000
+50099,LEM-MFFY-50099,Arsitektur,Lemari/Loker,59377,2024-05-23,Standar keamanan baru,98890000
+795,GRE-YT5G-0795,Mechanical,AC Split,69793,2024-05-23,Kerusakan fatal tidak ekonomis diperbaiki,97110000
+21720,AXI-RGP9-21720,Security Sistem,Kamera CCTV,70397,2025-05-23,Tidak ada spare part,21860000
+33550,POM-EZK9-33550,Mechanical,Pompa Chiller Water Sekunder,84273,2025-05-23,Usia pakai habis,2760000
+33497,LG-UUOX-33497,Mechanical,AC Split,89296,2021-06-23,Kontrak maintenance habis,16200000
+31077,LG-WVJW-31077,Security Sistem,Monitor CCTV,75676,2022-06-23,Kerusakan fatal tidak ekonomis diperbaiki,81700000
+58778,LAM-UPFA-58778,Electrical,Lampu TL LED,61262,2024-06-23,Tidak ada spare part,98400000
+49616,KIC-KHGI-49616,Security Sistem,Kick Bar,89694,2024-06-23,Sudah obsolete,29360000
+55156,LAN-1SZ9-55156,Civil,Lantai Granit,57825,2022-07-23,Upgrade kapasitas,17100000
+55978,LAM-E6C3-55978,Electrical,Lampu LED,98867,2024-07-23,Tidak ada spare part,76510000
+52709,ROO-9SVQ-52709,Distribusi Air,Roof Tank,82207,2024-07-23,Sudah obsolete,61830000
+1480,AHU-M0SW-1480,Mechanical,AHU,70022,2025-07-23,Efisiensi energi,28080000
+52724,APA-2CKK-52724,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,71729,2025-07-23,Upgrade kapasitas,77940000
+11885,GRE-DWTX-11885,Mechanical,AC Split,69450,2025-07-23,Sudah obsolete,49560000
+34430,PAN-SD7H-34430,Mechanical,AC Split,82304,2022-08-23,Sudah obsolete,11640000
+58568,ATA-7LT5-58568,Civil,Atap Galvalum,59331,2024-08-23,Efisiensi energi,41690000
+52850,ATA-JDZI-52850,Civil,Atap Genteng,55956,2024-08-23,Tidak ada spare part,95330000
+50703,GRE-941R-50703,Mechanical,AC Split,82376,2025-08-23,Kerusakan fatal tidak ekonomis diperbaiki,30090000
+60025,AMP-C2T2-60025,Sistem Telekomunikasi Gedung,Amplifier,71840,2025-08-23,Efisiensi energi,36750000
+57899,DOO-KM81-57899,Arsitektur,Door Closer,85090,2020-09-23,Usia pakai habis,48100000
+54651,WAS-5CQD-54651,Plumbing,Kran Air,79363,2022-09-23,Upgrade kapasitas,36480000
+56464,PLA-ISXN-56464,Arsitektur,Plafon Gypsum / GRC,68342,2022-09-23,Sudah obsolete,55810000
+23819,DAI-3CT3-23819,Mechanical,AC Cassette,58982,2022-09-23,Sudah obsolete,6130000
+2704,LVM-QZTG-2704,Electrical,LVMDP,68085,2023-09-23,Upgrade kapasitas,84160000
+2437,GRU-BMMZ-2437,Mechanical,Pompa Transfer,73243,2025-09-23,Kerusakan fatal tidak ekonomis diperbaiki,40660000
+30877,LAM-RHPT-30877,Electrical,Lampu Downlight,73946,2025-09-23,Efisiensi energi,13910000
+37854,DAH-088Z-37854,Security Sistem,Kamera CCTV,78226,2025-09-23,Kontrak maintenance habis,93950000
+222,DEU-7KUU-0222,Mechanical,Genset Diesel,59456,2023-10-23,Kontrak maintenance habis,4240000
+50171,TRA-ZZ9T-50171,Electrical,Trafo IT UPS,75141,2023-10-23,Tidak ada spare part,63040000
+6036,LG-K0BO-6036,Mechanical,AC Split,71128,2024-10-23,Upgrade kapasitas,34910000
+49612,BOS-IFO1-49612,Security Sistem,Kamera CCTV,50223,2024-10-23,Tidak ada spare part,12500000
+46592,HIK-0PB0-46592,Security Sistem,Kamera CCTV,86769,2025-10-23,Kerusakan fatal tidak ekonomis diperbaiki,87000000
+7285,GRE-UAXI-7285,Mechanical,AC Split,66102,2023-11-23,Kerusakan fatal tidak ekonomis diperbaiki,16510000
+40205,LAM-3WLX-40205,Electrical,Lampu LED Bulb,68637,2024-11-23,Kontrak maintenance habis,65160000
+36847,PLA-2985-36847,Arsitektur,Plafon Gypsum / GRC,59419,2024-11-23,Usia pakai habis,87680000
+40630,MEJ-TR51-40630,Arsitektur,Meja kerja,72809,2024-11-23,Kerusakan fatal tidak ekonomis diperbaiki,70600000
+28371,LAM-26M8-28371,Electrical,Lampu TL,57995,2025-11-23,Tidak ada spare part,86930000
+36470,APA-MH2H-36470,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,64588,2021-12-23,Kontrak maintenance habis,28490000
+41567,BOS-WTOK-41567,Security Sistem,Kamera CCTV,86303,2024-12-23,Sudah obsolete,93280000
+55768,PAV-OV3E-55768,Arsitektur,Paving Block,66699,2024-12-23,Standar keamanan baru,60880000
+47281,LAM-K5EU-47281,Electrical,Lampu Downlight,99081,2025-12-23,Standar keamanan baru,9950000
+45075,TOT-PLGO-45075,Plumbing,Wastafel,77644,2025-12-23,Efisiensi energi,51490000
+35102,HOS-AY47-35102,Sistem Pemadam Kebakaran,Hose Coupling,72748,2019-01-24,Upgrade kapasitas,49030000
+59019,LAM-CLXN-59019,Electrical,Lampu TL LED,73101,2023-01-24,Kontrak maintenance habis,79090000
+40258,LAM-OVTS-40258,Electrical,Lampu Downlight,90874,2023-01-24,Kontrak maintenance habis,48320000
+49657,ACC-6XZ5-49657,Security Sistem,Access Control ,50376,2023-01-24,Upgrade kapasitas,7750000
+15440,DAH-XOJD-15440,Security Sistem,Kamera CCTV,60045,2024-01-24,Efisiensi energi,90610000
+29611,SHA-NTPY-29611,Mechanical,AC Split,50869,2024-01-24,Efisiensi energi,33310000
+44683,PAG-SQ3G-44683,Arsitektur,Pagar Besi,68230,2024-01-24,Sudah obsolete,57280000
+23260,KLO-O6NB-23260,Plumbing,Kloset,81085,2024-01-24,Kontrak maintenance habis,36890000
+32580,LAM-T91D-32580,Electrical,Lampu T5,87624,2020-02-24,Sudah obsolete,70590000
+53125,APA-BDTL-53125,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,62540,2022-02-24,Kerusakan fatal tidak ekonomis diperbaiki,90470000
+54235,LAN-Q6B2-54235,Civil,Lantai Beton,88885,2022-02-24,Efisiensi energi,51850000
+36826,DAI-DU0L-36826,Mechanical,AC Split,71288,2023-02-24,Standar keamanan baru,84940000
+56003,BOS-UDRE-56003,Security Sistem,Kamera CCTV,78666,2024-02-24,Kerusakan fatal tidak ekonomis diperbaiki,78260000
+52875,DIN-AMXM-52875,Civil,"Dinding Partisi, GRC / Gypsum",51204,2025-02-24,Usia pakai habis,54420000
+28270,DIN-1ZLZ-28270,Civil,Dinding Tembok/Mansonry,60630,2025-02-24,Sudah obsolete,49940000
+11732,DAI-5CVY-11732,Mechanical,AC Cassette,55026,2021-03-24,Kerusakan fatal tidak ekonomis diperbaiki,33240000
+49479,HIK-IHGQ-49479,Security Sistem,DVR CCTV,98747,2022-03-24,Kontrak maintenance habis,48350000
+48481,PIN-0NHT-48481,Arsitektur,Pintu Kaca Hidrolik,76858,2023-03-24,Upgrade kapasitas,86100000
+983,FLO-HRYI-0983,Plumbing,Floor Drain,50890,2024-03-24,Efisiensi energi,55710000
+11849,APA-JZNL-11849,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,68123,2025-03-24,Usia pakai habis,13820000
+31842,DIN-I6Q7-31842,Civil,Dinding Tembok/Mansonry,86202,2025-03-24,Efisiensi energi,29360000
+13013,OND-FSMU-13013,Plumbing,Kran Air,52690,2025-03-24,Sudah obsolete,39780000
+31305,MEJ-EZIV-31305,Arsitektur,Meja kerja,53130,2022-04-24,Efisiensi energi,30680000
+54108,AXI-H7YG-54108,Security Sistem,Kamera CCTV,74055,2023-04-24,Usia pakai habis,75660000
+1122,HIK-442S-1122,Security Sistem,Kamera CCTV,98840,2024-04-24,Upgrade kapasitas,38470000
+37255,EBA-XEA6-37255,Mechanical,Pompa Transfer,84975,2025-04-24,Kontrak maintenance habis,7000000
+27773,URI-O0MK-27773,Plumbing,Urinal,84608,2024-05-24,Sudah obsolete,32930000
+30770,HIK-PE0H-30770,Security Sistem,Kamera CCTV,86964,2024-05-24,Efisiensi energi,71510000
+6393,LG-XRMS-6393,Mechanical,AC Split,96878,2025-05-24,Kontrak maintenance habis,62820000
+41084,JET-GITH-41084,Plumbing,Jet Shower,90596,2025-05-24,Efisiensi energi,50200000
+4794,LG-O9ST-4794,Mechanical,AC Split,59147,2022-06-24,Kontrak maintenance habis,65960000
+59848,LAN-EDWV-59848,Civil,Lantai Karpet,62466,2023-06-24,Sudah obsolete,59630000
+57797,WI--Y07G-57797,Sistem Telekomunikasi Gedung,WI-FI,93843,2023-06-24,Upgrade kapasitas,35170000
+11523,SHA-8SQY-11523,Mechanical,AC Split,78130,2024-06-24,Standar keamanan baru,73790000
+17937,KDK-9BOR-17937,Ventilasi Sistem,Exhaust Fan,79547,2025-06-24,Standar keamanan baru,52880000
+50480,ATA-7JPL-50480,Civil,Atap Spandek,88036,2025-06-24,Kontrak maintenance habis,24400000
+29666,KRI-VSSM-29666,Ventilasi Sistem,Exhaust Fan,53852,2018-07-24,Standar keamanan baru,91350000
+18671,PEM-ECH2-18671,Plumbing,Pemipaan Air Bersih,73063,2023-07-24,Usia pakai habis,20220000
+58126,BOS-TSGM-58126,Security Sistem,Kamera CCTV,58400,2023-07-24,Standar keamanan baru,17350000
+6207,AUT-HXLS-6207,Electrical,Automatic Transfer Switch (ATS Panel),79639,2024-07-24,Usia pakai habis,47000000
+23615,HIK-BP5S-23615,Security Sistem,Kamera CCTV,54050,2024-07-24,Tidak ada spare part,77530000
+19231,PEM-VWCM-19231,Plumbing,Pemipaan Air Kotor,55803,2025-07-24,Sudah obsolete,69170000
+51264,SAM-F77K-51264,Mechanical,AC Split,59540,2025-07-24,Tidak ada spare part,65910000
+56132,LG-EZZI-56132,Mechanical,AC Split,54965,2021-08-24,Standar keamanan baru,77770000
+53286,MEJ-YZLR-53286,Arsitektur,Meja kerja,72330,2023-08-24,Upgrade kapasitas,29540000
+35593,WIR-MTGR-35593,Electrical,Wiring System (Sistem Instalasi Kabel),52337,2024-08-24,Usia pakai habis,6770000
+5711,KDK-M10C-5711,Ventilasi Sistem,Exhaust Fan,70123,2025-08-24,Upgrade kapasitas,78320000
+56652,PLA-BFUS-56652,Arsitektur,Plafon Gypsum / GRC,62563,2025-08-24,Efisiensi energi,81140000
+22478,DEU-XPQA-22478,Mechanical,Genset Diesel,71503,2023-09-24,Upgrade kapasitas,61440000
+33036,PLA-IL5S-33036,Arsitektur,Plafon Gypsum / GRC,80600,2024-09-24,Standar keamanan baru,54250000
+29826,DIN-50X4-29826,Civil,Dinding Kaca Tempered,55169,2024-09-24,Usia pakai habis,61740000
+44643,LAM-SAHT-44643,Electrical,Lampu LED Downlight,64673,2024-09-24,Standar keamanan baru,95450000
+16261,MIT-0L6G-16261,Mechanical,AC Split,91757,2024-09-24,Kontrak maintenance habis,54430000
+1985,DAH-BWBX-1985,Security Sistem,Kamera CCTV,94610,2025-09-24,Upgrade kapasitas,61720000
+58930,PUS-E7ZZ-58930,Security Sistem,Push Button,67943,2021-10-24,Efisiensi energi,64370000
+835,LG-ZEBU-0835,Mechanical,AC Split,97205,2023-10-24,Kontrak maintenance habis,92050000
+8928,LAM-D1G1-8928,Electrical,Lampu Downlight,80589,2025-10-24,Efisiensi energi,2880000
+33230,KUR-U8GN-33230,Arsitektur,Kursi,71410,2025-10-24,Tidak ada spare part,26130000
+53078,ROL-4QSL-53078,Arsitektur,Rolling Door,56417,2025-10-24,Efisiensi energi,98850000
+38382,KDK-0H8X-38382,Ventilasi Sistem,Exhaust Fan,60743,2025-10-24,Tidak ada spare part,20740000
+19697,GRE-JXFJ-19697,Mechanical,AC Split,50864,2023-11-24,Tidak ada spare part,82600000
+46829,DIN-S0PW-46829,Civil,Dinding Tembok/Mansonry,79243,2024-11-24,Tidak ada spare part,62620000
+59954,PLA-NPDV-59954,Arsitektur,Plafon Gypsum / GRC,60956,2024-11-24,Kontrak maintenance habis,54350000
+5303,PAN-62RR-5303,Mechanical,AC Split,89952,2025-11-24,Kontrak maintenance habis,91850000
+39304,HIK-TGXX-39304,Security Sistem,Kamera CCTV,71106,2020-12-24,Upgrade kapasitas,33560000
+45553,HYD-SQVD-45553,Sistem Pemadam Kebakaran,Hydrant Box ,53008,2021-12-24,Kontrak maintenance habis,45750000
+41184,CON-1S19-41184,Electrical,Control Panel AC,70728,2022-12-24,Usia pakai habis,94760000
+41817,UNI-NUU5-41817,Electrical,Uninterruptible Power Supply,95167,2024-12-24,Standar keamanan baru,18480000
+24515,FCU-4EUE-24515,Mechanical,FCU,60172,2024-12-24,Kontrak maintenance habis,21070000
+49770,PES-W6EE-49770,Sistem Telekomunikasi Gedung,Pesawat Telepon,85509,2025-12-24,Sudah obsolete,77510000
+23296,MIT-04TU-23296,Mechanical,AC Split,59807,2025-12-24,Efisiensi energi,27370000
+28713,SAM-QJ1X-28713,Mechanical,AC Split,90194,2025-12-24,Tidak ada spare part,71400000
+47921,PUS-07SS-47921,Security Sistem,Push Button,67998,2023-01-25,Kerusakan fatal tidak ekonomis diperbaiki,13160000
+39178,AXI-V3NJ-39178,Security Sistem,Kamera CCTV,57666,2024-01-25,Tidak ada spare part,61610000
+821,SAM-KRBW-0821,Mechanical,AC Split,81489,2024-01-25,Standar keamanan baru,81140000
+12516,SPE-7U6O-12516,Sistem Telekomunikasi Gedung,Speaker,62345,2025-01-25,Usia pakai habis,96030000
+27963,GRE-OTOB-27963,Mechanical,AC Split,94895,2025-01-25,Standar keamanan baru,16210000
+2285,LAN-ONMC-2285,Civil,Lantai Keramik,54990,2025-01-25,Standar keamanan baru,71050000
+45238,MET-WHDY-45238,Pencatatan Meter,Meter PLN,98925,2024-02-25,Usia pakai habis,28730000
+19529,SWI-R30T-19529,Sistem Telekomunikasi Gedung,Switch Hub,70529,2025-02-25,Upgrade kapasitas,54420000
+51894,WAS-29BM-51894,Plumbing,Kran Air,60043,2023-03-25,Tidak ada spare part,94140000
+31971,PES-G9NG-31971,Sistem Telekomunikasi Gedung,Pesawat Telepon,73180,2024-03-25,Upgrade kapasitas,78780000
+11538,MIT-XGVI-11538,Mechanical,AC Split,55567,2024-03-25,Tidak ada spare part,45160000
+50595,PIN-J0CY-50595,Arsitektur,Pintu Kayu/HPL,86437,2025-03-25,Sudah obsolete,81590000
+42020,GRE-TAD2-42020,Mechanical,AC Split,65263,2023-04-25,Kontrak maintenance habis,22990000
+11342,AXI-YYPC-11342,Security Sistem,Kamera CCTV,70262,2023-04-25,Kontrak maintenance habis,77350000
+779,MIT-QFGA-0779,Mechanical,AC Split,61937,2024-04-25,Usia pakai habis,98660000
+44367,ROL-E73M-44367,Arsitektur,Rolling Door,89649,2025-04-25,Tidak ada spare part,68630000
+2628,MIT-XN8D-2628,Mechanical,AC Split,65572,2025-04-25,Upgrade kapasitas,9940000
+31118,APA-WBVI-31118,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,78967,2025-04-25,Tidak ada spare part,55540000
+22936,APA-0G52-22936,Sistem Pemadam Kebakaran,APAB Dry Powder,92131,2025-04-25,Standar keamanan baru,30260000
+49704,MEJ-2Y5H-49704,Arsitektur,Meja kerja,95587,2020-05-25,Efisiensi energi,19220000
+12668,PAN-MOVG-12668,Mechanical,AC Split,65238,2021-05-25,Upgrade kapasitas,52940000
+21485,APA-681V-21485,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,77983,2022-05-25,Sudah obsolete,59600000
+21491,APA-379T-21491,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,55774,2024-05-25,Kerusakan fatal tidak ekonomis diperbaiki,13300000
+54991,DIN-EZN7-54991,Civil,"Dinding Partisi, GRC / Gypsum",53014,2024-06-25,Usia pakai habis,30130000
+57988,DIN-A1GE-57988,Civil,Dinding Batu Alam,73640,2024-06-25,Standar keamanan baru,27450000
+356,DAI-4YFD-0356,Mechanical,AC Split,61938,2025-06-25,Sudah obsolete,41750000
+40243,STR-Z75Z-40243,Civil,Struktur Bangunan Beton,78913,2025-06-25,Efisiensi energi,54560000
+50442,AME-7X4O-50442,Plumbing,Wastafel,66538,2024-07-25,Upgrade kapasitas,18310000
+40201,LAM-Q1UV-40201,Electrical,Lampu LED Bulb,51761,2024-07-25,Kontrak maintenance habis,7520000
+39621,PAN-LQLV-39621,Mechanical,AC Split,69064,2024-07-25,Tidak ada spare part,95550000
+31487,BEL-GMWQ-31487,Sistem Proteksi Kebakaran Aktif,Bell Alarm,92295,2025-07-25,Sudah obsolete,93170000
+27703,LG-PG7M-27703,Security Sistem,Monitor CCTV,96977,2025-07-25,Upgrade kapasitas,51980000
+33162,BOS-6DSL-33162,Security Sistem,Kamera CCTV,86808,2025-07-25,Efisiensi energi,14810000
+1472,PAN-IEST-1472,Electrical,Panel UPS,82415,2019-08-25,Usia pakai habis,53790000
+37418,DAH-RRF5-37418,Security Sistem,Kamera CCTV,86847,2021-08-25,Usia pakai habis,43880000
+29918,PIN-URQZ-29918,Arsitektur,Pintu Kaca Hidrolik,81481,2023-08-25,Standar keamanan baru,92260000
+19681,PAB-UCDG-19681,Sistem Telekomunikasi Gedung,PABX,77240,2023-08-25,Efisiensi energi,92310000
+50392,MET-DH1X-50392,Pencatatan Meter,Meter Provider,69253,2024-08-25,Kerusakan fatal tidak ekonomis diperbaiki,21900000
+48345,SAM-K5IJ-48345,Mechanical,AC Split,82281,2024-08-25,Usia pakai habis,12700000
+34888,SAM-VFT0-34888,Mechanical,AC Split,56459,2020-09-25,Kerusakan fatal tidak ekonomis diperbaiki,76330000
+47153,LAN-Q1NG-47153,Civil,Lantai Granit,98426,2021-09-25,Tidak ada spare part,58940000
+59204,WAS-QT4E-59204,Plumbing,Kran Air,58813,2023-09-25,Sudah obsolete,93950000
+61087,PES-DT9S-61087,Sistem Telekomunikasi Gedung,Pesawat Telepon,78309,2023-09-25,Kontrak maintenance habis,52870000
+33883,LG-A5T7-33883,Mechanical,AC Split,68723,2024-09-25,Efisiensi energi,40800000
+37202,APA-DOCJ-37202,Sistem Pemadam Kebakaran,APAB Dry Powder,87893,2024-09-25,Usia pakai habis,6510000
+60331,AC -FVT3-60331,Mechanical,AC VRV,85117,2024-09-25,Sudah obsolete,29870000
+42365,SAM-CCYQ-42365,Mechanical,AC Split,53164,2024-09-25,Kerusakan fatal tidak ekonomis diperbaiki,17670000
+45742,PEM-ITOW-45742,Plumbing,Pemipaan Air Bersih,71308,2025-09-25,Usia pakai habis,29080000
+1021,PAN-A68T-1021,Mechanical,AC Cassette,70127,2025-09-25,Kontrak maintenance habis,42070000
+59018,LAM-CD9F-59018,Electrical,Lampu LED Downlight,94896,2025-09-25,Kerusakan fatal tidak ekonomis diperbaiki,78850000
+53066,MIT-KD08-53066,Mechanical,AC Split,96605,2025-09-25,Efisiensi energi,63500000
+31174,APA-12G9-31174,Sistem Pemadam Kebakaran,APAR CO2,69331,2025-09-25,Efisiensi energi,98520000
+19300,LG-7TOY-19300,Mechanical,AC Cassette,68692,2025-09-25,Tidak ada spare part,4920000
+6688,AXI-ZDR5-6688,Security Sistem,Kamera CCTV,87925,2021-10-25,Upgrade kapasitas,87490000
+39086,PIN-PKNQ-39086,Arsitektur,Pintu Besi,71436,2021-10-25,Tidak ada spare part,15430000
+31562,SAM-DBNM-31562,Mechanical,AC Split,73237,2024-10-25,Usia pakai habis,63420000
+51088,MIT-11H9-51088,Mechanical,AC Split,98673,2024-10-25,Efisiensi energi,39790000
+31248,KRI-3TZ8-31248,Ventilasi Sistem,Exhaust Fan,52613,2024-10-25,Usia pakai habis,31220000
+6358,PRO-QKXP-6358,Sistem Telekomunikasi Gedung,Proyektor,67550,2024-10-25,Kontrak maintenance habis,60300000
+31047,SHA-FLS5-31047,Mechanical,AC Split,76979,2025-10-25,Tidak ada spare part,17260000
+11498,ATA-1FZG-11498,Civil,Atap Genteng,76882,2025-10-25,Kontrak maintenance habis,94920000
+42956,OND-4BSN-42956,Plumbing,Kran Air,64099,2024-11-25,Efisiensi energi,89500000
+31300,MIT-KCHA-31300,Mechanical,AC Split,65770,2024-11-25,Sudah obsolete,16870000
+13572,LG-7LKE-13572,Mechanical,AC Standing,74844,2022-12-25,Kontrak maintenance habis,45270000
+54867,HIK-9UEA-54867,Security Sistem,DVR CCTV,55619,2022-12-25,Upgrade kapasitas,13140000
+51065,HIK-1H3A-51065,Security Sistem,Kamera CCTV,99833,2022-12-25,Upgrade kapasitas,85830000
+47808,HYD-BNKE-47808,Sistem Pemadam Kebakaran,Hydrant Pillar,64228,2022-12-25,Standar keamanan baru,6090000
+47574,PES-A0Y1-47574,Sistem Telekomunikasi Gedung,Pesawat Telepon,70027,2023-12-25,Standar keamanan baru,99810000
+49322,PAM-LGDP-49322,Distribusi Air,PAM,93482,2024-12-25,Efisiensi energi,81200000
+16864,LAM-YEZY-16864,Electrical,Lampu Downlight,70817,2024-12-25,Upgrade kapasitas,30990000
+26086,AME-1BEA-26086,Plumbing,Wastafel,98767,2024-12-25,Standar keamanan baru,47420000
+21834,DAI-1CDD-21834,Mechanical,AC Split,60162,2025-12-25,Upgrade kapasitas,95910000
+60366,PRO-BL65-60366,Sistem Telekomunikasi Gedung,Proyektor,77908,2025-12-25,Kontrak maintenance habis,60310000
+51608,PUS-TPAN-51608,Security Sistem,Push Button,63783,2022-01-26,Upgrade kapasitas,59210000
+6505,DIE-6KGL-6505,Sistem Pemadam Kebakaran,Diesel Fire Pump,61456,2023-01-26,Standar keamanan baru,28310000
+50209,DIN-ACV5-50209,Civil,"Dinding Partisi, GRC / Gypsum",94247,2023-01-26,Usia pakai habis,47820000
+9404,KRI-W6X2-9404,Ventilasi Sistem,Exhaust Fan,90930,2024-01-26,Efisiensi energi,31950000
+56697,APA-GCFU-56697,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,95934,2025-01-26,Tidak ada spare part,78220000
+35726,MCF-42FQ-35726,Sistem Proteksi Kebakaran Aktif,MCFA,73883,2025-01-26,Sudah obsolete,87200000
+30638,MIT-R8IF-30638,Mechanical,AC Split,65670,2025-01-26,Efisiensi energi,49080000
+37822,INA-J0QQ-37822,Plumbing,Wastafel,52944,2019-02-26,Kontrak maintenance habis,5080000
+20552,DAH-81ZN-20552,Security Sistem,Kamera CCTV,77123,2021-02-26,Sudah obsolete,66650000
+48892,SHA-9SZC-48892,Mechanical,AC Split,62966,2024-02-26,Kerusakan fatal tidak ekonomis diperbaiki,89120000
+28297,DIN-H0VI-28297,Civil,"Dinding Partisi, GRC / Gypsum",97155,2024-02-26,Kerusakan fatal tidak ekonomis diperbaiki,62190000
+42667,JET-5XO0-42667,Plumbing,Jet Shower,96880,2024-02-26,Sudah obsolete,55110000
+11360,DAI-N8VI-11360,Mechanical,AC Split,99156,2024-02-26,Tidak ada spare part,87520000
+34180,PAB-LORL-34180,Sistem Telekomunikasi Gedung,PABX,55549,2025-02-26,Kerusakan fatal tidak ekonomis diperbaiki,24510000
+19716,APA-SMP9-19716,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,53908,2022-03-26,Sudah obsolete,10100000
+31050,GRE-98GG-31050,Mechanical,AC Split,59818,2024-03-26,Standar keamanan baru,80120000
+38626,DAH-1JEV-38626,Security Sistem,Kamera CCTV,89827,2024-03-26,Efisiensi energi,94430000
+45781,KLO-AFHR-45781,Plumbing,Kloset,54985,2024-03-26,Kerusakan fatal tidak ekonomis diperbaiki,88900000
+12067,CON-5FFV-12067,Electrical,Control Panel AC,99602,2024-03-26,Kontrak maintenance habis,89360000
+47552,KUR-9Y4D-47552,Arsitektur,Kursi,94125,2024-03-26,Kerusakan fatal tidak ekonomis diperbaiki,19370000
+43041,LAM-RXB3-43041,Electrical,Lampu TL,54704,2025-03-26,Sudah obsolete,64830000
+21578,CON-UFRV-21578,Electrical,Control Panel Pompa Transfer,99593,2020-04-26,Sudah obsolete,99040000
+31745,LAN-318F-31745,Civil,Lantai Karpet,92005,2022-04-26,Kerusakan fatal tidak ekonomis diperbaiki,33400000
+48402,APA-B1LQ-48402,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,92633,2024-04-26,Upgrade kapasitas,4930000
+28099,FCU-P4YK-28099,Mechanical,FCU,90078,2024-04-26,Standar keamanan baru,86690000
+57250,DIN-L26Y-57250,Civil,"Dinding Partisi, GRC / Gypsum",61893,2019-05-26,Standar keamanan baru,44100000
+28801,PLA-77HT-28801,Arsitektur,Plafon Gypsum / GRC,71913,2023-05-26,Standar keamanan baru,14100000
+30615,LAM-6A42-30615,Electrical,Lampu Pylon Sign,60898,2024-05-26,Tidak ada spare part,33080000
+42436,HIK-SI4S-42436,Security Sistem,Kamera CCTV,69353,2024-05-26,Efisiensi energi,60660000
+17666,PES-CN62-17666,Sistem Telekomunikasi Gedung,Pesawat Telepon,84213,2024-05-26,Kerusakan fatal tidak ekonomis diperbaiki,34270000
+43596,LAM-TPD1-43596,Electrical,Lampu Wall sign,67669,2025-05-26,Standar keamanan baru,52920000
+1506,LAM-05H3-1506,Electrical,Lampu LED,69972,2023-06-26,Kontrak maintenance habis,43650000
+33267,PAB-QMW6-33267,Sistem Telekomunikasi Gedung,PABX,95544,2024-06-26,Standar keamanan baru,43330000
+53344,LAN-K3ET-53344,Civil,Lantai Keramik,65877,2024-07-26,Tidak ada spare part,84290000
+16717,KLO-TQ61-16717,Plumbing,Kloset,83736,2024-07-26,Standar keamanan baru,71560000
+52879,DIN-ASFJ-52879,Civil,"Dinding Partisi, GRC / Gypsum",68809,2025-07-26,Sudah obsolete,19130000
+28087,FCU-GKV8-28087,Mechanical,FCU,84703,2025-07-26,Sudah obsolete,33160000
+2975,LG-XPGB-2975,Mechanical,AC Cassette,52962,2019-08-26,Kerusakan fatal tidak ekonomis diperbaiki,87330000
+54974,LAM-MKVM-54974,Electrical,Lampu Neon Sign,73119,2022-08-26,Efisiensi energi,35960000
+7692,NOT-JC1O-7692,Sistem Proteksi Kebakaran Aktif,Smoke Detector,64585,2023-08-26,Kerusakan fatal tidak ekonomis diperbaiki,9030000
+28234,KRI-WAD4-28234,Ventilasi Sistem,Exhaust Fan,73610,2025-08-26,Standar keamanan baru,74620000
+56689,KUR-H5RF-56689,Arsitektur,Kursi,60422,2021-09-26,Kontrak maintenance habis,54930000
+43442,MDP-JUXJ-43442,Electrical,MDP,65879,2024-09-26,Tidak ada spare part,78610000
+16995,DAH-H5F3-16995,Security Sistem,DVR CCTV,63624,2024-09-26,Sudah obsolete,26000000
+28451,UNI-GZO0-28451,Electrical,Uninterruptible Power Supply,95035,2025-09-26,Tidak ada spare part,99190000
+59294,DAH-QIX1-59294,Security Sistem,Kamera CCTV,83500,2025-09-26,Upgrade kapasitas,49250000
+17622,PAB-IQ15-17622,Sistem Telekomunikasi Gedung,PABX,85574,2025-09-26,Sudah obsolete,82470000
+34474,KLO-RG5L-34474,Plumbing,Kloset,64272,2024-10-26,Kerusakan fatal tidak ekonomis diperbaiki,44320000
+23400,LAN-GWKJ-23400,Sistem Telekomunikasi Gedung,LAN (Local Area Network),69332,2024-10-26,Kontrak maintenance habis,50420000
+735,APA-IVTQ-0735,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,58676,2025-10-26,Standar keamanan baru,45300000
+38944,PLA-3R8O-38944,Arsitektur,Plafon Gypsum / GRC,55327,2023-11-26,Sudah obsolete,76390000
+47475,DIN-GQXQ-47475,Civil,Dinding beton ekspos,85559,2023-11-26,Standar keamanan baru,56000000
+4384,PES-IJVT-4384,Sistem Telekomunikasi Gedung,Pesawat Telepon,90708,2023-11-26,Sudah obsolete,66870000
+54793,KUR-XLZZ-54793,Arsitektur,Kursi,90037,2024-11-26,Kontrak maintenance habis,37250000
+11809,AUT-8GGI-11809,Electrical,Automatic Transfer Switch (ATS Panel),92940,2022-12-26,Kontrak maintenance habis,31340000
+21160,APA-1VA2-21160,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,61120,2022-12-26,Efisiensi energi,87080000
+5771,LAM-279I-5771,Electrical,Lampu Pylon Sign,54818,2024-12-26,Standar keamanan baru,87350000
+48761,KDK-JW5A-48761,Ventilasi Sistem,Exhaust Fan,93542,2024-12-26,Efisiensi energi,76650000
+30007,SHA-M4ZJ-30007,Mechanical,AC Split,67906,2024-12-26,Kontrak maintenance habis,47260000
+42868,PIN-21PB-42868,Arsitektur,Pintu Kayu/HPL,72047,2024-12-26,Upgrade kapasitas,19420000
+20453,APA-KBEG-20453,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,92467,2025-12-26,Kerusakan fatal tidak ekonomis diperbaiki,92680000
+16587,LG-GC3T-16587,Mechanical,AC Split,58440,2025-12-26,Standar keamanan baru,93470000
+47852,DIN-WHMF-47852,Civil,Dinding Tembok/Mansonry,76306,2025-12-26,Kontrak maintenance habis,17960000
+16220,LG-SQP1-16220,Mechanical,AC Split,55597,2025-01-27,Efisiensi energi,30770000
+36371,LAM-BACM-36371,Electrical,Lampu Downlight,58142,2025-01-27,Sudah obsolete,9470000
+6585,DIN-5WAA-6585,Civil,Dinding Tembok/Mansonry,83466,2019-02-27,Kontrak maintenance habis,10730000
+21018,LAM-BKDK-21018,Electrical,Lampu LED,97289,2021-02-27,Upgrade kapasitas,18090000
+5990,MCF-4OIN-5990,Sistem Proteksi Kebakaran Aktif,MCFA,69908,2022-02-27,Usia pakai habis,12220000
+36998,SHA-SRJW-36998,Mechanical,AC Split,65728,2023-02-27,Efisiensi energi,85850000
+69,SHA-J3R3-0069,Mechanical,AC Portable,89293,2023-02-27,Kontrak maintenance habis,41300000
+26492,JET-RE2Q-26492,Plumbing,Jet Shower,63689,2024-02-27,Usia pakai habis,74490000
+57399,LAM-XAO7-57399,Electrical,Lampu TL LED,90535,2024-02-27,Standar keamanan baru,31470000
+48395,LAM-K767-48395,Electrical,Lampu LED,75631,2024-02-27,Efisiensi energi,63920000
+24981,LAM-NYUJ-24981,Electrical,Lampu Downlight,52686,2025-02-27,Upgrade kapasitas,96760000
+33126,KUR-8JZB-33126,Arsitektur,Kursi,63040,2025-02-27,Standar keamanan baru,9920000
+49989,NOH-JNHZ-49989,Sistem Proteksi Kebakaran Aktif,Smoke Detector,56298,2020-03-27,Sudah obsolete,53110000
+28539,LAM-4F2C-28539,Electrical,Lampu Downlight,74466,2021-03-27,Usia pakai habis,2300000
+26512,PAN-7PWE-26512,Mechanical,AC Split,90471,2022-03-27,Kontrak maintenance habis,99780000
+41802,JET-G6GG-41802,Plumbing,Jet Shower,57774,2022-03-27,Efisiensi energi,45020000
+29560,SAM-H0BY-29560,Mechanical,AC Split,89317,2023-03-27,Tidak ada spare part,55060000
+39330,KLO-K17T-39330,Plumbing,Kloset,63237,2023-03-27,Kerusakan fatal tidak ekonomis diperbaiki,43040000
+33079,LAM-89VX-33079,Electrical,Lampu TL,94436,2023-03-27,Sudah obsolete,8680000
+49834,HON-ZFZQ-49834,Security Sistem,DVR CCTV,72241,2024-03-27,Kerusakan fatal tidak ekonomis diperbaiki,81150000
+20945,FLO-1B3W-20945,Plumbing,Floor Drain,99486,2025-03-27,Kerusakan fatal tidak ekonomis diperbaiki,51950000
+8960,LAM-2R7B-8960,Electrical,Lampu Downlight,77627,2025-03-27,Tidak ada spare part,6720000
+28875,LAM-U1CK-28875,Electrical,Lampu LED,56783,2025-03-27,Efisiensi energi,10820000
+45516,PIN-1O5J-45516,Arsitektur,Pintu Kaca Hidrolik,96394,2025-03-27,Standar keamanan baru,98940000
+20404,PAN-LGPH-20404,Mechanical,AC Split,69401,2021-04-27,Kerusakan fatal tidak ekonomis diperbaiki,42990000
+49266,GRU-AUF0-49266,Mechanical,Pompa Air Tanah,92661,2022-04-27,Tidak ada spare part,49370000
+18049,LAM-9VPP-18049,Electrical,Lampu Downlight,90905,2024-04-27,Tidak ada spare part,53260000
+1532,GRU-PNFI-1532,Mechanical,Pompa Transfer,80024,2024-04-27,Kontrak maintenance habis,14460000
+33590,GRO-N5HI-33590,Distribusi Air,Ground Water Tank,96760,2025-04-27,Standar keamanan baru,87020000
+1503,KIC-ZQHB-1503,Security Sistem,Kick Bar,77193,2025-04-27,Efisiensi energi,52390000
+15068,TRA-NJOQ-15068,Electrical,Trafo 3 Phase,94839,2025-04-27,Kontrak maintenance habis,60760000
+46268,PAB-BL30-46268,Sistem Telekomunikasi Gedung,PABX,53746,2025-04-27,Upgrade kapasitas,41670000
+22463,PAN-N8FW-22463,Mechanical,AC Split,68252,2023-05-27,Kerusakan fatal tidak ekonomis diperbaiki,19290000
+15145,LAM-Y5H9-15145,Electrical,Lampu Downlight,81285,2023-05-27,Tidak ada spare part,25240000
+28196,PIN-CVOJ-28196,Arsitektur,Pintu Kayu/HPL,83865,2024-05-27,Tidak ada spare part,4580000
+3774,HIK-SJRR-3774,Security Sistem,Monitor CCTV,82418,2025-05-27,Kerusakan fatal tidak ekonomis diperbaiki,19220000
+39083,MEJ-1RN8-39083,Arsitektur,Meja kerja,64361,2023-06-27,Standar keamanan baru,14220000
+44767,MDP-IPRE-44767,Electrical,MDP,65749,2024-06-27,Sudah obsolete,33060000
+55124,JET-9RUE-55124,Plumbing,Jet Shower,90392,2025-06-27,Tidak ada spare part,76220000
+55240,SIE-YVEL-55240,Sistem Proteksi Kebakaran Aktif,Smoke Detector,79857,2025-06-27,Efisiensi energi,87080000
+43698,SHA-606K-43698,Mechanical,AC Split,92496,2021-07-27,Usia pakai habis,57910000
+33544,MIT-N7UJ-33544,Mechanical,AC Cassette,80493,2022-07-27,Kerusakan fatal tidak ekonomis diperbaiki,31370000
+41037,LAN-IEET-41037,Civil,Lantai Batu,79073,2023-07-27,Tidak ada spare part,33180000
+25215,GON-8VES-25215,Sistem Transportasi Gedung,Gondola,72315,2024-07-27,Kerusakan fatal tidak ekonomis diperbaiki,65750000
+34163,DIN-PGOM-34163,Civil,Dinding Tembok/Mansonry,84939,2024-07-27,Sudah obsolete,82790000
+41534,SDP-HSX5-41534,Electrical,SDP,64592,2021-08-27,Sudah obsolete,19610000
+6483,AME-7FMN-6483,Plumbing,Wastafel,62793,2023-08-27,Tidak ada spare part,5250000
+29556,SHA-TZFF-29556,Mechanical,AC Split,87628,2024-08-27,Usia pakai habis,89210000
+5945,ROO-IZVB-5945,Plumbing,Rooftank,83647,2019-09-27,Sudah obsolete,44320000
+32531,HIK-Y7I9-32531,Security Sistem,Kamera CCTV,69377,2021-09-27,Tidak ada spare part,4770000
+58500,PIN-DH8V-58500,Arsitektur,Pintu Besi,54926,2022-09-27,Sudah obsolete,4900000
+3417,SHA-OR2K-3417,Mechanical,AC Split,55262,2022-09-27,Usia pakai habis,90170000
+8468,PAN-E1AU-8468,Electrical,Panel UPS,64048,2024-09-27,Kontrak maintenance habis,19760000
+21609,AC -RNXZ-21609,Mechanical,AC VRV,63329,2024-09-27,Upgrade kapasitas,16290000
+16647,LG-HDLS-16647,Mechanical,AC Split,77227,2025-09-27,Usia pakai habis,38840000
+11819,SDP-4EFM-11819,Electrical,SDP,89712,2025-10-27,Kontrak maintenance habis,50710000
+19481,SAM-6HVL-19481,Mechanical,AC Split,56396,2018-11-27,Sudah obsolete,20460000
+43001,APA-HK9I-43001,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,94144,2021-11-27,Kontrak maintenance habis,20280000
+58448,PEM-BKIG-58448,Plumbing,Pemipaan Air Bersih,90617,2022-11-27,Kontrak maintenance habis,35350000
+54937,DIN-9VAK-54937,Civil,"Dinding Partisi, GRC / Gypsum",99079,2023-11-27,Tidak ada spare part,21100000
+21733,BEL-IBD0-21733,Sistem Proteksi Kebakaran Aktif,Bell Alarm,57500,2024-11-27,Sudah obsolete,68840000
+44987,PLA-OECW-44987,Arsitektur,Plafon Gypsum / GRC,86032,2024-11-27,Upgrade kapasitas,63010000
+49016,LAM-0Z9M-49016,Electrical,Lampu Downlight,93695,2025-11-27,Sudah obsolete,12740000
+33215,LAM-KHBE-33215,Electrical,Lampu LED Bulb,52733,2025-11-27,Usia pakai habis,16310000
+5182,PAN-4LE5-5182,Mechanical,AC Cassette,89137,2019-12-27,Sudah obsolete,79250000
+40277,LAM-0FSP-40277,Electrical,Lampu Downlight,75706,2022-12-27,Usia pakai habis,4460000
+102,MIT-0JNW-0102,Mechanical,AC Split,90278,2024-12-27,Upgrade kapasitas,75940000
+58483,DOO-2CFY-58483,Arsitektur,Door Closer,53426,2024-12-27,Upgrade kapasitas,60240000
+23717,EBA-ODZ5-23717,Mechanical,Pompa Boster,60709,2023-01-28,Tidak ada spare part,69160000
+37187,KLO-4TKV-37187,Plumbing,Kloset,81515,2024-02-28,Kontrak maintenance habis,69380000
+31272,PIN-SE4Y-31272,Arsitektur,Pintu Kayu/HPL,55029,2024-02-28,Efisiensi energi,94990000
+41516,JET-XWL6-41516,Plumbing,Jet Shower,50990,2024-02-28,Upgrade kapasitas,86380000
+15055,PAB-ZZU1-15055,Sistem Telekomunikasi Gedung,PABX,73720,2025-02-28,Upgrade kapasitas,67070000
+40964,DAI-DRZG-40964,Mechanical,AC Split,75941,2025-02-28,Upgrade kapasitas,79300000
+3097,PAN-WZUU-3097,Mechanical,AC Cassette,86032,2025-02-28,Usia pakai habis,9150000
+2767,LAM-SRD8-2767,Electrical,Lampu Wall sign,99522,2021-03-28,Standar keamanan baru,53500000
+58069,PLA-YR75-58069,Arsitektur,Plafon Gypsum / GRC,89199,2022-03-28,Usia pakai habis,6100000
+92,PAN-LYK8-0092,Mechanical,AC Cassette,74235,2024-03-28,Efisiensi energi,86430000
+27626,HON-8AC5-27626,Security Sistem,DVR CCTV,81505,2024-03-28,Sudah obsolete,77000000
+2242,SHA-6V3J-2242,Mechanical,AC Split,74714,2024-03-28,Usia pakai habis,61590000
+23811,CON-0GB4-23811,Electrical,Control Panel AC,58663,2025-03-28,Tidak ada spare part,87840000
+37601,KIC-R0WS-37601,Security Sistem,Kick Bar,81863,2025-03-28,Efisiensi energi,3340000
+17164,PAN-AQY2-17164,Mechanical,AC Split,51638,2025-03-28,Efisiensi energi,96070000
+48610,CUM-EHI0-48610,Mechanical,Genset Diesel,64992,2024-04-28,Usia pakai habis,65790000
+30246,PIN-7XXD-30246,Arsitektur,Pintu Kayu/HPL,82319,2024-04-28,Usia pakai habis,21100000
+35284,LAM-4Q67-35284,Electrical,Lampu Downlight,93715,2024-04-28,Usia pakai habis,59310000
+38300,GRE-K33W-38300,Mechanical,AC Split,94342,2024-04-28,Upgrade kapasitas,17090000
+742,APA-11YK-0742,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,56143,2024-05-28,Kontrak maintenance habis,10260000
+57016,KUS-NRQM-57016,Arsitektur,Kusen Jendela Berbahan Alumunium,69026,2024-05-28,Standar keamanan baru,57310000
+42596,KLO-I38F-42596,Plumbing,Kloset,54544,2025-05-28,Tidak ada spare part,21670000
+10291,PAN-9LM8-10291,Mechanical,AC Split,67536,2025-05-28,Tidak ada spare part,33880000
+57552,BOS-S4FW-57552,Security Sistem,Kamera CCTV,70030,2021-06-28,Usia pakai habis,26410000
+38478,AUT-TE8S-38478,Electrical,Automatic Transfer Switch (ATS Panel),87914,2024-06-28,Kontrak maintenance habis,2410000
+44388,UNI-5WAS-44388,Electrical,Uninterruptible Power Supply,87398,2025-06-28,Standar keamanan baru,70260000
+34275,AME-OW18-34275,Plumbing,Wastafel,94908,2025-06-28,Standar keamanan baru,79560000
+12490,ACC-9H8J-12490,Security Sistem,Access Control ,78728,2022-07-28,Efisiensi energi,46160000
+36979,KUR-TQDH-36979,Arsitektur,Kursi,86842,2023-07-28,Upgrade kapasitas,68860000
+57477,AME-RWJ4-57477,Plumbing,Wastafel,80198,2024-07-28,Efisiensi energi,78160000
+57459,LAM-XXMJ-57459,Electrical,Lampu LED Downlight,66621,2025-07-28,Upgrade kapasitas,56640000
+757,LAM-SX0G-0757,Electrical,Lampu Downlight,59826,2025-07-28,Usia pakai habis,75880000
+51454,PER-99JE-51454,Mechanical,Genset Diesel,75659,2025-07-28,Kontrak maintenance habis,13350000
+5026,AXI-JJCT-5026,Security Sistem,Kamera CCTV,56832,2019-08-28,Usia pakai habis,59270000
+41791,UNI-OWM5-41791,Electrical,Uninterruptible Power Supply,94132,2019-08-28,Kerusakan fatal tidak ekonomis diperbaiki,89330000
+26886,LAM-ESLS-26886,Electrical,Lampu Downlight,60337,2023-08-28,Kerusakan fatal tidak ekonomis diperbaiki,39800000
+6125,DAI-JI7U-6125,Mechanical,AC Split,83246,2024-08-28,Usia pakai habis,48660000
+45946,WIR-TRJH-45946,Electrical,Wiring System (Sistem Instalasi Kabel),67860,2025-08-28,Upgrade kapasitas,17640000
+55227,LET-6U42-55227,Electrical,Lettersign,79980,2023-09-28,Sudah obsolete,94850000
+26488,JET-VV27-26488,Plumbing,Jet Shower,80784,2023-09-28,Sudah obsolete,96050000
+31798,LEM-T7SD-31798,Arsitektur,Lemari/Loker,87189,2025-09-28,Efisiensi energi,95680000
+49375,HOC-ERZ4-49375,Sistem Proteksi Kebakaran Aktif,Smoke Detector,97105,2022-10-28,Upgrade kapasitas,68130000
+45412,PAB-A06I-45412,Sistem Telekomunikasi Gedung,PABX,56499,2023-10-28,Kontrak maintenance habis,62840000
+20538,CON-S6U9-20538,Electrical,Control Panel Penerangan,61888,2024-10-28,Efisiensi energi,6690000
+1165,SHA-GFYW-1165,Mechanical,AC Split,65610,2024-10-28,Kontrak maintenance habis,8900000
+60462,LEM-85AO-60462,Arsitektur,Lemari/Loker,76451,2025-10-28,Kontrak maintenance habis,18800000
+16707,KIT-Q1W2-16707,Plumbing,Kitchen sink,90666,2021-11-28,Efisiensi energi,76750000
+30089,GRE-8GYZ-30089,Mechanical,AC Split,56595,2025-11-28,Usia pakai habis,29420000
+60820,WIR-BJ31-60820,Electrical,Wiring System (Sistem Instalasi Kabel),68977,2025-11-28,Efisiensi energi,89980000
+20810,HON-K337-20810,Mechanical,Genset Bensin,64697,2018-12-28,Kerusakan fatal tidak ekonomis diperbaiki,39530000
+44746,MDP-WNUX-44746,Electrical,MDP,62160,2021-12-28,Kontrak maintenance habis,84690000
+38005,WAS-3JTY-38005,Plumbing,Kran Air,67668,2023-12-28,Upgrade kapasitas,91510000
+31266,HON-1RB4-31266,Security Sistem,DVR CCTV,67316,2024-12-28,Tidak ada spare part,81880000
+21344,LAN-7I7N-21344,Sistem Telekomunikasi Gedung,LAN (Local Area Network),96384,2025-12-28,Kontrak maintenance habis,46850000
+30963,LAN-8FDT-30963,Civil,Lantai Keramik,51776,2020-01-29,Efisiensi energi,30570000
+2694,HOC-9Q0E-2694,Sistem Proteksi Kebakaran Aktif,Heat Detector,52839,2021-01-29,Sudah obsolete,17410000
+51322,KLO-690D-51322,Plumbing,Kloset,68472,2024-01-29,Usia pakai habis,79930000
+35373,MEJ-BC8B-35373,Arsitektur,Meja kerja,72448,2024-01-29,Kerusakan fatal tidak ekonomis diperbaiki,33980000
+43592,LAM-ALUI-43592,Electrical,Lampu Neon Sign,93365,2024-01-29,Kontrak maintenance habis,69960000
+28650,LAM-WWOP-28650,Electrical,Lampu LED Bulb,63636,2025-01-29,Usia pakai habis,86710000
+33802,PEM-T96U-33802,Plumbing,Pemipaan Air Bersih,56909,2025-01-29,Tidak ada spare part,66180000
+26420,FCU-S2UA-26420,Mechanical,FCU,51267,2020-03-29,Upgrade kapasitas,7530000
+2961,LG-PAS0-2961,Mechanical,AC Split,75612,2021-03-29,Sudah obsolete,87050000
+42632,SAM-40AK-42632,Security Sistem,Monitor CCTV,77292,2021-03-29,Tidak ada spare part,84150000
+60148,DAH-LZXQ-60148,Security Sistem,Kamera CCTV,69937,2023-03-29,Sudah obsolete,90280000
+15504,PES-1B1R-15504,Sistem Telekomunikasi Gedung,Pesawat Telepon,59053,2024-03-29,Usia pakai habis,13620000
+984,DAI-H36M-0984,Mechanical,AC Split,68703,2024-03-29,Sudah obsolete,67270000
+51519,KLO-EN29-51519,Plumbing,Kloset,54008,2024-03-29,Kerusakan fatal tidak ekonomis diperbaiki,86050000
+26001,WIR-BIKF-26001,Electrical,Wiring System (Sistem Instalasi Kabel),59931,2020-04-29,Sudah obsolete,63650000
+18042,GRE-UET5-18042,Mechanical,AC Split,55825,2023-04-29,Tidak ada spare part,68950000
+39995,DAH-X73V-39995,Security Sistem,Kamera CCTV,67524,2024-04-29,Kontrak maintenance habis,46200000
+2648,EBA-JRH8-2648,Mechanical,Pompa Transfer,82543,2024-04-29,Upgrade kapasitas,86720000
+17685,WAS-7MSN-17685,Plumbing,Kran Air,88464,2024-04-29,Tidak ada spare part,19360000
+43975,WIR-J9UN-43975,Electrical,Wiring System (Sistem Instalasi Kabel),88481,2023-05-29,Efisiensi energi,95340000
+21013,DIN-PSOG-21013,Civil,"Dinding Partisi, GRC / Gypsum",71859,2024-05-29,Usia pakai habis,31490000
+50227,PES-SUER-50227,Sistem Telekomunikasi Gedung,Pesawat Telepon,71268,2025-05-29,Tidak ada spare part,75400000
+33622,LG-JKJ1-33622,Mechanical,AC Cassette,56348,2025-05-29,Standar keamanan baru,80700000
+2327,SAM-AZP8-2327,Mechanical,AC Split,91560,2025-05-29,Kontrak maintenance habis,4630000
+25065,PEM-X2FY-25065,Plumbing,Pemipaan Air Bersih,68067,2025-05-29,Kerusakan fatal tidak ekonomis diperbaiki,65120000
+53250,DIN-54O9-53250,Civil,Dinding Tembok/Mansonry,95520,2025-05-29,Usia pakai habis,24010000
+49843,LAM-JMF3-49843,Electrical,Lampu Downlight,56172,2025-05-29,Standar keamanan baru,68570000
+31458,APA-REH3-31458,Sistem Pemadam Kebakaran,APAB Dry Powder,88708,2025-05-29,Sudah obsolete,43030000
+58513,LAM-UFXN-58513,Electrical,Lampu LED Bulb,60532,2024-06-29,Sudah obsolete,49760000
+11572,AUT-AOLD-11572,Electrical,Automatic Transfer Switch (ATS Panel),68165,2024-06-29,Kontrak maintenance habis,91560000
+20352,SPO-9GDN-20352,Electrical,Spotlight,79132,2024-06-29,Tidak ada spare part,40640000
+1172,MIT-Y21I-1172,Ventilasi Sistem,Air Curtain,56147,2024-06-29,Upgrade kapasitas,12260000
+37502,DAI-OAE2-37502,Mechanical,AC Cassette,70122,2024-06-29,Kerusakan fatal tidak ekonomis diperbaiki,40710000
+2861,LG-KR8I-2861,Mechanical,AC Cassette,79243,2025-06-29,Tidak ada spare part,42260000
+14764,GRE-AVD1-14764,Mechanical,AC Split,62762,2019-07-29,Efisiensi energi,82530000
+32544,DOO-KGGV-32544,Security Sistem,Door Contact,80885,2021-07-29,Sudah obsolete,96680000
+26798,LAM-3BIK-26798,Electrical,Lampu Pylon Sign,60861,2021-08-29,Kerusakan fatal tidak ekonomis diperbaiki,10380000
+56022,AXI-W7YK-56022,Security Sistem,Kamera CCTV,56115,2022-08-29,Standar keamanan baru,83120000
+38214,NOH-GUHD-38214,Sistem Proteksi Kebakaran Aktif,Smoke Detector,89260,2024-08-29,Kontrak maintenance habis,57620000
+32766,KUR-H7IJ-32766,Arsitektur,Kursi,83781,2024-08-29,Upgrade kapasitas,49030000
+55538,PIN-B560-55538,Arsitektur,Pintu Kaca Hidrolik,91200,2024-08-29,Usia pakai habis,80230000
+32430,DIN-OEIJ-32430,Civil,Dinding Tembok/Mansonry,78105,2024-08-29,Kerusakan fatal tidak ekonomis diperbaiki,99340000
+34070,LAM-FCHI-34070,Electrical,Lampu Downlight,73629,2025-08-29,Usia pakai habis,20550000
+59438,MET-UEGC-59438,Pencatatan Meter,Meter PDAM,74837,2019-09-29,Tidak ada spare part,9450000
+32942,KUR-L6UH-32942,Arsitektur,Kursi,62299,2019-09-29,Kerusakan fatal tidak ekonomis diperbaiki,37960000
+57270,LAM-52AZ-57270,Electrical,Lampu LED,92461,2022-09-29,Tidak ada spare part,11000000
+3654,MET-QTZ1-3654,Pencatatan Meter,Meter PDAM,60420,2024-09-29,Kontrak maintenance habis,42230000
+7408,LG-XSRK-7408,Mechanical,AC Split,50715,2024-09-29,Sudah obsolete,53300000
+12960,PAN-SS20-12960,Ventilasi Sistem,Exhaust Fan,95517,2025-09-29,Kerusakan fatal tidak ekonomis diperbaiki,13480000
+60079,PIN-2RL6-60079,Arsitektur,Pintu Biasa Berdaun Tunggal,57473,2025-09-29,Usia pakai habis,8840000
+16276,SAM-39QQ-16276,Security Sistem,Monitor CCTV,69080,2025-09-29,Sudah obsolete,46290000
+48258,PES-7F88-48258,Sistem Telekomunikasi Gedung,Pesawat Telepon,67632,2025-09-29,Usia pakai habis,33470000
+35860,LG-O94S-35860,Mechanical,AC Split,83938,2021-10-29,Usia pakai habis,47190000
+17100,PAN-C6P9-17100,Mechanical,AC Cassette,54540,2024-10-29,Sudah obsolete,7280000
+25197,POM-E8KK-25197,Mechanical,Pompa Chiller Water Primer,90193,2024-10-29,Kontrak maintenance habis,66850000
+3190,NOH-TVB1-3190,Sistem Proteksi Kebakaran Aktif,Smoke Detector,93959,2025-10-29,Kerusakan fatal tidak ekonomis diperbaiki,90490000
+40711,PIN-7YS1-40711,Arsitektur,Pintu Kayu/HPL,82152,2025-10-29,Standar keamanan baru,57910000
+60182,PAN-KNDD-60182,Mechanical,AC Split,73485,2025-10-29,Upgrade kapasitas,10700000
+41068,LAM-E2FF-41068,Electrical,Lampu LED Downlight,97830,2025-10-29,Sudah obsolete,67960000
+17157,SHA-4131-17157,Mechanical,AC Split,50608,2025-10-29,Kontrak maintenance habis,10070000
+5775,KIT-PR7P-5775,Plumbing,Kitchen sink,52362,2019-11-29,Efisiensi energi,74080000
+18449,PES-JCMN-18449,Sistem Telekomunikasi Gedung,Pesawat Telepon,85077,2021-11-29,Upgrade kapasitas,46930000
+35214,SAM-SWCO-35214,Mechanical,AC Split,58388,2023-11-29,Efisiensi energi,81190000
+2549,ROO-4HP5-2549,Plumbing,Rooftank,72398,2024-11-29,Standar keamanan baru,93640000
+890,JET-GH7I-0890,Plumbing,Jet Shower,62847,2024-11-29,Kerusakan fatal tidak ekonomis diperbaiki,79580000
+32596,KUR-43S7-32596,Arsitektur,Kursi,52481,2025-11-29,Upgrade kapasitas,8270000
+30352,PIN-AWG4-30352,Arsitektur,Pintu Kaca Hidrolik,72411,2019-12-29,Usia pakai habis,76990000
+18737,PUS-2VPZ-18737,Security Sistem,Push Button,93697,2023-12-29,Efisiensi energi,41280000
+48236,LAM-311F-48236,Electrical,Lampu LED,59732,2023-12-29,Tidak ada spare part,52870000
+42927,BOS-20X6-42927,Security Sistem,Kamera CCTV,88479,2024-12-29,Efisiensi energi,19080000
+51999,PLA-3PZ0-51999,Arsitektur,Plafon Gypsum / GRC,60690,2024-12-29,Standar keamanan baru,56990000
+38591,DIN-A40B-38591,Civil,Dinding Tembok/Mansonry,71893,2024-12-29,Kontrak maintenance habis,65050000
+59225,PLA-MNF8-59225,Arsitektur,Plafon,57899,2020-01-30,Kontrak maintenance habis,86960000
+51299,APA-22OY-51299,Sistem Pemadam Kebakaran,APAR Foam,76520,2025-01-30,Efisiensi energi,29430000
+47997,CON-KRN2-47997,Electrical,Control Panel Penerangan,61268,2021-03-30,Efisiensi energi,62380000
+19826,MON-UPUK-19826,Sistem Telekomunikasi Gedung,Monitor/Layar,92285,2021-03-30,Tidak ada spare part,28720000
+27125,APA-L3U2-27125,Sistem Pemadam Kebakaran,APAB Dry Powder,53843,2024-03-30,Kontrak maintenance habis,13150000
+55262,DIN-CKPK-55262,Civil,"Dinding Partisi, GRC / Gypsum",74024,2025-03-30,Standar keamanan baru,32190000
+43275,MEJ-O4HZ-43275,Arsitektur,Meja kerja,81620,2025-03-30,Kontrak maintenance habis,22900000
+30996,PIN-69Q7-30996,Arsitektur,Pintu Kayu/HPL,88303,2025-03-30,Sudah obsolete,76100000
+42497,MIX-VMX1-42497,Sistem Telekomunikasi Gedung,Mixer Audio,61746,2025-03-30,Sudah obsolete,28140000
+55331,WIR-8L8H-55331,Electrical,Wiring System (Sistem Instalasi Kabel),97100,2020-04-30,Sudah obsolete,43570000
+54034,LAM-7SJX-54034,Electrical,Lampu LED,66785,2021-04-30,Kontrak maintenance habis,54040000
+50993,SHA-712B-50993,Mechanical,AC Split,71737,2024-04-30,Tidak ada spare part,42220000
+24989,AXI-JRNL-24989,Security Sistem,Kamera CCTV,70524,2024-04-30,Standar keamanan baru,13950000
+50143,GRE-4P48-50143,Mechanical,AC Split,76836,2018-05-30,Usia pakai habis,55310000
+27871,FCU-0ODH-27871,Mechanical,FCU,90770,2022-05-30,Tidak ada spare part,61530000
+53856,LAM-BTOT-53856,Electrical,Lampu Downlight,68879,2023-05-30,Upgrade kapasitas,10590000
+41679,LAN-TIJ8-41679,Civil,Lantai Keramik,64418,2024-05-30,Tidak ada spare part,21120000
+36472,KLO-SCNQ-36472,Plumbing,Kloset,94952,2024-05-30,Efisiensi energi,80990000
+59838,LAN-VJYC-59838,Civil,Lantai Granit,65034,2025-05-30,Efisiensi energi,58290000
+38294,MIT-J61B-38294,Mechanical,AC Split,60981,2025-05-30,Sudah obsolete,42440000
+50582,CON-39V3-50582,Electrical,Control Panel Penerangan,69514,2025-06-30,Kontrak maintenance habis,32520000
+53280,PIN-AZ93-53280,Arsitektur,Pintu Biasa Berdaun Tunggal,61875,2025-06-30,Standar keamanan baru,54720000
+12015,CON-6X6H-12015,Electrical,Control Panel Hydrant Electric Pump,87266,2021-07-30,Kerusakan fatal tidak ekonomis diperbaiki,22090000
+30570,PAB-ZCO7-30570,Sistem Telekomunikasi Gedung,PABX,61775,2023-07-30,Upgrade kapasitas,96690000
+6114,DAI-0U60-6114,Mechanical,AC Cassette,94923,2023-07-30,Sudah obsolete,96360000
+21132,AUT-5E8P-21132,Electrical,Automatic Transfer Switch (ATS Panel),60406,2024-07-30,Kontrak maintenance habis,14290000
+37863,PIN-3RAP-37863,Arsitektur,Pintu Kayu/HPL,83850,2024-07-30,Standar keamanan baru,86480000
+51838,BOS-MC0F-51838,Security Sistem,Kamera CCTV,80523,2025-07-30,Usia pakai habis,56720000
+30885,MET-NQCX-30885,Pencatatan Meter,Meter PLN,64928,2025-07-30,Sudah obsolete,19280000
+61064,DIN-3UUX-61064,Civil,Dinding Tembok/Mansonry,82475,2025-07-30,Standar keamanan baru,42830000
+55840,ROO-RKBM-55840,Plumbing,Rooftank,66627,2025-07-30,Tidak ada spare part,41900000
+38583,LG-B0ZP-38583,Mechanical,AC Split,52202,2023-08-30,Usia pakai habis,46090000
+21161,LAM-GTJB-21161,Electrical,Lampu Pylon Sign,90874,2024-08-30,Standar keamanan baru,92660000
+57094,MEJ-MQD5-57094,Arsitektur,Meja kerja,89919,2024-08-30,Efisiensi energi,31830000
+19221,LAN-UKHX-19221,Civil,Lantai Granit,61569,2024-08-30,Kontrak maintenance habis,80720000
+42899,TRA-NKBJ-42899,Electrical,Trafo 3 Phase,53637,2025-08-30,Usia pakai habis,72670000
+28632,APA-38BK-28632,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,68732,2025-08-30,Standar keamanan baru,42210000
+51758,SHA-LG8U-51758,Mechanical,AC Split,83522,2025-08-30,Kontrak maintenance habis,17340000
+1632,MIT-7Y96-1632,Mechanical,AC Split,55940,2021-09-30,Tidak ada spare part,19310000
+39965,UNI-SA17-39965,Electrical,Uninterruptible Power Supply,97446,2022-09-30,Upgrade kapasitas,29740000
+17002,HON-U6Z1-17002,Security Sistem,DVR CCTV,67430,2024-09-30,Upgrade kapasitas,45390000
+43645,LEM-HMA9-43645,Arsitektur,Lemari/Loker,66416,2025-09-30,Efisiensi energi,76800000
+33566,SAM-QMIP-33566,Mechanical,AC Split,62311,2025-09-30,Kontrak maintenance habis,32710000
+51426,NOT-7LZF-51426,Sistem Proteksi Kebakaran Aktif,Smoke Detector,76469,2019-10-30,Standar keamanan baru,69800000
+39876,PAN-SGRD-39876,Mechanical,AC Split,95493,2022-10-30,Kerusakan fatal tidak ekonomis diperbaiki,84360000
+58303,MEJ-OQZB-58303,Arsitektur,Meja kerja,59132,2023-10-30,Upgrade kapasitas,36270000
+16292,WI--5OXK-16292,Sistem Telekomunikasi Gedung,WI-FI,84027,2023-10-30,Usia pakai habis,11910000
+25321,ROO-6C4R-25321,Plumbing,Rooftank,68643,2024-10-30,Usia pakai habis,59000000
+1041,SHA-9OIN-1041,Mechanical,AC Split,63007,2025-10-30,Tidak ada spare part,73900000
+51450,PER-N5VC-51450,Mechanical,Genset Diesel,83109,2025-10-30,Upgrade kapasitas,69850000
+17977,LG-XX4F-17977,Mechanical,AC Split,81521,2025-10-30,Usia pakai habis,4950000
+25474,HIK-FTSX-25474,Security Sistem,DVR CCTV,84585,2025-10-30,Sudah obsolete,87500000
+56168,GRE-IVIX-56168,Mechanical,AC Split,82969,2025-10-30,Standar keamanan baru,58380000
+18434,LAM-CI5G-18434,Electrical,Lampu LED,62606,2025-10-30,Standar keamanan baru,77900000
+15526,LAN-MLFP-15526,Civil,Lantai Granit,77822,2025-10-30,Kontrak maintenance habis,85320000
+15928,KIT-KZZE-15928,Plumbing,Kitchen sink,59142,2025-10-30,Sudah obsolete,70700000
+308,SHA-HU7F-0308,Mechanical,AC Split,86342,2021-11-30,Sudah obsolete,44240000
+31835,DIN-UWV2-31835,Civil,Dinding Tembok/Mansonry,82533,2022-11-30,Upgrade kapasitas,33430000
+60141,DIN-DCYW-60141,Civil,Dinding Tembok/Mansonry,83782,2024-11-30,Sudah obsolete,40370000
+59354,DIN-LOSZ-59354,Civil,Dinding Tembok/Mansonry,75635,2024-11-30,Standar keamanan baru,88940000
+46037,LAM-4BIB-46037,Electrical,Lampu Neon Sign,60696,2025-11-30,Upgrade kapasitas,63750000
+4768,SAM-6PR7-4768,Mechanical,AC Split,59263,2025-11-30,Sudah obsolete,97300000
+22791,LG-7Y9A-22791,Mechanical,AC Split,55104,2020-12-30,Efisiensi energi,85610000
+14974,GRE-92D5-14974,Mechanical,AC Split,56332,2021-12-30,Kerusakan fatal tidak ekonomis diperbaiki,22100000
+16844,APA-GV9B-16844,Sistem Pemadam Kebakaran,APAR Dry Powder Stored Pressure,83485,2022-12-30,Tidak ada spare part,23830000
+11310,SHA-4CA8-11310,Mechanical,AC Split,51020,2023-12-30,Sudah obsolete,61480000
+59542,DIN-X69B-59542,Civil,Dinding Tembok/Mansonry,52148,2024-12-30,Usia pakai habis,72160000
+26793,LAM-CHHO-26793,Electrical,Lampu Wall sign,55558,2025-12-30,Kerusakan fatal tidak ekonomis diperbaiki,43860000
+58321,BRE-MAXH-58321,Electrical,Breker Panel,98344,2025-12-30,Usia pakai habis,95340000
+35996,FIN-AS89-35996,Security Sistem,Fingerprint,50819,2025-12-30,Standar keamanan baru,4130000
+29913,PIN-OKJD-29913,Arsitektur,Pintu Kaca Hidrolik,62028,2025-12-30,Upgrade kapasitas,5000000
+32405,DIN-AIVR-32405,Civil,Dinding Tembok/Mansonry,55909,2025-12-30,Efisiensi energi,21320000
+8264,CON-K2V4-8264,Electrical,Control Panel AC,92340,2024-01-31,Kontrak maintenance habis,82480000
+33870,PAN-CEVH-33870,Mechanical,AC Cassette,72669,2024-01-31,Usia pakai habis,44360000
+51121,DAI-V9R7-51121,Mechanical,AC Split,72441,2024-01-31,Tidak ada spare part,39740000
+39079,MEJ-AYWM-39079,Arsitektur,Meja kerja,77341,2024-01-31,Tidak ada spare part,41440000
+38515,PEM-MYS3-38515,Plumbing,Pemipaan Air Bersih,94399,2024-01-31,Standar keamanan baru,8660000
+46078,LEM-H3KF-46078,Arsitektur,Lemari/Loker,60076,2025-01-31,Upgrade kapasitas,42700000
+55986,DIN-FV1U-55986,Civil,"Dinding Partisi, GRC / Gypsum",68224,2023-03-31,Kerusakan fatal tidak ekonomis diperbaiki,17370000
+19429,PES-0NO7-19429,Sistem Telekomunikasi Gedung,Pesawat Telepon,95533,2023-03-31,Standar keamanan baru,40970000
+25454,KRI-7ZU0-25454,Ventilasi Sistem,Exhaust Fan,54393,2024-03-31,Kerusakan fatal tidak ekonomis diperbaiki,60170000
+2472,PAN-CN78-2472,Ventilasi Sistem,Exhaust Fan,85046,2024-03-31,Standar keamanan baru,90110000
+60417,PIN-OWIS-60417,Arsitektur,Pintu Biasa Berdaun Tunggal,97772,2025-03-31,Kontrak maintenance habis,39020000
+46018,PAG-UTX0-46018,Arsitektur,Pagar Besi,55655,2025-03-31,Standar keamanan baru,42190000
+57268,LAM-ZD9G-57268,Electrical,Lampu Downlight,68837,2020-05-31,Kontrak maintenance habis,87740000
+24522,FCU-SRW7-24522,Mechanical,FCU,73366,2021-05-31,Usia pakai habis,51930000
+32463,DIN-Y2GV-32463,Civil,Dinding Tembok/Mansonry,76504,2023-05-31,Efisiensi energi,74240000
+34683,BOS-PUXP-34683,Security Sistem,Kamera CCTV,52555,2024-05-31,Standar keamanan baru,15470000
+36636,MON-E2ZZ-36636,Sistem Telekomunikasi Gedung,Monitor/Layar,97113,2024-05-31,Usia pakai habis,26730000
+19020,PES-DDD6-19020,Sistem Telekomunikasi Gedung,Pesawat Telepon,88767,2025-05-31,Upgrade kapasitas,76310000
+57972,PIN-5H0L-57972,Arsitektur,Pintu Biasa Berdaun Tunggal,72125,2021-07-31,Sudah obsolete,32610000
+56954,LAM-E60W-56954,Electrical,Lampu TL LED,85236,2022-07-31,Standar keamanan baru,53060000
+32352,PLA-GDWF-32352,Arsitektur,Plafon,86801,2024-07-31,Sudah obsolete,52690000
+25537,MDP-EYT7-25537,Electrical,MDP,58243,2024-08-31,Standar keamanan baru,27290000
+2279,SHA-ZF74-2279,Mechanical,AC Split,59701,2024-08-31,Upgrade kapasitas,52780000
+33974,KUR-FTUC-33974,Arsitektur,Kursi,59933,2025-08-31,Kontrak maintenance habis,3750000
+43353,AUT-90BQ-43353,Electrical,Automatic Transfer Switch (ATS Panel),54160,2025-08-31,Efisiensi energi,19430000
+53457,DAH-JJCW-53457,Security Sistem,Kamera CCTV,87180,2020-10-31,Usia pakai habis,85930000
+30632,SAM-AE44-30632,Mechanical,AC Split,64646,2022-10-31,Standar keamanan baru,94320000
+35793,LAM-89UT-35793,Electrical,Lampu LED Bulb,89371,2024-10-31,Kerusakan fatal tidak ekonomis diperbaiki,78030000
+57743,APA-AEIL-57743,Sistem Pemadam Kebakaran,APAR Dry Powder Cartridge,69640,2025-10-31,Tidak ada spare part,86460000
+28863,LAM-NQYR-28863,Electrical,Lampu LED,84712,2022-12-31,Kontrak maintenance habis,87860000
+37908,PAN-9OMU-37908,Mechanical,AC Split,68370,2022-12-31,Upgrade kapasitas,49590000
+39011,DIN-3VHX-39011,Civil,Dinding Keramik/Mozaik,63663,2023-12-31,Efisiensi energi,48880000

@@ -3,15 +3,23 @@ import { db } from "@/db";
 import { masterAset, asetKomplain } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+function parseId(raw: string): number | null {
+  const n = parseInt(decodeURIComponent(raw), 10);
+  return isNaN(n) ? null : n;
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ idAset: string }> },
 ) {
   const { idAset } = await params;
+  const id = parseId(idAset);
+  if (id === null) return NextResponse.json({ message: "Invalid asset ID" }, { status: 400 });
+
   const [asset] = await db
     .select()
     .from(masterAset)
-    .where(eq(masterAset.idAset, decodeURIComponent(idAset)));
+    .where(eq(masterAset.idAset, id));
 
   if (!asset) {
     return NextResponse.json({ message: "Asset not found" }, { status: 404 });
@@ -24,6 +32,9 @@ export async function PUT(
   { params }: { params: Promise<{ idAset: string }> },
 ) {
   const { idAset } = await params;
+  const id = parseId(idAset);
+  if (id === null) return NextResponse.json({ message: "Invalid asset ID" }, { status: 400 });
+
   const body = await req.json();
   const {
     nama, merek, model, kategori, subKategori, tipe,
@@ -45,11 +56,11 @@ export async function PUT(
         lokasiGedung: lokasiGedung || null,
         lokasiLantai: lokasiLantai ? String(lokasiLantai) : null,
         lokasiZona: lokasiZona || null,
-        kekritisan: kekritisan || null,
-        statusJadwal: statusJadwal || null,
+        ...(kekritisan !== undefined && { kekritisan: kekritisan || null }),
+        ...(statusJadwal !== undefined && { statusJadwal: statusJadwal || null }),
         ...(status && { status }),
       })
-      .where(eq(masterAset.idAset, decodeURIComponent(idAset)));
+      .where(eq(masterAset.idAset, id));
 
     return NextResponse.json({ message: "Asset updated" });
   } catch (err) {
@@ -63,11 +74,12 @@ export async function DELETE(
   { params }: { params: Promise<{ idAset: string }> },
 ) {
   const { idAset } = await params;
-  const decoded = decodeURIComponent(idAset);
+  const id = parseId(idAset);
+  if (id === null) return NextResponse.json({ message: "Invalid asset ID" }, { status: 400 });
 
   try {
-    await db.delete(asetKomplain).where(eq(asetKomplain.idAset, decoded));
-    await db.delete(masterAset).where(eq(masterAset.idAset, decoded));
+    await db.delete(asetKomplain).where(eq(asetKomplain.idAset, id));
+    await db.delete(masterAset).where(eq(masterAset.idAset, id));
     return NextResponse.json({ message: "Asset deleted" });
   } catch (err) {
     console.error("[DELETE /api/assets/[idAset]]", err);

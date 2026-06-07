@@ -25,3 +25,20 @@ body {
   color: var(--foreground);
   font-family: "Akzidenz-Grotesk BQ", Arial, Helvetica, sans-serif;
 }
+
+/* Severity tab count badge — pops in with a subtle overshoot on mount */
+@keyframes badge-pop {
+  0%   { opacity: 0; transform: scale(0.2) translateY(3px); }
+  55%  { opacity: 1; transform: scale(1.18) translateY(0); }
+  78%  { transform: scale(0.94); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-badge-pop {
+  animation: badge-pop 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-badge-pop { animation: none; }
+}

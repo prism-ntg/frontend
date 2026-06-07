@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
 import { db } from '../db';
-import { masterAset, asetKomplain, katalogHarga } from '../db/schema';
+import { masterAset, asetKomplain, katalogHarga, riwayatPenggantianAset } from '../db/schema';
 import { sql } from 'drizzle-orm';
 
 const BATCH = 500;
@@ -52,7 +52,7 @@ async function insertBatches<T extends object>(
 
 async function seedMasterAset() {
   const rows = readCsv('master_aset.csv').map((r) => ({
-    idAset: r.id_aset,
+    idAset: parseInt2(r.id_aset)!,
     nama: r.nama || null,
     merek: r.merek || null,
     model: r.model || null,
@@ -80,7 +80,8 @@ async function seedKatalogHarga() {
 
 async function seedAsetKomplain() {
   const rows = readCsv('aset_komplain.csv').map((r) => ({
-    idAset: r.id_aset,
+    idAset: parseInt2(r.id_aset)!,
+    nama: r.nama || null,
     tanggalPerencanaan: parseDate(r.tanggal_perencanaan),
     tanggalPengerjaan: parseDate(r.tanggal_pengerjaan),
     tanggalSelesai: parseDate(r.tanggal_selesai),
@@ -95,7 +96,7 @@ async function seedAsetKomplain() {
 
   // aset_komplain FK references master_aset — skip orphan rows
   const masterIds = new Set(
-    readCsv('master_aset.csv').map((r) => r.id_aset),
+    readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
   );
   const valid = rows.filter((r) => masterIds.has(r.idAset));
   const orphans = rows.length - valid.length;
@@ -104,11 +105,31 @@ async function seedAsetKomplain() {
   await insertBatches(asetKomplain, valid, 'aset_komplain', { id: sql`id` });
 }
 
+async function seedRiwayatPenggantianAset() {
+  const masterIds = new Set(
+    readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
+  );
+  const rows = readCsv('riwayat_penggantian_aset.csv')
+    .map((r) => ({
+      idAsetLama: parseInt2(r.id_aset_lama)!,
+      namaAsetLama: r.nama_aset_lama || null,
+      kategori: r.kategori || null,
+      tipe: r.tipe || null,
+      idAsetBaru: parseInt2(r.id_aset_baru),
+      tanggalPenggantian: parseDate(r.tanggal_penggantian),
+      alasanPenggantian: r.alasan_penggantian || null,
+      biayaPenggantian: parseFloat2(r.biaya_penggantian),
+    }))
+    .filter((r) => masterIds.has(r.idAsetLama));
+  await insertBatches(riwayatPenggantianAset, rows, 'riwayat_penggantian_aset', { idAsetLama: sql`VALUES(id_aset_lama)` });
+}
+
 async function seed() {
   console.log('Starting PRISM database seed...\n');
   await seedMasterAset();
   await seedKatalogHarga();
   await seedAsetKomplain();
+  await seedRiwayatPenggantianAset();
   console.log('\nSeed complete.');
   process.exit(0);
 }

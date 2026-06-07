@@ -11,7 +11,7 @@ export const users = mysqlTable('users', {
 
 export const masterAset = mysqlTable('master_aset', {
   id: int('id').autoincrement().primaryKey(),
-  idAset: varchar('id_aset', { length: 255 }).notNull().unique(),
+  idAset: int('id_aset').notNull().unique(),
   nama: varchar('nama', { length: 255 }),
   merek: varchar('merek', { length: 255 }),
   model: varchar('model', { length: 255 }),
@@ -25,13 +25,15 @@ export const masterAset = mysqlTable('master_aset', {
   kekritisan: varchar('kekritisan', { length: 50 }),
   status: varchar('status', { length: 50 }).notNull().default('Aktif'),
   statusJadwal: varchar('status_jadwal', { length: 255 }),
+  confidence: float('confidence'),
   lastPredictedAt: timestamp('last_predicted_at'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
 export const asetKomplain = mysqlTable('aset_komplain', {
   id: int('id').autoincrement().primaryKey(),
-  idAset: varchar('id_aset', { length: 255 }).notNull().references(() => masterAset.idAset),
+  idAset: int('id_aset').notNull().references(() => masterAset.idAset),
+  nama: varchar('nama', { length: 255 }),
   tanggalPerencanaan: date('tanggal_perencanaan'),
   tanggalPengerjaan: date('tanggal_pengerjaan'),
   tanggalSelesai: date('tanggal_selesai'),
@@ -45,18 +47,16 @@ export const asetKomplain = mysqlTable('aset_komplain', {
   teknisiPelaksana: varchar('teknisi_pelaksana', { length: 255 }),
 });
 
-// Riwayat penggantian aset — independent dari aset_komplain, relasi ke master_aset
-// No FK constraint on idAsetLama/idAsetBaru karena tidak semua aset ada di DB saat ini
 export const riwayatPenggantianAset = mysqlTable('riwayat_penggantian_aset', {
   id: int('id').autoincrement().primaryKey(),
-  idAsetLama: varchar('id_aset_lama', { length: 255 }).notNull(),
-  idAsetBaru: varchar('id_aset_baru', { length: 255 }),
-  merekBaru: varchar('merek_baru', { length: 255 }),
-  modelBaru: varchar('model_baru', { length: 255 }),
+  idAsetLama: int('id_aset_lama').notNull(),
+  namaAsetLama: varchar('nama_aset_lama', { length: 255 }),
+  kategori: varchar('kategori', { length: 255 }),
+  tipe: varchar('tipe', { length: 255 }),
+  idAsetBaru: int('id_aset_baru'),
   tanggalPenggantian: date('tanggal_penggantian'),
   alasanPenggantian: text('alasan_penggantian'),
   biayaPenggantian: float('biaya_penggantian'),
-  severity: varchar('severity', { length: 50 }),
 });
 
 // Reference table: avg replacement price per asset type, used for Avg_Biaya_Penggantian feature
@@ -84,9 +84,15 @@ export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
 
 export const masterAsetRelations = relations(masterAset, ({ many }) => ({
   komplain: many(asetKomplain),
-  penggantian: many(riwayatPenggantianAset),
+  penggantianSebagaiLama: many(riwayatPenggantianAset, { relationName: "asetLama" }),
+  penggantianSebagaiBaru: many(riwayatPenggantianAset, { relationName: "asetBaru" }),
 }));
 
 export const asetKomplainRelations = relations(asetKomplain, ({ one }) => ({
   masterAset: one(masterAset, { fields: [asetKomplain.idAset], references: [masterAset.idAset] }),
+}));
+
+export const riwayatPenggantianAsetRelations = relations(riwayatPenggantianAset, ({ one }) => ({
+  asetLama: one(masterAset, { fields: [riwayatPenggantianAset.idAsetLama], references: [masterAset.idAset], relationName: "asetLama" }),
+  asetBaru: one(masterAset, { fields: [riwayatPenggantianAset.idAsetBaru], references: [masterAset.idAset], relationName: "asetBaru" }),
 }));
