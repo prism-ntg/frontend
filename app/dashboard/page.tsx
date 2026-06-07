@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, ChevronDown, ChevronRight, Loader2, PlusSquare, Sparkles, SquarePen } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronRight, PlusSquare, Sparkles, SquarePen } from "lucide-react";
 
 // Types                                                                     
 
@@ -555,7 +555,7 @@ function FreqTile({ label, value, pct }: { label: string; value: number; pct: nu
   return (
     <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-3 hover:bg-white hover:shadow-sm hover:border-slate-200 transition-all duration-200 cursor-default">
       <p className="text-[11px] text-slate-400 mb-1">{label}</p>
-      <p className="text-xl font-bold text-slate-800 tabular-nums">{value.toLocaleString()}</p>
+      <p className="text-xl font-bold text-slate-800 tabular-nums"><AnimatedNumber value={value} /></p>
       <p className="text-[10px] text-slate-400 mt-0.5">{pct}%</p>
     </div>
   );
@@ -601,8 +601,127 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
+      <div className="space-y-5 animate-pulse motion-reduce:animate-none">
+        {/* Welcome */}
+        <div>
+          <div className="h-7 w-56 rounded-lg bg-slate-200" />
+          <div className="h-4 w-72 rounded bg-slate-100 mt-2" />
+        </div>
+
+        {/* Row 1: KPI + Quick Actions */}
+        <div className="grid grid-cols-12 gap-4">
+          {/* Total Assets */}
+          <div className="col-span-12 md:col-span-3 rounded-xl border border-slate-100 bg-white p-5 shadow-sm space-y-3">
+            <div className="h-3 w-20 rounded bg-slate-100" />
+            <div className="h-10 w-16 rounded-lg bg-slate-200" />
+            <div className="h-2.5 w-28 rounded bg-slate-100" />
+          </div>
+          {/* Fatal / At Risk / Healthy */}
+          <div className="col-span-12 md:col-span-6 grid grid-cols-3 gap-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="rounded-xl border border-slate-100 bg-white p-4 space-y-2">
+                <div className="h-2.5 w-10 rounded bg-slate-100" />
+                <div className="h-8 w-12 rounded-lg bg-slate-200" />
+                <div className="h-2.5 w-20 rounded bg-slate-100" />
+              </div>
+            ))}
+          </div>
+          {/* Quick Actions */}
+          <div className="col-span-12 md:col-span-3 space-y-3">
+            <div className="h-12 rounded-xl bg-slate-200 border border-slate-100" />
+            <div className="h-11 rounded-xl bg-slate-100 border border-slate-100" />
+            <div className="h-11 rounded-xl bg-slate-100 border border-slate-100" />
+          </div>
+        </div>
+
+        {/* Row 2: Bar Chart + Frequency */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-8 rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between mb-5">
+              <div className="space-y-1.5">
+                <div className="h-3.5 w-48 rounded bg-slate-200" />
+                <div className="h-2.5 w-36 rounded bg-slate-100" />
+              </div>
+              <div className="h-8 w-36 rounded-lg bg-slate-100" />
+            </div>
+            {/* fake bars */}
+            <div className="flex items-end gap-3 h-44 px-2">
+              {[55, 80, 40, 95, 65, 30, 75, 90, 50, 70, 45, 85].map((h, i) => (
+                <div key={i} className="flex-1 rounded-t-md bg-slate-100" style={{ height: `${h}%` }} />
+              ))}
+            </div>
+          </div>
+          <div className="col-span-12 md:col-span-4 rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="h-3.5 w-40 rounded bg-slate-200 mb-5" />
+            <div className="grid grid-cols-2 gap-2.5">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-lg border border-slate-100 bg-slate-50 p-3 space-y-2">
+                  <div className="h-2.5 w-10 rounded bg-slate-200" />
+                  <div className="h-6 w-10 rounded bg-slate-200" />
+                  <div className="h-2 w-6 rounded bg-slate-100" />
+                </div>
+              ))}
+            </div>
+            <div className="mt-2.5 rounded-lg border border-slate-100 bg-slate-50 p-3 flex items-center justify-between">
+              <div className="space-y-1.5">
+                <div className="h-2.5 w-12 rounded bg-slate-200" />
+                <div className="h-6 w-10 rounded bg-slate-200" />
+              </div>
+              <div className="h-3 w-6 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+
+        {/* Row 3: Priority / Donut / Top Assets */}
+        <div className="grid grid-cols-3 gap-4">
+          {Array.from({ length: 3 }).map((_, col) => (
+            <div key={col} className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm space-y-4">
+              <div className="h-3.5 w-36 rounded bg-slate-200" />
+              {col === 1 ? (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-36 h-36 rounded-full bg-slate-100" />
+                  <div className="w-full space-y-2">
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <div key={j} className="h-4 rounded bg-slate-100" />
+                    ))}
+                  </div>
+                </div>
+              ) : col === 0 ? (
+                <div className="space-y-4">
+                  {[0, 1, 2].map((j) => (
+                    <div key={j} className="space-y-1.5">
+                      <div className="flex justify-between">
+                        <div className="h-2.5 w-12 rounded bg-slate-100" />
+                        <div className="h-2.5 w-6 rounded bg-slate-100" />
+                      </div>
+                      <div className="h-12 rounded-lg bg-slate-100" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {Array.from({ length: 6 }).map((_, j) => (
+                    <div key={j} className="grid grid-cols-12 gap-1 py-1">
+                      <div className="col-span-4 space-y-1">
+                        <div className="h-2.5 w-full rounded bg-slate-200" />
+                        <div className="h-2 w-3/4 rounded bg-slate-100" />
+                      </div>
+                      <div className="col-span-3 flex items-center">
+                        <div className="h-4 w-14 rounded-full bg-slate-100" />
+                      </div>
+                      <div className="col-span-3 flex items-center">
+                        <div className="h-2.5 w-12 rounded bg-slate-100" />
+                      </div>
+                      <div className="col-span-2 flex items-center">
+                        <div className="h-2.5 w-6 rounded bg-slate-100" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -739,7 +858,7 @@ export default function Dashboard() {
           <div className="mt-2.5 rounded-lg border border-slate-100 bg-slate-50/70 p-3 flex items-center justify-between hover:bg-white hover:shadow-sm hover:border-slate-200 transition-all duration-200">
             <div>
               <p className="text-[11px] text-slate-400 mb-0.5">Reactive</p>
-              <p className="text-xl font-bold text-slate-800 tabular-nums">{jadwal.Reactive.toLocaleString()}</p>
+              <p className="text-xl font-bold text-slate-800 tabular-nums"><AnimatedNumber value={jadwal.Reactive} /></p>
             </div>
             <p className="text-xs text-slate-400">{pct(jadwal.Reactive)}%</p>
           </div>

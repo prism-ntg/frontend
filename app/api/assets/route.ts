@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { masterAset } from "@/db/schema";
+import { masterAset, asetKomplain, riwayatPenggantianAset } from "@/db/schema";
 import { sql, eq, count, and, like, or, isNull } from "drizzle-orm";
+import { unionAll } from "drizzle-orm/mysql-core";
 
 const latestSeverityExpr = sql<string | null>`(
   SELECT ak.severity
@@ -23,6 +24,7 @@ export async function GET(req: NextRequest) {
   const kekritisan = searchParams.get("kekritisan") ?? null;
   const severity = searchParams.get("severity") ?? null; // Fatal | AtRisk | Healthy
   const search = searchParams.get("search") ?? null;
+  const sort = searchParams.get("sort") ?? "selesai_desc"; // by latest maintenance completion
   const offset = (page - 1) * limit;
 
   const conditions: ReturnType<typeof eq>[] = [];
@@ -71,6 +73,33 @@ export async function GET(req: NextRequest) {
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
+  // Sort by the most recent maintenance event — the latest of a repair/preventive
+  // completion (aset_komplain) or a replacement (riwayat_penggantian_aset, matching
+  // either side of the swap, same as the history panel). Built as grouped aggregates
+  // joined once; correlated subqueries here are ~200x slower across the full table.
+  // Distinct column names (kd/rd) — Drizzle renders subquery fields unqualified, so a
+  // shared name like "d" makes the ORDER BY ambiguous (ER_NON_UNIQ_ERROR).
+  const kAgg = db
+    .select({ idAset: asetKomplain.idAset, kd: sql<string | null>`MAX(${asetKomplain.tanggalSelesai})`.as("kd") })
+    .from(asetKomplain)
+    .groupBy(asetKomplain.idAset)
+    .as("k");
+  const rUnion = unionAll(
+    db.select({ idAset: sql<number | null>`${riwayatPenggantianAset.idAsetLama}`.as("idAset"), d: riwayatPenggantianAset.tanggalPenggantian }).from(riwayatPenggantianAset),
+    db.select({ idAset: sql<number | null>`${riwayatPenggantianAset.idAsetBaru}`.as("idAset"), d: riwayatPenggantianAset.tanggalPenggantian }).from(riwayatPenggantianAset),
+  ).as("u");
+  const rAgg = db
+    .select({ idAset: rUnion.idAset, rd: sql<string | null>`MAX(${rUnion.d})`.as("rd") })
+    .from(rUnion)
+    .groupBy(rUnion.idAset)
+    .as("r");
+  // GREATEST(COALESCE(a,b), COALESCE(b,a)) = the later of the two, or NULL when both are NULL
+  // (assets with no maintenance sort last). Latest id keeps the order stable on ties.
+  const latest = sql`GREATEST(COALESCE(${kAgg.kd}, ${rAgg.rd}), COALESCE(${rAgg.rd}, ${kAgg.kd}))`;
+  const orderBy = sort === "selesai_asc"
+    ? sql`ISNULL(${latest}), ${latest} ASC, ${masterAset.idAset} DESC`
+    : sql`ISNULL(${latest}), ${latest} DESC, ${masterAset.idAset} DESC`;
+
   const [totalRow] = await db
     .select({ total: count() })
     .from(masterAset)
@@ -98,7 +127,10 @@ export async function GET(req: NextRequest) {
       latestSeverity: latestSeverityExpr,
     })
     .from(masterAset)
+    .leftJoin(kAgg, eq(kAgg.idAset, masterAset.idAset))
+    .leftJoin(rAgg, eq(rAgg.idAset, masterAset.idAset))
     .where(where)
+    .orderBy(orderBy)
     .limit(limit)
     .offset(offset);
 

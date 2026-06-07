@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
   Loader2, RefreshCw, Plus, X, Pencil, AlertTriangle,
-  ArrowRight, ArrowDown, Wrench, User, Filter, Trash2,
+  ArrowRight, ArrowDown, ArrowDownUp, CheckCircle2, Wrench, User, Trash2,
 } from "lucide-react";
 
 // Types                                                                    
@@ -237,7 +237,13 @@ function currentLife(tglInstalasi: string | null): string {
 }
 
 function parseBiaya(val: string): number {
-  return parseFloat(val.replace(/[^0-9.]/g, "")) || 0;
+  return parseInt(val.replace(/\D/g, ""), 10) || 0;
+}
+
+// Live thousand-separator formatting for cost inputs, e.g. "100000" -> "100.000"
+function formatRupiahInput(val: string): string {
+  const digits = val.replace(/\D/g, "");
+  return digits ? Number(digits).toLocaleString("id-ID") : "";
 }
 
 function fmtLogDate(d: string | null): string {
@@ -297,71 +303,136 @@ function GeoDeco() {
 }
 
 function DowntimeChart({ logs }: { logs: KomplainLog[] }) {
-  const now = new Date();
-  const months = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-    return {
-      label: d.toLocaleDateString("en-US", { month: "short" }),
-      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-    };
-  });
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [reduceMotion] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(t);
+  }, []);
 
-  const downtimeByMonth: Record<string, number> = {};
+  // Reference year = the year of the most recent maintenance completion (fallback to
+  // work date, then current year). The chart always spans Jan–Dec of that one year.
+  const lastDate = logs.reduce<Date | null>((acc, l) => {
+    const raw = l.tanggalSelesai ?? l.tanggalPengerjaan;
+    if (!raw) return acc;
+    const d = new Date(raw);
+    return !acc || d > acc ? d : acc;
+  }, null);
+  const year = (lastDate ?? new Date()).getFullYear();
+
+  // Downtime (days) per month, bucketed by the month work started, within the year.
+  const dayMs = 86_400_000;
+  const byMonth = Array.from({ length: 12 }, () => 0);
   for (const log of logs) {
     if (!log.tanggalPengerjaan) continue;
-    const d = new Date(log.tanggalPengerjaan);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const start = log.tanggalPengerjaan ? new Date(log.tanggalPengerjaan) : null;
+    const start = new Date(log.tanggalPengerjaan);
+    if (start.getFullYear() !== year) continue;
     const end = log.tanggalSelesai ? new Date(log.tanggalSelesai) : null;
-    const days = start && end ? Math.max(0, Math.round((end.getTime() - start.getTime()) / 86_400_000)) : 0;
-    downtimeByMonth[key] = (downtimeByMonth[key] ?? 0) + days;
+    const days = end ? Math.max(0, Math.round((end.getTime() - start.getTime()) / dayMs)) : 0;
+    byMonth[start.getMonth()] += days;
   }
-
-  const data = months.map(m => ({ ...m, value: downtimeByMonth[m.key] ?? 0 }));
-  const maxVal = Math.max(...data.map(d => d.value), 1);
-  const yMax = Math.max(Math.ceil(maxVal / 5) * 5, 5);
-  const ySteps = 4;
-  const yLabels = Array.from({ length: ySteps + 1 }, (_, i) => Math.round((i / ySteps) * yMax));
-
-  const W = 240, H = 90, PL = 24, PT = 6, PB = 16, PR = 4;
-  const chartW = W - PL - PR;
-  const chartH = H - PT - PB;
-
-  const pts = data.map((d, i) => ({
-    x: PL + (i / (data.length - 1)) * chartW,
-    y: PT + ((yMax - d.value) / yMax) * chartH,
+  const data = byMonth.map((value, i) => ({
+    value,
+    label: new Date(year, i, 1).toLocaleString("en-US", { month: "short" }),
+    short: new Date(year, i, 1).toLocaleString("en-US", { month: "narrow" }),
   }));
 
-  const lineD = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
-  const areaD = `${lineD} L${pts[pts.length - 1].x.toFixed(1)} ${PT + chartH} L${pts[0].x.toFixed(1)} ${PT + chartH} Z`;
+  if (logs.length === 0) {
+    return <p className="py-8 text-center text-[11px] text-zinc-400">No maintenance records yet</p>;
+  }
+
+  const maxVal = Math.max(...data.map(d => d.value), 1);
+  const step = Math.max(Math.ceil(maxVal / 4 / 5) * 5, 5);
+  const yMax = Math.ceil(maxVal / step) * step;
+  const gridLines = Array.from({ length: yMax / step + 1 }, (_, i) => i * step);
+
+  const W = 300, H = 150;
+  const PL = 22, PT = 8, PB = 18, PR = 6;
+  const chartW = W - PL - PR;
+  const chartH = H - PT - PB;
+  const bottomY = PT + chartH;
+  const slotW = chartW / 12;
+  const barW = Math.min(slotW * 0.6, 16);
+  const MIN_BH = 3;
+
+  const bars = data.map((d, i) => {
+    const cx = PL + i * slotW + slotW / 2;
+    const bh = d.value > 0 ? Math.max((d.value / yMax) * chartH, MIN_BH) : 0;
+    return { ...d, cx, x: cx - barW / 2, y: bottomY - bh, bh };
+  });
+
+  const TW = 70, TH = 34;
+  const tipX = hovered !== null ? Math.min(Math.max(bars[hovered].cx - TW / 2, 0), W - TW) : 0;
+  const tipY = hovered !== null ? Math.max(bars[hovered].y - TH - 4, 0) : 0;
 
   return (
     <div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-20">
+      <div className="flex justify-end mb-0.5">
+        <span className="text-[10px] font-medium text-zinc-400">{year}</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 150 }}
+        onMouseLeave={() => setHovered(null)}>
         <defs>
-          <linearGradient id="dtg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+          <linearGradient id="dtBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4F75FF" />
+            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.4" />
+          </linearGradient>
+          <linearGradient id="dtBarHov" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#a5b4fc" stopOpacity="0.6" />
           </linearGradient>
         </defs>
-        {yLabels.map((v, i) => {
-          const y = PT + ((yMax - v) / yMax) * chartH;
+
+        {gridLines.map(v => {
+          const y = bottomY - (v / yMax) * chartH;
           return (
-            <g key={i}>
-              <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="#e4e4e7" strokeWidth="0.5" />
-              <text x={PL - 3} y={y + 3} textAnchor="end" fontSize="8" fill="#71717a">{v}</text>
+            <g key={v}>
+              <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="#f1f5f9" strokeWidth="0.7" strokeDasharray="3 2" />
+              <text x={PL - 4} y={y + 3} textAnchor="end" fontSize="7.5" fill="#a1a1aa">{v}</text>
             </g>
           );
         })}
-        <path d={areaD} fill="url(#dtg)" />
-        <path d={lineD} stroke="#6366f1" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        {pts.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="2.5" fill="#6366f1" />)}
-      </svg>
-      <div className="flex" style={{ paddingLeft: `${(PL / W) * 100}%`, paddingRight: `${(PR / W) * 100}%` }}>
-        {data.map((d, i) => (
-          <span key={i} className="flex-1 text-[10px] text-zinc-500 text-center">{d.label}</span>
+        <line x1={PL} y1={bottomY} x2={W - PR} y2={bottomY} stroke="#e4e4e7" strokeWidth="0.7" />
+
+        {bars.map((b, i) => (
+          <g key={i}>
+            {b.bh > 0 ? (
+              <rect x={b.x} y={b.y} width={barW} height={b.bh} rx="2.5"
+                fill={hovered === i ? "url(#dtBarHov)" : "url(#dtBar)"}
+                opacity={hovered !== null && hovered !== i ? 0.55 : 1}
+                style={{
+                  transformOrigin: `${b.cx}px ${bottomY}px`,
+                  transform: mounted || reduceMotion ? "scaleY(1)" : "scaleY(0)",
+                  transition: reduceMotion ? "none" : `transform 0.5s cubic-bezier(0.34,1.4,0.64,1) ${i * 0.03}s, opacity 0.15s`,
+                }} />
+            ) : (
+              <rect x={b.x} y={bottomY - MIN_BH} width={barW} height={MIN_BH} rx="1.5"
+                fill="none" stroke="#e4e4e7" strokeWidth="1" strokeDasharray="2 2" />
+            )}
+            <rect x={b.cx - slotW / 2} y={PT} width={slotW} height={chartH}
+              fill="transparent" style={{ cursor: "pointer" }} onMouseEnter={() => setHovered(i)} />
+            <text x={b.cx} y={H - 5} textAnchor="middle" fontSize="8"
+              fill={hovered === i ? "#6366f1" : "#a1a1aa"} style={{ transition: "fill 0.15s" }}>
+              {b.short}
+            </text>
+          </g>
         ))}
-      </div>
+
+        {hovered !== null && (
+          <g pointerEvents="none">
+            <rect x={tipX} y={tipY} width={TW} height={TH} rx="6" fill="#0f172a" />
+            <text x={tipX + TW / 2} y={tipY + 13} textAnchor="middle" fontSize="8" fill="#94a3b8">
+              {bars[hovered].label} {year}
+            </text>
+            <text x={tipX + TW / 2} y={tipY + 27} textAnchor="middle" fontSize="11" fontWeight="700" fill="white">
+              {bars[hovered].value} {bars[hovered].value === 1 ? "day" : "days"}
+            </text>
+          </g>
+        )}
+      </svg>
     </div>
   );
 }
@@ -610,7 +681,7 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
 // Edit Asset Form                                                           
 
 function EditAssetForm({
-  asset, filters, onSave, onCancel, onDelete, onGoToReplace, onDirtyChange,
+  asset, filters, onSave, onCancel, onDelete, onGoToReplace, onDirtyChange, onToast,
 }: {
   asset: Asset;
   filters: Filters;
@@ -619,6 +690,7 @@ function EditAssetForm({
   onDelete: () => void;
   onGoToReplace: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onToast: (type: "success" | "error", message: string) => void;
 }) {
   // Status & zone held in English for display; mapped back to Indonesian on save
   const initialForm = {
@@ -698,7 +770,9 @@ function EditAssetForm({
         lokasiZona: zonaId, kekritisan: form.kekritisan || null,
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      onToast("error", `Couldn't save changes: ${msg}`);
     } finally {
       setSaving(false);
     }
@@ -729,7 +803,9 @@ function EditAssetForm({
       if (!res.ok) throw new Error((await res.json()).message ?? "Failed to delete");
       onDelete();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      onToast("error", `Couldn't delete asset: ${msg}`);
       setShowDeleteWarning(false);
       setDeleting(false);
     }
@@ -943,8 +1019,8 @@ function RepairFormFields({ form, setForm }: {
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Repair Cost*</label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">Rp.</span>
-          <input type="text" value={form.biayaPerbaikan} placeholder="00,00"
-            onChange={e => setForm(f => ({ ...f, biayaPerbaikan: e.target.value }))}
+          <input type="text" inputMode="numeric" value={form.biayaPerbaikan} placeholder="100.000"
+            onChange={e => setForm(f => ({ ...f, biayaPerbaikan: formatRupiahInput(e.target.value) }))}
             className="w-full rounded-lg border border-zinc-200 pl-9 pr-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
         </div>
       </div>
@@ -1048,8 +1124,8 @@ function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Replacement Cost*</label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">Rp.</span>
-          <input type="text" value={form.biayaPenggantian} placeholder="00,00"
-            onChange={e => setForm(f => ({ ...f, biayaPenggantian: e.target.value }))}
+          <input type="text" inputMode="numeric" value={form.biayaPenggantian} placeholder="100.000"
+            onChange={e => setForm(f => ({ ...f, biayaPenggantian: formatRupiahInput(e.target.value) }))}
             className="w-full rounded-lg border border-zinc-200 pl-9 pr-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
         </div>
       </div>
@@ -1059,12 +1135,13 @@ function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
 
 // Add Maintenance Form                                                      
 
-function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, onDirtyChange }: {
+function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, onDirtyChange, onToast }: {
   asset: Asset;
   initialType?: "repair" | "replace";
   onSave: (result?: { newIdAset?: number; newNama?: string }) => void;
   onCancel: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onToast: (type: "success" | "error", message: string) => void;
 }) {
   const [type, setType] = useState<"repair" | "replace">(initialType);
   const [repair, setRepair] = useState<RepairForm>(INIT_REPAIR);
@@ -1157,7 +1234,9 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
       if (!res.ok) throw new Error(json.message ?? "Failed to save");
       onSave(isReplace ? { newIdAset: json.newIdAset, newNama: json.newNama } : undefined);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      onToast("error", `Couldn't save maintenance log: ${msg}`);
     } finally {
       setSaving(false);
     }
@@ -1380,7 +1459,15 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
   typeFilter: string;
   onTypeFilterChange: (v: string) => void;
 }) {
+  const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
   const filtered = typeFilter ? entries.filter(e => e.maintenanceType === typeFilter) : entries;
+  const sorted = [...filtered].sort((a, b) => {
+    const ta = a.tanggalPengerjaan ? new Date(a.tanggalPengerjaan).getTime() : null;
+    const tb = b.tanggalPengerjaan ? new Date(b.tanggalPengerjaan).getTime() : null;
+    if (ta === null) return 1;
+    if (tb === null) return -1;
+    return sortDir === "desc" ? tb - ta : ta - tb;
+  });
 
   if (loading) {
     return (
@@ -1412,21 +1499,27 @@ function MaintenanceHistoryList({ entries, loading, asset, expandedLogId, onExpa
           <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-zinc-500" />
           {typeFilter && (
             <button onClick={() => onTypeFilterChange("")} className="text-[11px] text-indigo-600 hover:underline">
               Clear All
             </button>
           )}
+          <button onClick={() => setSortDir(d => (d === "desc" ? "asc" : "desc"))}
+            title={sortDir === "desc" ? "Newest first" : "Oldest first"}
+            aria-label="Toggle sort order by date"
+            className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-[11px] text-zinc-500 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 transition-[background-color,border-color,color,transform] duration-150">
+            <ArrowDownUp className="w-3.5 h-3.5" />
+            {sortDir === "desc" ? "Newest" : "Oldest"}
+          </button>
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <p className="py-10 text-center text-xs text-zinc-500">
           {typeFilter ? "No records for this type." : "No maintenance history found."}
         </p>
       ) : (
-        filtered.map(e => (
+        sorted.map(e => (
           <MaintenanceHistoryItem
             key={`${e.source}-${e.id}`}
             entry={e}
@@ -1534,7 +1627,37 @@ function FilterCombobox({ value, onChange, options, placeholder, disabled = fals
   );
 }
 
-// Main Page                                                                 
+// Toast Notification
+
+interface Toast { id: number; type: "success" | "error"; message: string; }
+
+function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+  const [vis, setVis] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  useEffect(() => {
+    const enter = requestAnimationFrame(() => setVis(true));
+    const timer = setTimeout(() => setLeaving(true), 3800);
+    return () => { cancelAnimationFrame(enter); clearTimeout(timer); };
+  }, []);
+  const success = toast.type === "success";
+  return (
+    <div role="status" aria-live="polite"
+      onTransitionEnd={() => { if (leaving) onDismiss(); }}
+      style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+      className={`pointer-events-auto flex items-start gap-2.5 w-72 rounded-xl border bg-white px-3.5 py-2.5 shadow-lg transition-[transform,opacity] duration-300 motion-reduce:transition-opacity ${
+        vis && !leaving ? "translate-x-0 opacity-100" : "translate-x-3 opacity-0"
+      } ${success ? "border-green-200" : "border-red-200"}`}>
+      {success
+        ? <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+        : <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />}
+      <p className="flex-1 text-xs text-zinc-700">{toast.message}</p>
+      <button onClick={() => setLeaving(true)} aria-label="Dismiss notification"
+        className="text-zinc-400 hover:text-zinc-600 transition-colors shrink-0"><X className="w-3.5 h-3.5" /></button>
+    </div>
+  );
+}
+
+// Main Page
 
 export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -1546,6 +1669,8 @@ export default function AssetsPage() {
   const [selectedTipe, setSelectedTipe] = useState("");
   const [selectedLokasi, setSelectedLokasi] = useState("");
   const [selectedJadwal, setSelectedJadwal] = useState("");
+  const [selectedKekritisan, setSelectedKekritisan] = useState("");
+  const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [predicting, setPredicting] = useState(false);
@@ -1575,6 +1700,16 @@ export default function AssetsPage() {
   const [editDirty, setEditDirty] = useState(false);
   const [pendingNav, setPendingNav] = useState<(() => void) | null>(null);
 
+  // Toast notifications (top-right)
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const toastSeq = useRef(0);
+  const pushToast = useCallback((type: Toast["type"], message: string) => {
+    setToasts(t => [...t, { id: ++toastSeq.current, type, message }]);
+  }, []);
+  const dismissToast = useCallback((id: number) => {
+    setToasts(t => t.filter(x => x.id !== id));
+  }, []);
+
   // Animation refs
   const riskTabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [riskIndicator, setRiskIndicator] = useState({ left: 0, width: 0, ready: false });
@@ -1603,6 +1738,13 @@ export default function AssetsPage() {
       .catch(err => console.error("Failed to load filters:", err));
   }, []);
 
+  // Sync search from URL on mount (handles SSR hydration where useState initializer can't read window)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search).get("search");
+    if (p) { setSearchInput(p); setSearch(p); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const t = setTimeout(() => { setSearch(searchInput); setPage(1); }, 400);
     return () => clearTimeout(t);
@@ -1617,12 +1759,14 @@ export default function AssetsPage() {
       ...(selectedTipe && { tipe: selectedTipe }),
       ...(selectedLokasi && { lokasi: selectedLokasi }),
       ...(selectedJadwal && { jadwal: FREQ_TO_JADWAL[selectedJadwal] ?? selectedJadwal }),
+      ...(selectedKekritisan && { kekritisan: selectedKekritisan }),
       ...(search && { search }),
+      sort: sortDir === "asc" ? "selesai_asc" : "selesai_desc",
       ...(activeStatus === "Active" && severityFilter !== "All Assets" && {
         severity: severityFilter === "At Risk" ? "AtRisk" : severityFilter,
       }),
     }),
-    [page, selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search, severityFilter, activeStatus],
+    [page, selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, selectedKekritisan, sortDir, search, severityFilter, activeStatus],
   );
 
   useEffect(() => {
@@ -1669,9 +1813,10 @@ export default function AssetsPage() {
       ...(selectedTipe && { tipe: selectedTipe }),
       ...(selectedLokasi && { lokasi: selectedLokasi }),
       ...(selectedJadwal && { jadwal: FREQ_TO_JADWAL[selectedJadwal] ?? selectedJadwal }),
+      ...(selectedKekritisan && { kekritisan: selectedKekritisan }),
       ...(search && { search }),
     }),
-    [selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, search, activeStatus],
+    [selectedKategori, selectedTipe, selectedLokasi, selectedJadwal, selectedKekritisan, search, activeStatus],
   );
 
   const fetchCounts = useCallback(async () => {
@@ -1863,6 +2008,7 @@ export default function AssetsPage() {
     setEditDirty(false);
     setPanelView("overview");
     fetchAssets();
+    pushToast("success", "Asset changes saved");
   }
 
   function handleEditDelete() {
@@ -1870,6 +2016,7 @@ export default function AssetsPage() {
     closePanel();
     fetchAssets();
     fetchCounts();
+    pushToast("success", "Asset deleted");
   }
 
   async function handleMaintenanceSave(result?: { newIdAset?: number; newNama?: string }) {
@@ -1894,20 +2041,22 @@ export default function AssetsPage() {
     setPanelView("maintenance-history");
     fetchAssets();
     fetchCounts();
+    pushToast("success", "Maintenance log saved");
   }
 
-  const handleFilterChange = (type: "kategori" | "tipe" | "lokasi" | "jadwal", value: string) => {
+  const handleFilterChange = (type: "kategori" | "tipe" | "lokasi" | "jadwal" | "kekritisan", value: string) => {
     if (type === "kategori") setSelectedKategori(value);
     else if (type === "tipe") setSelectedTipe(value);
     else if (type === "lokasi") setSelectedLokasi(value);
     else if (type === "jadwal") setSelectedJadwal(value);
+    else if (type === "kekritisan") setSelectedKekritisan(value);
     setPage(1);
   };
 
-  const hasActiveFilters = selectedKategori !== "" || selectedTipe !== "" || selectedLokasi !== "" || selectedJadwal !== "" || search !== "" || severityFilter !== "All Assets";
+  const hasActiveFilters = selectedKategori !== "" || selectedTipe !== "" || selectedLokasi !== "" || selectedJadwal !== "" || selectedKekritisan !== "" || search !== "" || severityFilter !== "All Assets";
 
   function resetFilters() {
-    setSelectedKategori(""); setSelectedTipe(""); setSelectedLokasi(""); setSelectedJadwal("");
+    setSelectedKategori(""); setSelectedTipe(""); setSelectedLokasi(""); setSelectedJadwal(""); setSelectedKekritisan("");
     setSearchInput(""); setSearch(""); setSeverityFilter("All Assets"); setPage(1);
   }
 
@@ -2002,10 +2151,18 @@ export default function AssetsPage() {
               placeholder="Search..." aria-label="Search assets by name, type, or ID"
               className="w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 py-2 text-xs text-zinc-700 shadow-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-[border-color,box-shadow]" />
           </div>
-          <FilterCombobox value={selectedLokasi} onChange={v => handleFilterChange("lokasi", v)} options={filters.lokasi} placeholder="Location" />
-          <FilterCombobox value={selectedJadwal} onChange={v => handleFilterChange("jadwal", v)} options={FREQ_OPTIONS} placeholder="Frequency" />
           <FilterCombobox value={selectedTipe} onChange={v => handleFilterChange("tipe", v)} options={filters.tipe} placeholder="Asset Type" />
           <FilterCombobox value={selectedKategori} onChange={v => handleFilterChange("kategori", v)} options={filters.kategori} placeholder="Category" />
+          <FilterCombobox value={selectedLokasi} onChange={v => handleFilterChange("lokasi", v)} options={filters.lokasi} placeholder="Location" />
+          <FilterCombobox value={selectedKekritisan} onChange={v => handleFilterChange("kekritisan", v)} options={PRIORITY_OPTIONS} placeholder="Priority" />
+          <FilterCombobox value={selectedJadwal} onChange={v => handleFilterChange("jadwal", v)} options={FREQ_OPTIONS} placeholder="Frequency" />
+          <button onClick={() => { setSortDir(d => (d === "desc" ? "asc" : "desc")); setPage(1); }}
+            title={sortDir === "desc" ? "Latest maintenance first (newest to oldest)" : "Oldest maintenance first (oldest to newest)"}
+            aria-label="Toggle sort by maintenance completion date"
+            className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-500 shadow-sm hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 transition-[background-color,border-color,color,transform] duration-150">
+            <ArrowDownUp className="w-3.5 h-3.5" />
+            {sortDir === "desc" ? "Newest" : "Oldest"}
+          </button>
           {hasActiveFilters && (
             <button onClick={resetFilters}
               className="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-500 hover:bg-red-50 hover:border-red-200 hover:text-red-500 active:scale-95 transition-[background-color,border-color,color,transform] duration-150">
@@ -2247,6 +2404,7 @@ export default function AssetsPage() {
                 onDelete={handleEditDelete}
                 onGoToReplace={() => goToAddMaintenance("replace")}
                 onDirtyChange={setEditDirty}
+                onToast={pushToast}
               />
             )}
 
@@ -2280,6 +2438,7 @@ export default function AssetsPage() {
                 onSave={handleMaintenanceSave}
                 onCancel={() => { setMaintenanceDirty(false); setPanelView("maintenance-history"); }}
                 onDirtyChange={setMaintenanceDirty}
+                onToast={pushToast}
               />
             )}
           </div>
@@ -2298,6 +2457,15 @@ export default function AssetsPage() {
             act?.();
           }}
         />,
+        document.body,
+      )}
+
+      {typeof document !== "undefined" && toasts.length > 0 && createPortal(
+        <div className="fixed top-4 right-4 z-[200] flex flex-col gap-2 pointer-events-none">
+          {toasts.map(t => (
+            <ToastItem key={t.id} toast={t} onDismiss={() => dismissToast(t.id)} />
+          ))}
+        </div>,
         document.body,
       )}
     </div>
