@@ -881,7 +881,7 @@ export default function Dashboard() {
 
         {/* Asset Overview Donut */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold text-slate-700 mb-1">Asset Overview</p>
+          <p className="text-sm font-semibold text-slate-700 mb-1">Asset Category Overview</p>
           {recentlyAdded > 0 && (
             <p className="text-xs text-green-600 mb-4">+{recentlyAdded} assets added this month</p>
           )}

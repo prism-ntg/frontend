@@ -1,144 +1,338 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   FileSpreadsheet, Trash2, Save, Upload, ChevronDown,
-  Loader2, X, CheckCircle, AlertCircle, Pencil, Copy, Plus, ArrowLeft,
+  Loader2, X, CheckCircle, AlertCircle, Pencil, Plus,
+  ArrowLeft, AlertTriangle, Server, Search,
 } from "lucide-react";
 
-// Types                                                                     
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 interface AssetDraft {
   draftId: string;
-  idAset: string;
-  nama: string;
-  currentStatus: "Healthy" | "At Risk" | "Critical";
+  // Step 1
+  namaPrefix: string;
+  nextIdAset: number | null;
+  assetModel: string;
+  assetStatus: "Aktif" | "Rusak" | "Diganti";
   tipe: string;
   kategori: string;
+  subKategori: string;
+  merek: string;
   tglInstalasi: string;
+  kekritisan: "Critical" | "Major" | "Minor" | "";
+  frequency: "Daily" | "Weekly" | "Monthly" | "Yearly" | "Reactive" | "";
   lokasiGedung: string;
   lokasiLantai: string;
   lokasiZona: "Timur" | "Barat" | "Utara" | "Selatan" | "";
-  maintenanceType: "Preventive" | "Repair" | "Replace" | "";
-  frequency: "Daily" | "Weekly" | "Monthly" | "Yearly" | "Reactive" | "";
+  // Step 2
+  logType: "repair" | "replacement" | "";
   lastPlanned: string;
-  lastExecution: string;
-  lastDone: string;
+  lastExecFrom: string;
+  lastExecTo: string;
+  damageDesc: string;
+  damageCause: string;
+  severity: "Fatal" | "Serious" | "Sedang" | "Ringan" | "";
   repairCost: string;
+  spareParts: string;
+  technician: string;
+  replacementDate: string;
+  replacementCause: string;
   replacementCost: string;
-  description: string;
+  prevAssetName: string;
+  prevManufacturer: string;
+  prevModel: string;
 }
 
-// Helpers                                                                   
-
-function genId(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const rand = (n: number) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-  return `PRISM-${rand(4)}-${rand(4)}`;
+interface DropdownOptions {
+  tipe: string[];
+  kategori: string[];
+  subKategori: string[];
+  merek: string[];
+  lokasiGedung: string[];
+  lokasiLantai: string[];
 }
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function emptyDraft(): AssetDraft {
   return {
     draftId: crypto.randomUUID(),
-    idAset: genId(),
-    nama: "",
-    currentStatus: "Healthy",
+    namaPrefix: "",
+    nextIdAset: null,
+    assetModel: "",
+    assetStatus: "Aktif",
     tipe: "",
     kategori: "",
+    subKategori: "",
+    merek: "",
     tglInstalasi: "",
-    lokasiGedung: "Gedung A",
-    lokasiLantai: "",
-    lokasiZona: "Barat",
-    maintenanceType: "",
+    kekritisan: "",
     frequency: "",
+    lokasiGedung: "",
+    lokasiLantai: "",
+    lokasiZona: "",
+    logType: "",
     lastPlanned: "",
-    lastExecution: "",
-    lastDone: "",
+    lastExecFrom: "",
+    lastExecTo: "",
+    damageDesc: "",
+    damageCause: "",
+    severity: "",
     repairCost: "",
+    spareParts: "",
+    technician: "",
+    replacementDate: "",
+    replacementCause: "",
     replacementCost: "",
-    description: "",
+    prevAssetName: "",
+    prevManufacturer: "",
+    prevModel: "",
   };
 }
 
+
 function freqToJadwal(f: string): string {
   const map: Record<string, string> = {
-    Daily: "Harian",
-    Weekly: "Mingguan",
-    Monthly: "Bulanan",
-    Yearly: "Tahunan",
-    Reactive: "Reactive",
+    Daily: "Harian", Weekly: "Mingguan", Monthly: "Bulanan",
+    Yearly: "Tahunan", Reactive: "Reactive",
   };
   return map[f] ?? f;
 }
 
-function statusToKekritisan(s: string): string | null {
-  if (s === "Critical") return "Critical";
-  if (s === "At Risk") return "Major";
-  return null;
+function severityToDb(s: string): string {
+  if (s === "Serious") return "Berat";
+  return s;
 }
 
-// Small shared components                                                   
+function formatAssetName(prefix: string, id: number): string {
+  return `${prefix}-${String(id).padStart(4, "0")}`;
+}
+
+function formatRupiah(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return "";
+  return "Rp" + Number(digits).toLocaleString("id-ID");
+}
+
+const STEP1_REQUIRED: { key: keyof AssetDraft; label: string }[] = [
+  { key: "namaPrefix", label: "Asset Name" },
+  { key: "assetModel", label: "Asset Model" },
+  { key: "assetStatus", label: "Asset Status" },
+  { key: "tipe", label: "Asset Type" },
+  { key: "kategori", label: "Category" },
+  { key: "subKategori", label: "Sub-category" },
+  { key: "merek", label: "Manufacturer" },
+  { key: "tglInstalasi", label: "Installation Date" },
+  { key: "kekritisan", label: "Priority to Company" },
+  { key: "frequency", label: "Maintenance Frequency" },
+  { key: "lokasiGedung", label: "Building" },
+  { key: "lokasiLantai", label: "Floor Level" },
+  { key: "lokasiZona", label: "Zone" },
+];
+
+// ─── Modals ──────────────────────────────────────────────────────────────────
+
+function IncompleteWarningModal({
+  missingFields,
+  onContinue,
+  onClose,
+}: {
+  missingFields: string[];
+  onContinue: () => void;
+  onClose: () => void;
+}) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setVis(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}
+    >
+      <div
+        className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+      >
+        <div className="flex flex-col items-center text-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-zinc-900">Incomplete Form</h3>
+            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+              Some required fields (*) are still empty. Do you want to keep filling them in?
+            </p>
+          </div>
+        </div>
+        {missingFields.length > 0 && (
+          <div className="mb-4 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2">
+            <p className="text-[11px] text-amber-700 font-medium mb-1">Missing fields:</p>
+            <p className="text-[11px] text-amber-600">{missingFields.join(", ")}</p>
+          </div>
+        )}
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Discard
+          </button>
+          <button
+            onClick={onContinue}
+            className="flex-1 px-3 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Keep Editing
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeavePageWarningModal({
+  onLeave,
+  onStay,
+}: {
+  onLeave: () => void;
+  onStay: () => void;
+}) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setVis(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}
+    >
+      <div
+        className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+      >
+        <div className="flex flex-col items-center text-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-zinc-900">Leave Page?</h3>
+            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+              You have unsaved changes. If you leave now, your progress will be lost.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onStay}
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Stay
+          </button>
+          <button
+            onClick={onLeave}
+            className="flex-1 px-3 py-2 rounded-lg bg-amber-500 text-xs font-semibold text-white hover:bg-amber-600 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Leave
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteDraftModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setVis(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${vis ? "opacity-100" : "opacity-0"}`}
+    >
+      <div
+        className={`bg-white rounded-2xl shadow-2xl p-6 w-80 mx-4 transition-[opacity,transform] duration-200 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+      >
+        <div className="flex flex-col items-center text-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-zinc-900">Delete Asset</h3>
+            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+              This asset will be removed from the list. This action cannot be undone.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-red-600 text-xs font-semibold text-white hover:bg-red-700 active:scale-[0.97] transition-[background-color,transform] duration-150"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Form UI Components ───────────────────────────────────────────────────────
 
 function RadioGroup<T extends string>({
   options,
   value,
   onChange,
-  disabled = false,
+  colorMap,
+  labels,
 }: {
   options: T[];
   value: T | "";
   onChange: (v: T) => void;
-  disabled?: boolean;
+  colorMap?: Record<string, string>;
+  labels?: Record<string, string>;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {options.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          disabled={disabled}
-          onClick={() => onChange(opt)}
-          className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150 ${
-            value === opt
-              ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
-              : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
-          } disabled:opacity-50 disabled:cursor-not-allowed active:scale-95`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function SelectField({
-  value,
-  onChange,
-  options,
-  placeholder,
-  disabled = false,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-  placeholder: string;
-  disabled?: boolean;
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full appearance-none rounded-lg border border-zinc-200 bg-white pl-3 pr-8 py-2.5 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <option value="">{placeholder}</option>
-        {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+      {options.map((opt) => {
+        const customColor = colorMap?.[opt];
+        const active = value === opt;
+        return (
+          <button
+            key={opt}
+            type="button"
+            onClick={() => onChange(opt)}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 ${
+              customColor && active
+                ? customColor
+                : active
+                ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
+                : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
+            }`}
+          >
+            {labels?.[opt] ?? opt}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -158,21 +352,15 @@ function DateField({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all disabled:opacity-50"
+      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     />
   );
-}
-
-function formatRupiah(raw: string): string {
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return "";
-  return "Rp" + Number(digits).toLocaleString("id-ID");
 }
 
 function CurrencyField({
   value,
   onChange,
-  placeholder = "Rp 0",
+  placeholder = "Rp.00,00",
   disabled = false,
 }: {
   value: string;
@@ -188,61 +376,205 @@ function CurrencyField({
       onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
       placeholder={placeholder}
       disabled={disabled}
-      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all disabled:opacity-50"
+      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     />
   );
 }
 
-// Saved Asset Card                                                          
+function DropdownAddable({
+  value,
+  onChange,
+  options,
+  onAddOption,
+  placeholder,
+  disabled = false,
+  dropUp = false,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  onAddOption: (v: string) => void;
+  placeholder: string;
+  disabled?: boolean;
+  dropUp?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setSearch("");
+      }
+    }
+    if (open) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  // Auto-focus search input when panel opens; clear search when it closes
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (open) searchRef.current?.focus();
+      else setSearch("");
+    }, 10);
+    return () => clearTimeout(id);
+  }, [open]);
+
+  const filtered = options.filter((o) =>
+    o.toLowerCase().includes(search.toLowerCase())
+  );
+  const canAdd =
+    search.trim() !== "" &&
+    !options.some((o) => o.toLowerCase() === search.trim().toLowerCase());
+
+  function handleSelect(opt: string) {
+    onChange(opt);
+    setOpen(false);
+    setSearch("");
+  }
+
+  function handleAdd() {
+    const v = search.trim();
+    if (!v) return;
+    if (!options.includes(v)) onAddOption(v);
+    onChange(v);
+    setOpen(false);
+    setSearch("");
+  }
+
+  const panelPos = dropUp ? "bottom-full mb-1" : "top-full mt-1";
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full flex items-center justify-between rounded-lg border bg-white px-3 py-2.5 text-sm text-left transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
+          open ? "border-indigo-300 ring-2 ring-indigo-200" : "border-zinc-200 hover:border-zinc-300"
+        }`}
+      >
+        <span className={value ? "text-zinc-700" : "text-zinc-400"}>{value || placeholder}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-zinc-400 transition-transform duration-150 shrink-0 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className={`absolute ${panelPos} left-0 right-0 z-50 bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden`}>
+          {/* Search */}
+          <div className="p-2 border-b border-zinc-100">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (filtered.length === 1) handleSelect(filtered[0]);
+                    else if (canAdd) handleAdd();
+                  }
+                  if (e.key === "Escape") { setOpen(false); setSearch(""); }
+                }}
+                placeholder="Search..."
+                className="w-full rounded-md border border-zinc-200 pl-7 pr-2.5 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Options */}
+          <div className="max-h-40 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="px-3 py-2.5 text-xs text-zinc-400 italic">
+                {search ? `No results for "${search}"` : "No options yet"}
+              </p>
+            ) : (
+              filtered.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => handleSelect(opt)}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors duration-100 ${
+                    value === opt ? "bg-indigo-50 text-indigo-700 font-medium" : "text-zinc-700 hover:bg-zinc-50"
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))
+            )}
+          </div>
+
+          {/* Add button — only shown when typed text is not already in list */}
+          {canAdd && (
+            <div className="border-t border-zinc-100 p-2">
+              <button
+                type="button"
+                onClick={handleAdd}
+                className="w-full flex items-center gap-1.5 rounded-md bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-100 transition-colors duration-150"
+              >
+                <Plus className="w-3 h-3" />
+                Add &ldquo;{search.trim()}&rdquo;
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Draft Card ───────────────────────────────────────────────────────────────
 
 function DraftCard({
   draft,
   active,
   onEdit,
-  onDuplicate,
   onDelete,
 }: {
   draft: AssetDraft;
   active: boolean;
   onEdit: () => void;
-  onDuplicate: () => void;
   onDelete: () => void;
 }) {
+  const displayName =
+    draft.namaPrefix && draft.nextIdAset
+      ? formatAssetName(draft.namaPrefix, draft.nextIdAset)
+      : draft.namaPrefix || "Unnamed Asset";
+
   return (
     <div
-      className={`rounded-xl border p-3 transition-all duration-200 ${
+      className={`rounded-xl border p-3 transition-all duration-200 cursor-pointer ${
         active
           ? "border-indigo-300 bg-indigo-50/60 shadow-sm"
           : "border-zinc-200 bg-white hover:border-indigo-200 hover:shadow-sm"
       }`}
+      onClick={onEdit}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <FileSpreadsheet className="w-4 h-4 text-zinc-400 shrink-0" />
-        <p className="text-sm font-medium text-zinc-700 truncate">
-          {draft.nama || "Unnamed Asset"}
-        </p>
+      <div className="flex items-start gap-2 mb-2">
+        <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
+          <Server className="w-3.5 h-3.5 text-zinc-400" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-zinc-800 truncate">{displayName}</p>
+          <p className="text-[11px] text-zinc-400 truncate">{draft.tipe || "—"}</p>
+        </div>
       </div>
-      <p className="text-[11px] text-zinc-400 font-mono mb-2">{draft.idAset}</p>
-      <div className={`h-0.5 rounded-full mb-3 ${
-        draft.currentStatus === "Critical" ? "bg-red-500" : draft.currentStatus === "At Risk" ? "bg-yellow-400" : "bg-green-500"
-      }`} />
+      <div className="h-0.5 w-full rounded-full bg-indigo-400/60 mb-3" />
       <div className="flex items-center gap-2">
         <button
-          onClick={onEdit}
+          onClick={(e) => { e.stopPropagation(); onEdit(); }}
           className="flex items-center gap-1 text-xs text-zinc-500 hover:text-indigo-600 transition-colors active:scale-95"
         >
           <Pencil className="w-3 h-3" />
           Edit
         </button>
         <button
-          onClick={onDuplicate}
-          title="Duplicate"
-          className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors active:scale-95"
-        >
-          <Copy className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={onDelete}
+          onClick={(e) => { e.stopPropagation(); onDelete(); }}
           className="ml-auto flex items-center gap-1 rounded-md bg-red-50 border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-100 transition-all duration-150 active:scale-95"
         >
           <Trash2 className="w-3 h-3" />
@@ -253,7 +585,7 @@ function DraftCard({
   );
 }
 
-// CSV Upload Panel                                                          
+// ─── CSV Panel ────────────────────────────────────────────────────────────────
 
 const REQUIRED_COLS = [
   "ID_Aset", "Kategori", "Sub_Kategori", "Tipe", "Lokasi",
@@ -261,23 +593,12 @@ const REQUIRED_COLS = [
   "Biaya_Penggantian", "Jenis_Kerusakan", "Tanggal_Perbaikan",
 ];
 
-function CsvPanel({
-  onSubmitSuccess,
-}: {
-  onSubmitSuccess: (count: number) => void;
-}) {
+function CsvPanel({ onSubmitSuccess }: { onSubmitSuccess: (n: number) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ created: number; errors: string[] } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setDragging(false);
-    const f = e.dataTransfer.files[0];
-    if (f && (f.name.endsWith(".csv") || f.name.endsWith(".xlsx"))) setFile(f);
-  }
 
   async function handleSubmit() {
     if (!file) return;
@@ -298,33 +619,28 @@ function CsvPanel({
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      <div className="flex-1 p-6 md:p-8">
+    <div className="flex-1 flex flex-col bg-white rounded-2xl border border-zinc-200 overflow-hidden">
+      <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-base font-semibold text-zinc-800 mb-4">Import Data</h2>
-
-        {/* Drop zone */}
         <div
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
-          onDrop={handleDrop}
+          onDrop={(e) => {
+            e.preventDefault(); setDragging(false);
+            const f = e.dataTransfer.files[0];
+            if (f && (f.name.endsWith(".csv") || f.name.endsWith(".xlsx"))) setFile(f);
+          }}
           onClick={() => inputRef.current?.click()}
-          className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 py-16 mb-6 ${
-            dragging
-              ? "border-green-400 bg-green-50"
-              : file
-              ? "border-green-400 bg-green-50/60"
-              : "border-green-300 bg-green-50/40 hover:bg-green-50 hover:border-green-400"
+          className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 py-14 mb-6 ${
+            dragging ? "border-green-400 bg-green-50"
+            : file ? "border-green-400 bg-green-50/60"
+            : "border-green-300 bg-green-50/40 hover:bg-green-50 hover:border-green-400"
           }`}
         >
-          <input
-            ref={inputRef}
-            type="file"
-            accept=".csv,.xlsx"
-            className="hidden"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          />
-          <div className="w-16 h-16 rounded-xl bg-green-100 flex items-center justify-center mb-4">
-            <FileSpreadsheet className="w-8 h-8 text-green-600" />
+          <input ref={inputRef} type="file" accept=".csv,.xlsx" className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+          <div className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center mb-3">
+            <FileSpreadsheet className="w-7 h-7 text-green-600" />
           </div>
           {file ? (
             <div className="text-center">
@@ -334,72 +650,41 @@ function CsvPanel({
           ) : (
             <div className="text-center">
               <p className="text-sm font-semibold text-green-700 flex items-center gap-1.5">
-                Import CSV or XLSX File
-                <Upload className="w-4 h-4" />
+                Import CSV or XLSX <Upload className="w-4 h-4" />
               </p>
               <p className="text-xs text-green-500 mt-1">Drag & drop or click to browse</p>
             </div>
           )}
           {file && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setFile(null); }}
-              className="absolute top-3 right-3 p-1 rounded-full bg-white border border-zinc-200 text-zinc-400 hover:text-red-500 transition-colors"
-            >
+            <button onClick={(e) => { e.stopPropagation(); setFile(null); }}
+              className="absolute top-3 right-3 p-1 rounded-full bg-white border border-zinc-200 text-zinc-400 hover:text-red-500 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
-
-        {/* Required columns */}
-        <div>
-          <p className="text-sm font-medium text-zinc-700 mb-3">
-            Required Columns{" "}
-            <span className="text-zinc-400 font-normal">({REQUIRED_COLS.length})</span>
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {REQUIRED_COLS.map((col) => (
-              <span
-                key={col}
-                className="rounded-lg border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-600"
-              >
-                {col}
-              </span>
-            ))}
-          </div>
+        <p className="text-sm font-medium text-zinc-700 mb-3">
+          Required Columns <span className="text-zinc-400 font-normal">({REQUIRED_COLS.length})</span>
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {REQUIRED_COLS.map((col) => (
+            <span key={col} className="rounded-lg border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-600">{col}</span>
+          ))}
         </div>
-
-        {/* Result */}
         {result && (
           <div className={`mt-4 rounded-xl border p-4 ${result.errors.length === 0 ? "bg-green-50 border-green-200" : "bg-yellow-50 border-yellow-200"}`}>
             <div className="flex items-center gap-2 mb-1">
               {result.errors.length === 0
                 ? <CheckCircle className="w-4 h-4 text-green-600" />
                 : <AlertCircle className="w-4 h-4 text-yellow-600" />}
-              <p className="text-sm font-medium text-zinc-700">
-                {result.created} asset(s) imported successfully
-              </p>
+              <p className="text-sm font-medium text-zinc-700">{result.created} asset(s) imported</p>
             </div>
-            {result.errors.map((e, i) => (
-              <p key={i} className="text-xs text-yellow-700 mt-1">{e}</p>
-            ))}
+            {result.errors.map((e, i) => <p key={i} className="text-xs text-yellow-700 mt-1">{e}</p>)}
           </div>
         )}
       </div>
-
-      {/* Footer buttons */}
-      <div className="shrink-0 border-t border-zinc-100 px-6 py-4 flex items-center justify-between bg-white">
-        <button
-          disabled
-          className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-400 opacity-50 cursor-not-allowed"
-        >
-          <Trash2 className="w-4 h-4" />
-          Delete Asset
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={!file || submitting}
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-        >
+      <div className="shrink-0 border-t border-zinc-100 px-6 py-4 flex justify-end">
+        <button onClick={handleSubmit} disabled={!file || submitting}
+          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150">
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-4 h-4" />}
           {submitting ? "Importing…" : "Submit Asset(s)"}
         </button>
@@ -408,65 +693,527 @@ function CsvPanel({
   );
 }
 
-// Delete Confirmation Modal
+// ─── Step Indicator ───────────────────────────────────────────────────────────
 
-function DeleteConfirmModal({
-  assetId,
-  onConfirm,
-  onCancel,
-  loading,
+function StepIndicator({ step, onBack }: { step: 1 | 2; onBack?: () => void }) {
+  return (
+    <div className="flex items-center px-6 pt-5 pb-4 border-b border-zinc-100">
+      <button
+        type="button"
+        onClick={step === 2 ? onBack : undefined}
+        className={`flex items-center gap-2.5 transition-opacity duration-150 ${
+          step === 2 ? "cursor-pointer hover:opacity-70" : "cursor-default"
+        }`}
+      >
+        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+          step >= 1 ? "bg-indigo-600 text-white" : "border-2 border-zinc-300 text-zinc-400"
+        }`}>1</div>
+        <span className={`text-sm font-medium ${step === 1 ? "text-indigo-600" : "text-zinc-500"}`}>
+          Asset Information<span className="text-red-400">*</span>
+        </span>
+      </button>
+
+      <div className="flex-1 h-px bg-zinc-200 mx-4" />
+
+      <div className="flex items-center gap-2.5">
+        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+          step === 2 ? "bg-indigo-600 text-white" : "border-2 border-zinc-300 text-zinc-400"
+        }`}>2</div>
+        <span className={`text-sm font-medium ${step === 2 ? "text-indigo-600" : "text-zinc-400"}`}>
+          Maintenance History
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Step 1: Asset Information ────────────────────────────────────────────────
+
+function AssetInfoStep({
+  form,
+  setField,
+  dbOptions,
+  localOptions,
+  addLocalOption,
+  nameCheck,
+  nameCheckLoading,
 }: {
-  assetId: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-  loading: boolean;
+  form: AssetDraft;
+  setField: <K extends keyof AssetDraft>(k: K, v: AssetDraft[K]) => void;
+  dbOptions: DropdownOptions;
+  localOptions: DropdownOptions;
+  addLocalOption: (field: keyof DropdownOptions, v: string) => void;
+  nameCheck: { nextId: number; nameExists: boolean } | null;
+  nameCheckLoading: boolean;
 }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
+  function mergedOptions(field: keyof DropdownOptions, numeric = false): string[] {
+    const set = new Set([...dbOptions[field], ...localOptions[field]]);
+    const arr = Array.from(set).filter(Boolean);
+    if (numeric) {
+      return arr.sort((a, b) => {
+        const na = parseFloat(a), nb = parseFloat(b);
+        return !isNaN(na) && !isNaN(nb) ? na - nb : a.localeCompare(b);
+      });
+    }
+    return arr.sort();
+  }
+
+  const labelClass = "block text-xs font-medium text-zinc-600 mb-1.5";
+  const req = <span className="text-red-400 ml-0.5">*</span>;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        onClick={!loading ? onCancel : undefined}
-        className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-200 ${visible ? "opacity-100" : "opacity-0"}`}
-      />
-      <div className={`relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transition-all duration-200 ${visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"}`}>
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-14 h-14 rounded-full bg-red-50 border border-red-100 flex items-center justify-center mb-4">
-            <Trash2 className="w-6 h-6 text-red-500" />
-          </div>
-          <h3 className="text-base font-semibold text-zinc-900 mb-1">Delete Asset</h3>
-          <p className="text-sm text-zinc-400 mb-4">This action cannot be undone.</p>
-          <div className="rounded-lg bg-zinc-50 border border-zinc-200 px-4 py-2.5 w-full">
-            <p className="text-sm font-mono text-zinc-700">{assetId}</p>
+    <div className="space-y-0">
+      {/* Row 1: Asset Name | Asset Model | Asset Status */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label className={labelClass}>Asset Name{req}</label>
+          <input
+            type="text"
+            value={form.namaPrefix}
+            onChange={(e) => setField("namaPrefix", e.target.value.toUpperCase())}
+            placeholder="e.g. MIT-E0IF"
+            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+          />
+          <div className="mt-1 min-h-[16px]">
+            {nameCheckLoading && (
+              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+                <Loader2 className="w-3 h-3 animate-spin" /> Checking…
+              </span>
+            )}
+            {!nameCheckLoading && nameCheck && form.namaPrefix && (
+              nameCheck.nameExists ? (
+                <p className="text-[11px] text-red-500">Asset name already existed</p>
+              ) : (
+                <p className="text-[11px] text-green-600">
+                  Your new asset {formatAssetName(form.namaPrefix, nameCheck.nextId)}
+                </p>
+              )
+            )}
           </div>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className="flex-1 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300 active:scale-95 transition-all duration-150 disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-150"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-            {loading ? "Deleting…" : "Delete"}
-          </button>
+
+        <div>
+          <label className={labelClass}>Asset Model{req}</label>
+          <input
+            type="text"
+            value={form.assetModel}
+            onChange={(e) => setField("assetModel", e.target.value)}
+            placeholder="e.g. MSY-GN-792"
+            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Asset Status{req}</label>
+          <RadioGroup<"Aktif" | "Rusak" | "Diganti">
+            options={["Aktif", "Rusak", "Diganti"]}
+            value={form.assetStatus}
+            onChange={(v) => setField("assetStatus", v)}
+            labels={{ Aktif: "Active", Rusak: "Damaged", Diganti: "Replaced" }}
+          />
+        </div>
+      </div>
+
+      <div className="border-t border-zinc-100 mb-5" />
+
+      {/* Row 2: Asset Type | Category / Sub-category */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label className={labelClass}>Asset Type{req}</label>
+          <DropdownAddable
+            value={form.tipe}
+            onChange={(v) => setField("tipe", v)}
+            options={mergedOptions("tipe")}
+            onAddOption={(v) => addLocalOption("tipe", v)}
+            placeholder="e.g. Air Conditioner"
+          />
+        </div>
+
+        <div className="col-span-2 flex items-end gap-2">
+          <div className="flex-1">
+            <label className={labelClass}>Category{req}</label>
+            <DropdownAddable
+              value={form.kategori}
+              onChange={(v) => setField("kategori", v)}
+              options={mergedOptions("kategori")}
+              onAddOption={(v) => addLocalOption("kategori", v)}
+              placeholder="e.g. Mechanical"
+            />
+          </div>
+          <span className="text-zinc-400 pb-2.5 text-sm font-medium shrink-0">/</span>
+          <div className="flex-1">
+            <label className={labelClass}>Sub-category{req}</label>
+            <DropdownAddable
+              value={form.subKategori}
+              onChange={(v) => setField("subKategori", v)}
+              options={mergedOptions("subKategori")}
+              onAddOption={(v) => addLocalOption("subKategori", v)}
+              placeholder="e.g. Control Panel"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: Manufacturer | Installation Date | Priority to Company */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label className={labelClass}>Manufacturer{req}</label>
+          <DropdownAddable
+            value={form.merek}
+            onChange={(v) => setField("merek", v)}
+            options={mergedOptions("merek")}
+            onAddOption={(v) => addLocalOption("merek", v)}
+            placeholder="e.g. Mitsubishi"
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Installation Date{req}</label>
+          <DateField value={form.tglInstalasi} onChange={(v) => setField("tglInstalasi", v)} />
+        </div>
+
+        <div>
+          <label className={labelClass}>Priority to Company{req}</label>
+          <RadioGroup<"Critical" | "Major" | "Minor">
+            options={["Critical", "Major", "Minor"]}
+            value={form.kekritisan}
+            onChange={(v) => setField("kekritisan", v)}
+          />
+        </div>
+      </div>
+
+      {/* Row 4: Maintenance Frequency (full width) */}
+      <div className="mb-5">
+        <label className={labelClass}>Maintenance Frequency{req}</label>
+        <RadioGroup<"Daily" | "Weekly" | "Monthly" | "Yearly" | "Reactive">
+          options={["Daily", "Weekly", "Monthly", "Yearly", "Reactive"]}
+          value={form.frequency}
+          onChange={(v) => setField("frequency", v)}
+        />
+      </div>
+
+      <div className="border-t border-zinc-100 mb-5" />
+
+      {/* Row 5: Building | Floor Level | Zone */}
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label className={labelClass}>Building{req}</label>
+          <DropdownAddable
+            value={form.lokasiGedung}
+            onChange={(v) => setField("lokasiGedung", v)}
+            options={mergedOptions("lokasiGedung")}
+            onAddOption={(v) => addLocalOption("lokasiGedung", v)}
+            placeholder="e.g. Gedung A"
+            dropUp
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Floor Level{req}</label>
+          <DropdownAddable
+            value={form.lokasiLantai}
+            onChange={(v) => setField("lokasiLantai", v)}
+            options={mergedOptions("lokasiLantai", true)}
+            onAddOption={(v) => addLocalOption("lokasiLantai", v)}
+            placeholder="e.g. 15"
+            dropUp
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Zone{req}</label>
+          <RadioGroup<"Timur" | "Barat" | "Utara" | "Selatan">
+            options={["Timur", "Barat", "Utara", "Selatan"]}
+            value={form.lokasiZona}
+            onChange={(v) => setField("lokasiZona", v)}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-// Main page (wrapped content)
+// ─── Step 2: Maintenance History ──────────────────────────────────────────────
+
+function MaintenanceHistoryStep({
+  form,
+  setField,
+}: {
+  form: AssetDraft;
+  setField: <K extends keyof AssetDraft>(k: K, v: AssetDraft[K]) => void;
+}) {
+  const labelClass = "block text-xs font-medium text-zinc-600 mb-1.5";
+
+  function switchLogType(t: "repair" | "replacement") {
+    if (form.logType === t) return;
+    setField("logType", t);
+  }
+
+  const severityColorMap: Record<string, string> = {
+    Fatal: "border-red-400 bg-red-50 text-red-600 shadow-sm",
+    Serious: "border-orange-300 bg-orange-50 text-orange-600 shadow-sm",
+    Sedang: "border-yellow-300 bg-yellow-50 text-yellow-600 shadow-sm",
+    Ringan: "border-green-400 bg-green-50 text-green-600 shadow-sm",
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Log type toggle */}
+      <div>
+        <p className="text-sm font-medium text-zinc-700 mb-2">
+          Latest Maintenance Log{" "}
+          <span className="text-xs font-normal text-zinc-400">(optional)</span>
+        </p>
+        <div className="relative flex rounded-xl border border-zinc-200 bg-zinc-100 overflow-hidden text-sm w-full max-w-xs">
+          <div
+            className={`absolute inset-y-0 w-1/2 bg-white rounded-lg shadow-sm border border-zinc-200 transition-transform duration-200 ${
+              form.logType === "replacement" ? "translate-x-full" : "translate-x-0"
+            }`}
+          />
+          <button
+            type="button"
+            onClick={() => switchLogType("repair")}
+            className={`relative z-10 flex-1 px-4 py-2 font-medium transition-colors duration-150 text-center ${
+              form.logType !== "replacement" ? "text-zinc-900" : "text-zinc-500"
+            }`}
+          >
+            Repair Log
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLogType("replacement")}
+            className={`relative z-10 flex-1 px-4 py-2 font-medium transition-colors duration-150 text-center ${
+              form.logType === "replacement" ? "text-zinc-900" : "text-zinc-500"
+            }`}
+          >
+            Replacement Log
+          </button>
+        </div>
+      </div>
+
+      {/* Repair Log */}
+      {form.logType !== "replacement" && (
+        <div className="space-y-5">
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className={labelClass}>Last Planned Maintenance</label>
+              <DateField value={form.lastPlanned} onChange={(v) => setField("lastPlanned", v)} />
+            </div>
+            <div>
+              <label className={labelClass}>Last Maintenance Execution</label>
+              <DateField value={form.lastExecFrom} onChange={(v) => setField("lastExecFrom", v)} />
+            </div>
+            <div>
+              <label className={labelClass}>Last Maintenance Done</label>
+              <DateField value={form.lastExecTo} onChange={(v) => setField("lastExecTo", v)} />
+            </div>
+          </div>
+
+          <div className="border-t border-zinc-100" />
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className={labelClass}>Damage Description</label>
+              <div className="relative">
+                <textarea
+                  value={form.damageDesc}
+                  onChange={(e) => setField("damageDesc", e.target.value.slice(0, 30))}
+                  placeholder="Outdoor fan broken..."
+                  rows={3}
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all resize-none"
+                />
+                <span className="absolute bottom-2 right-2 text-[10px] text-zinc-400">
+                  {form.damageDesc.length}/30
+                </span>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Damage Cause</label>
+              <div className="relative">
+                <textarea
+                  value={form.damageCause}
+                  onChange={(e) => setField("damageCause", e.target.value.slice(0, 30))}
+                  placeholder="Prob due to overheating..."
+                  rows={3}
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all resize-none"
+                />
+                <span className="absolute bottom-2 right-2 text-[10px] text-zinc-400">
+                  {form.damageCause.length}/30
+                </span>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Severity Level</label>
+              <div className="flex flex-wrap gap-2">
+                {(["Fatal", "Serious", "Sedang", "Ringan"] as const).map((s) => {
+                  const displayLabel: Record<string, string> = {
+                    Fatal: "Fatal", Serious: "Serious", Sedang: "Medium", Ringan: "Healthy",
+                  };
+                  const active = form.severity === s;
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setField("severity", active ? "" : s)}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 ${
+                        active && severityColorMap[s]
+                          ? severityColorMap[s]
+                          : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+                      }`}
+                    >
+                      {displayLabel[s]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-zinc-100" />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Total Repair Cost</label>
+              <CurrencyField value={form.repairCost} onChange={(v) => setField("repairCost", v)} />
+            </div>
+            <div>
+              <label className={labelClass}>Spareparts Involved</label>
+              <input
+                type="text"
+                value={form.spareParts}
+                onChange={(e) => setField("spareParts", e.target.value)}
+                placeholder="Thermostat, Cables..."
+                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="max-w-xs">
+            <label className={labelClass}>People Involved</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={form.technician}
+                onChange={(e) => setField("technician", e.target.value)}
+                placeholder="Technician 1"
+                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 pr-9 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
+              />
+              <Server className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Replacement Log (auto-filled, read-only) */}
+      {form.logType === "replacement" && (
+        <div className="flex gap-6">
+          {/* Left: replacement fields */}
+          <div className="flex-1 space-y-5">
+            <div>
+              <label className={labelClass}>Replacement Execution</label>
+              <DateField value={form.replacementDate} onChange={(v) => setField("replacementDate", v)} disabled />
+            </div>
+            <div>
+              <label className={labelClass}>Replacement Cause</label>
+              <textarea
+                value={form.replacementCause}
+                readOnly
+                placeholder="Obsoletely broken..."
+                rows={4}
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600 placeholder:text-zinc-400 resize-none cursor-not-allowed"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Total Repair Cost</label>
+              <CurrencyField value={form.replacementCost} onChange={() => {}} disabled />
+            </div>
+            {form.replacementDate && (
+              <div className="rounded-lg bg-indigo-50 border border-indigo-100 px-3 py-2 flex items-center gap-2">
+                <CheckCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                <p className="text-xs text-indigo-600">Successfully merged previous asset&apos;s maintenance history</p>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Previous Asset panel */}
+          <div className="w-64 shrink-0">
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3">
+              <p className="text-xs font-semibold text-zinc-700">Previous Asset</p>
+
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={form.prevAssetName}
+                    readOnly
+                    placeholder="—"
+                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 pr-8 cursor-not-allowed"
+                  />
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+                </div>
+                {form.prevAssetName && (
+                  <p className="text-[10px] text-indigo-500 mt-1">Previous asset detected on database!</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Manufacturer</label>
+                <input
+                  type="text"
+                  value={form.prevManufacturer}
+                  readOnly
+                  placeholder="—"
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600 cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-zinc-500 mb-1">Model</label>
+                <input
+                  type="text"
+                  value={form.prevModel}
+                  readOnly
+                  placeholder="—"
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Arrow divider */}
+              <div className="flex items-center gap-2 py-1">
+                <div className="flex-1 border-t border-dashed border-zinc-300" />
+                <div className="w-5 h-5 rounded-full border border-zinc-300 bg-white flex items-center justify-center">
+                  <ChevronDown className="w-3 h-3 text-zinc-400" />
+                </div>
+                <div className="flex-1 border-t border-dashed border-zinc-300" />
+              </div>
+
+              <p className="text-xs font-semibold text-zinc-700">Current Asset</p>
+              <div className="rounded-lg border border-zinc-200 bg-white p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-semibold text-zinc-800">
+                      {form.namaPrefix
+                        ? formatAssetName(form.namaPrefix, form.nextIdAset ?? 0)
+                        : "—"}
+                    </p>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">{form.tipe || "—"}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-zinc-600">{form.merek || "—"}</p>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">{form.assetModel || "—"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 function UpdateAssetsContent() {
   const router = useRouter();
@@ -475,14 +1222,86 @@ function UpdateAssetsContent() {
   const isEditMode = Boolean(assetId);
 
   const [activeMode, setActiveMode] = useState<"form" | "csv">("form");
+  const [step, setStep] = useState<1 | 2>(1);
   const [drafts, setDrafts] = useState<AssetDraft[]>([]);
   const [form, setForm] = useState<AssetDraft>(emptyDraft());
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
-  const [loadingAsset, setLoadingAsset] = useState(isEditMode);
+
+  const [dbOptions, setDbOptions] = useState<DropdownOptions>({
+    tipe: [], kategori: [], subKategori: [], merek: [], lokasiGedung: [], lokasiLantai: [],
+  });
+  const [localOptions, setLocalOptions] = useState<DropdownOptions>({
+    tipe: [], kategori: [], subKategori: [], merek: [], lokasiGedung: [], lokasiLantai: [],
+  });
+
+  const [nameCheck, setNameCheck] = useState<{ nextId: number; nameExists: boolean } | null>(null);
+  const [nameCheckLoading, setNameCheckLoading] = useState(false);
+
+  const [showIncomplete, setShowIncomplete] = useState(false);
+  const [missingFields, setMissingFields] = useState<string[]>([]);
+  const [showDeleteDraft, setShowDeleteDraft] = useState<string | null>(null);
+  const [showLeaveWarning, setShowLeaveWarning] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
+  const [loadingAsset, setLoadingAsset] = useState(isEditMode);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deletingAsset, setDeletingAsset] = useState(false);
+
+  function isFormDirty(): boolean {
+    if (drafts.length > 0) return true;
+    const e = emptyDraft();
+    return (
+      form.namaPrefix !== e.namaPrefix ||
+      form.assetModel !== e.assetModel ||
+      form.tipe !== e.tipe ||
+      form.kategori !== e.kategori ||
+      form.subKategori !== e.subKategori ||
+      form.merek !== e.merek ||
+      form.tglInstalasi !== e.tglInstalasi ||
+      form.kekritisan !== e.kekritisan ||
+      form.frequency !== e.frequency ||
+      form.lokasiGedung !== e.lokasiGedung ||
+      form.lokasiLantai !== e.lokasiLantai ||
+      form.lokasiZona !== e.lokasiZona
+    );
+  }
+
+  function handleBackToAssets() {
+    if (isFormDirty()) {
+      setShowLeaveWarning(true);
+    } else {
+      router.push("/assets");
+    }
+  }
+
+  function showToast(msg: string, ok: boolean) {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 4000);
+  }
+
+  function setField<K extends keyof AssetDraft>(key: K, value: AssetDraft[K]) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function addLocalOption(field: keyof DropdownOptions, v: string) {
+    setLocalOptions((o) => ({ ...o, [field]: [...o[field], v] }));
+  }
+
+  // Fetch filter options
+  useEffect(() => {
+    fetch("/api/assets/filters")
+      .then((r) => r.json())
+      .then((data) => {
+        setDbOptions({
+          tipe: data.tipe ?? [],
+          kategori: data.kategori ?? [],
+          subKategori: data.subKategori ?? [],
+          merek: data.merek ?? [],
+          lokasiGedung: data.lokasi ?? [],
+          lokasiLantai: data.lokasiLantai ?? [],
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   // Load asset for edit mode
   useEffect(() => {
@@ -502,29 +1321,52 @@ function UpdateAssetsContent() {
           .filter((l) => l.tanggalPengerjaan)
           .sort((x, y) => new Date(y.tanggalPengerjaan).getTime() - new Date(x.tanggalPengerjaan).getTime())[0] ?? null;
 
-        const freqMap: Record<string, string> = {
-          Harian: "Daily", Mingguan: "Weekly", Bulanan: "Monthly", Tahunan: "Yearly",
+        const freqFromDb: Record<string, string> = {
+          Harian: "Daily", Mingguan: "Weekly", Bulanan: "Monthly", Tahunan: "Yearly", Reactive: "Reactive",
         };
         const toDate = (v: string | null | undefined) => (v ? v.substring(0, 10) : "");
+
+        // Parse prefix from full name (everything before last -XXXX segment)
+        const nameParts = (a.nama ?? "").split("-");
+        const prefix = nameParts.length > 1 ? nameParts.slice(0, -1).join("-") : (a.nama ?? "");
+        const idNum = parseInt(a.idAset ?? "0", 10);
+
+        const sevMap: Record<string, string> = {
+          Fatal: "Fatal", Berat: "Serious", Sedang: "Sedang", Ringan: "Ringan",
+        };
+
         const draft: AssetDraft = {
           draftId: "edit",
-          idAset: a.idAset ?? "",
-          nama: a.nama ?? "",
-          currentStatus: a.kekritisan === "Critical" ? "Critical" : a.kekritisan === "Major" ? "At Risk" : "Healthy",
+          namaPrefix: prefix,
+          nextIdAset: idNum,
+          assetModel: a.model ?? "",
+          assetStatus: (["Aktif", "Rusak", "Diganti"].includes(a.status) ? a.status : "Aktif") as AssetDraft["assetStatus"],
           tipe: a.tipe ?? "",
           kategori: a.kategori ?? "",
+          subKategori: a.subKategori ?? "",
+          merek: a.merek ?? "",
           tglInstalasi: toDate(a.tglInstalasi),
-          lokasiGedung: a.lokasiGedung ?? "Gedung A",
+          kekritisan: (["Critical", "Major", "Minor"].includes(a.kekritisan) ? a.kekritisan : "") as AssetDraft["kekritisan"],
+          frequency: (freqFromDb[a.statusJadwal ?? ""] ?? "") as AssetDraft["frequency"],
+          lokasiGedung: a.lokasiGedung ?? "",
           lokasiLantai: a.lokasiLantai ?? "",
-          lokasiZona: (["Timur", "Barat", "Utara", "Selatan"].includes(a.lokasiZona) ? a.lokasiZona : "Barat") as AssetDraft["lokasiZona"],
-          maintenanceType: "",
-          frequency: (freqMap[a.statusJadwal ?? ""] ?? "") as AssetDraft["frequency"],
+          lokasiZona: (["Timur", "Barat", "Utara", "Selatan"].includes(a.lokasiZona) ? a.lokasiZona : "") as AssetDraft["lokasiZona"],
+          logType: latest ? "repair" : "",
           lastPlanned: toDate(latest?.tanggalPerencanaan),
-          lastExecution: toDate(latest?.tanggalPengerjaan),
-          lastDone: toDate(latest?.tanggalSelesai),
+          lastExecFrom: toDate(latest?.tanggalPengerjaan),
+          lastExecTo: toDate(latest?.tanggalSelesai),
+          damageDesc: latest?.jenisKerusakan ?? "",
+          damageCause: latest?.penyebab ?? "",
+          severity: (sevMap[latest?.severity ?? ""] ?? "") as AssetDraft["severity"],
           repairCost: latest?.biayaPerbaikan != null ? String(Math.round(latest.biayaPerbaikan)) : "",
+          spareParts: latest?.sparePartDigunakan ?? "",
+          technician: latest?.teknisiPelaksana ?? "",
+          replacementDate: "",
+          replacementCause: "",
           replacementCost: "",
-          description: latest?.jenisKerusakan ?? "",
+          prevAssetName: "",
+          prevManufacturer: "",
+          prevModel: "",
         };
         setForm(draft);
         setDrafts([draft]);
@@ -538,93 +1380,182 @@ function UpdateAssetsContent() {
     load();
   }, [assetId]);
 
-  function showToast(msg: string, ok: boolean) {
-    setToast({ msg, ok });
-    setTimeout(() => setToast(null), 4000);
+  // Debounced name check — all setState calls are inside the async callback to avoid
+  // synchronous setState-in-effect lint errors.
+  const nameCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (nameCheckTimer.current) clearTimeout(nameCheckTimer.current);
+
+    const delay = form.namaPrefix.trim() ? 400 : 0;
+    nameCheckTimer.current = setTimeout(async () => {
+      if (!form.namaPrefix.trim()) {
+        setNameCheck(null);
+        setNameCheckLoading(false);
+        return;
+      }
+      setNameCheckLoading(true);
+      try {
+        const res = await fetch(`/api/assets/name-check?prefix=${encodeURIComponent(form.namaPrefix)}`);
+        const data = await res.json();
+        setNameCheck(data);
+        setField("nextIdAset", data.nextId);
+
+        const repRes = await fetch(`/api/assets/replacement-check?prefix=${encodeURIComponent(form.namaPrefix)}`);
+        const repData = await repRes.json();
+        if (repData.found) {
+          const toDate = (v: string | null | undefined) => (v ? String(v).substring(0, 10) : "");
+          setForm((f) => ({
+            ...f,
+            replacementDate: toDate(repData.data.tanggalPenggantian),
+            replacementCause: repData.data.alasanPenggantian ?? "",
+            replacementCost: repData.data.biayaPenggantian != null ? String(Math.round(repData.data.biayaPenggantian)) : "",
+            prevAssetName: repData.data.prevAssetName ?? "",
+            prevManufacturer: repData.data.prevManufacturer ?? "",
+            prevModel: repData.data.prevModel ?? "",
+          }));
+        }
+      } catch {
+        // ignore
+      } finally {
+        setNameCheckLoading(false);
+      }
+    }, delay);
+    return () => { if (nameCheckTimer.current) clearTimeout(nameCheckTimer.current); };
+  }, [form.namaPrefix]);
+
+  function validateStep1(): string[] {
+    const missing: string[] = [];
+    for (const { key, label } of STEP1_REQUIRED) {
+      if (!form[key]) missing.push(label);
+    }
+    if (nameCheck?.nameExists) missing.push("Asset Name (already existed)");
+    return missing;
   }
 
-  function setField<K extends keyof AssetDraft>(key: K, value: AssetDraft[K]) {
-    setForm((f) => ({ ...f, [key]: value }));
+  function handleNext() {
+    const missing = validateStep1();
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      setShowIncomplete(true);
+      return;
+    }
+    setStep(2);
   }
 
   function saveDraft() {
+    const saved = { ...form };
     if (activeDraftId) {
-      setDrafts((d) => d.map((x) => (x.draftId === activeDraftId ? { ...form, draftId: activeDraftId } : x)));
+      setDrafts((d) => d.map((x) => (x.draftId === activeDraftId ? { ...saved, draftId: activeDraftId } : x)));
+      showToast("Asset updated in list", true);
     } else {
-      const saved = { ...form, draftId: crypto.randomUUID() };
-      setDrafts((d) => [...d, saved]);
-      setActiveDraftId(saved.draftId);
+      const newDraft = { ...saved, draftId: crypto.randomUUID() };
+      setDrafts((d) => [...d, newDraft]);
+      setActiveDraftId(newDraft.draftId);
+      showToast(`"${form.namaPrefix || "Asset"}" saved to list`, true);
     }
-    showToast(`"${form.nama || form.idAset}" saved to list`, true);
+    // Reset for new form
+    setForm(emptyDraft());
+    setActiveDraftId(null);
+    setStep(1);
+    setNameCheck(null);
   }
 
   function loadDraft(d: AssetDraft) {
     setForm(d);
     setActiveDraftId(d.draftId);
+    setStep(1);
   }
 
-  function duplicateDraft(d: AssetDraft) {
-    const copy = { ...d, draftId: crypto.randomUUID(), idAset: genId() };
-    setDrafts((prev) => [...prev, copy]);
-  }
-
-  function deleteDraft(id: string) {
+  function deleteDraftById(id: string) {
     setDrafts((d) => d.filter((x) => x.draftId !== id));
     if (activeDraftId === id) {
-      setActiveDraftId(null);
       setForm(emptyDraft());
+      setActiveDraftId(null);
+      setStep(1);
+      setNameCheck(null);
     }
+    setShowDeleteDraft(null);
   }
 
-  async function submitAll() {
+  const submitAll = useCallback(async () => {
     const toSubmit = isEditMode ? [form] : (drafts.length > 0 ? drafts : [{ ...form, draftId: "tmp" }]);
     setSubmitting(true);
+
+    // Fetch MAX idAset once, then assign sequential IDs to each draft
+    let baseId: number;
+    try {
+      const r = await fetch("/api/assets/name-check?prefix=__NOCHECK__");
+      const d = await r.json();
+      baseId = d.nextId as number;
+    } catch {
+      baseId = 1;
+    }
+
     let ok = 0;
     let fail = 0;
-    for (const d of toSubmit) {
+
+    for (let i = 0; i < toSubmit.length; i++) {
+      const d = toSubmit[i];
+      const assignedId = isEditMode ? (d.nextIdAset ?? baseId) : (d.nextIdAset ?? baseId + i);
+      const fullName = formatAssetName(d.namaPrefix, assignedId);
+
       try {
         const method = isEditMode ? "PUT" : "POST";
         const url = isEditMode
-          ? `/api/assets/${encodeURIComponent(d.idAset)}`
+          ? `/api/assets/${encodeURIComponent(String(assignedId))}`
           : "/api/assets";
+
         const res = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            idAset: d.idAset,
-            nama: d.nama,
-            kategori: d.kategori,
-            tipe: d.tipe,
+            idAset: assignedId,
+            nama: fullName,
+            merek: d.merek || null,
+            model: d.assetModel || null,
+            kategori: d.kategori || null,
+            subKategori: d.subKategori || null,
+            tipe: d.tipe || null,
             tglInstalasi: d.tglInstalasi || null,
-            lokasiGedung: d.lokasiGedung,
-            lokasiLantai: d.lokasiLantai,
-            lokasiZona: d.lokasiZona,
-            kekritisan: statusToKekritisan(d.currentStatus),
+            lokasiGedung: d.lokasiGedung || null,
+            lokasiLantai: d.lokasiLantai || null,
+            lokasiZona: d.lokasiZona || null,
+            kekritisan: d.kekritisan || null,
+            status: d.assetStatus,
             statusJadwal: d.frequency ? freqToJadwal(d.frequency) : null,
           }),
         });
+
         if (res.ok) {
           ok++;
-          const hasMaintenanceData = d.lastPlanned || d.lastExecution || d.lastDone || d.repairCost || d.description || d.maintenanceType;
-          if (hasMaintenanceData) {
-            await fetch(`/api/assets/${encodeURIComponent(d.idAset)}/komplain`, {
+          const hasRepair = d.logType !== "replacement" && (
+            d.lastPlanned || d.lastExecFrom || d.damageDesc || d.repairCost || d.severity
+          );
+          if (hasRepair) {
+            await fetch(`/api/assets/${encodeURIComponent(String(assignedId))}/komplain`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 tanggalPerencanaan: d.lastPlanned || null,
-                tanggalPengerjaan: d.lastExecution || null,
-                tanggalSelesai: d.lastDone || null,
-                jenisKerusakan: d.maintenanceType || null,
-                penyebab: d.description || null,
+                tanggalPengerjaan: d.lastExecFrom || null,
+                tanggalSelesai: d.lastExecTo || null,
+                jenisKerusakan: d.damageDesc || null,
+                penyebab: d.damageCause || null,
+                severity: d.severity ? severityToDb(d.severity) : null,
                 biayaPerbaikan: d.repairCost ? Number(d.repairCost) : null,
+                sparePartDigunakan: d.spareParts || null,
+                teknisiPelaksana: d.technician || null,
               }),
             });
           }
         } else {
           fail++;
         }
-      } catch { fail++; }
+      } catch {
+        fail++;
+      }
     }
+
     setSubmitting(false);
     if (ok > 0) {
       showToast(`${ok} asset(s) submitted successfully${fail > 0 ? `, ${fail} failed` : ""}`, true);
@@ -632,31 +1563,7 @@ function UpdateAssetsContent() {
     } else {
       showToast(`Submission failed (${fail} error${fail > 1 ? "s" : ""})`, false);
     }
-  }
-
-  function deleteAsset() {
-    if (!isEditMode || !assetId) return;
-    setShowDeleteConfirm(true);
-  }
-
-  async function confirmDelete() {
-    setDeletingAsset(true);
-    try {
-      const res = await fetch(`/api/assets/${encodeURIComponent(assetId!)}`, { method: "DELETE" });
-      if (res.ok) {
-        showToast("Asset deleted", true);
-        setTimeout(() => router.push("/assets"), 1200);
-      } else {
-        showToast("Delete failed", false);
-      }
-    } finally {
-      setDeletingAsset(false);
-      setShowDeleteConfirm(false);
-    }
-  }
-
-  const BUILDINGS = ["Gedung A", "Gedung B", "Gedung C", "Gedung D", "Gedung E", "Gedung Parkir", "Gedung Servis", "Gedung Utama"];
-  const BLOCK_NUMBERS = Array.from({ length: 20 }, (_, i) => String(i + 1));
+  }, [isEditMode, form, drafts, router]);
 
   if (loadingAsset) {
     return (
@@ -666,27 +1573,36 @@ function UpdateAssetsContent() {
     );
   }
 
+  const totalDrafts = drafts.length + (activeDraftId ? 0 : 1);
+
   return (
     <div className="flex flex-col h-full relative">
-      {/* Delete Confirm Modal */}
-      {showDeleteConfirm && (
-        <DeleteConfirmModal
-          assetId={assetId!}
-          onConfirm={confirmDelete}
-          onCancel={() => setShowDeleteConfirm(false)}
-          loading={deletingAsset}
+      {/* Modals */}
+      {showIncomplete && (
+        <IncompleteWarningModal
+          missingFields={missingFields}
+          onContinue={() => setShowIncomplete(false)}
+          onClose={() => setShowIncomplete(false)}
+        />
+      )}
+      {showDeleteDraft && (
+        <DeleteDraftModal
+          onConfirm={() => deleteDraftById(showDeleteDraft)}
+          onCancel={() => setShowDeleteDraft(null)}
+        />
+      )}
+      {showLeaveWarning && (
+        <LeavePageWarningModal
+          onLeave={() => router.push("/assets")}
+          onStay={() => setShowLeaveWarning(false)}
         />
       )}
 
       {/* Toast */}
       {toast && (
-        <div
-          className={`fixed top-6 right-6 z-50 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm shadow-lg transition-all duration-300 ${
-            toast.ok
-              ? "bg-green-50 border-green-200 text-green-700"
-              : "bg-red-50 border-red-200 text-red-700"
-          }`}
-        >
+        <div className={`fixed top-6 right-6 z-50 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm shadow-lg transition-all duration-300 ${
+          toast.ok ? "bg-green-50 border-green-200 text-green-700" : "bg-red-50 border-red-200 text-red-700"
+        }`}>
           {toast.ok ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
           {toast.msg}
         </div>
@@ -696,7 +1612,7 @@ function UpdateAssetsContent() {
       <div className="flex items-start justify-between mb-6 shrink-0">
         <div>
           <button
-            onClick={() => router.push("/assets")}
+            onClick={handleBackToAssets}
             className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-indigo-600 transition-colors duration-150 mb-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -709,283 +1625,116 @@ function UpdateAssetsContent() {
         </div>
 
         {/* Form / CSV toggle */}
-        <div
-          className={`relative flex rounded-xl border border-zinc-200 bg-zinc-100 overflow-hidden text-sm ${isEditMode ? "opacity-60 cursor-not-allowed" : ""}`}
-          title={isEditMode ? "Toggle disabled in edit mode" : undefined}
-        >
-          <div
-            className={`absolute inset-y-0 w-1/2 bg-white rounded-lg shadow-sm border border-zinc-200 transition-transform duration-200 ${activeMode === "csv" ? "translate-x-full" : "translate-x-0"}`}
-          />
-          <button
-            onClick={() => !isEditMode && setActiveMode("form")}
-            disabled={isEditMode}
-            className={`relative z-10 px-5 py-2 font-medium transition-colors duration-150 ${activeMode === "form" ? "text-zinc-900" : "text-zinc-500"}`}
-          >
-            Form
-          </button>
-          <button
-            onClick={() => !isEditMode && setActiveMode("csv")}
-            disabled={isEditMode}
-            className={`relative z-10 px-5 py-2 font-medium transition-colors duration-150 ${activeMode === "csv" ? "text-zinc-900" : "text-zinc-500"}`}
-          >
-            CSV
-          </button>
+        <div className={`relative flex rounded-xl border border-zinc-200 bg-zinc-100 overflow-hidden text-sm ${isEditMode ? "opacity-60 pointer-events-none" : ""}`}>
+          <div className={`absolute inset-y-0 w-1/2 bg-white rounded-lg shadow-sm border border-zinc-200 transition-transform duration-200 ${activeMode === "csv" ? "translate-x-full" : "translate-x-0"}`} />
+          <button onClick={() => setActiveMode("form")} className={`relative z-10 px-5 py-2 font-medium transition-colors duration-150 ${activeMode === "form" ? "text-zinc-900" : "text-zinc-500"}`}>Form</button>
+          <button onClick={() => setActiveMode("csv")} className={`relative z-10 px-5 py-2 font-medium transition-colors duration-150 ${activeMode === "csv" ? "text-zinc-900" : "text-zinc-500"}`}>CSV</button>
         </div>
       </div>
 
       {activeMode === "csv" ? (
         <CsvPanel onSubmitSuccess={(n) => showToast(`${n} asset(s) imported`, true)} />
       ) : (
-        <div className="flex gap-5 flex-1 overflow-hidden min-h-0">
-          {/* Left: Saved drafts list */}
-          <div className="w-52 xl:w-60 shrink-0 flex flex-col">
-            {drafts.length > 0 && !isEditMode && (
+        <div className="flex gap-4 flex-1 overflow-hidden min-h-0">
+          {/* Left panel: saved drafts */}
+          <div className="w-48 xl:w-52 shrink-0 flex flex-col gap-3 overflow-y-auto pr-1">
+            {!isEditMode && (
               <button
-                onClick={() => { setForm(emptyDraft()); setActiveDraftId(null); }}
-                className="shrink-0 mb-3 flex items-center justify-center gap-1.5 w-full rounded-xl border border-dashed border-indigo-300 bg-indigo-50/50 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 hover:shadow-sm active:scale-[0.98] active:shadow-none transition-all duration-150"
+                onClick={() => { setForm(emptyDraft()); setActiveDraftId(null); setStep(1); setNameCheck(null); }}
+                className="shrink-0 flex items-center justify-center gap-1.5 w-full rounded-xl border border-dashed border-indigo-300 bg-indigo-50/50 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 hover:shadow-sm active:scale-[0.98] transition-all duration-150"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add New Form
               </button>
             )}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-              {drafts.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-zinc-200 p-4 text-center">
-                  <p className="text-xs text-zinc-400">No saved assets yet.</p>
-                  <p className="text-[11px] text-zinc-300 mt-1">Click &ldquo;Save Asset&rdquo; to add.</p>
-                </div>
-              ) : (
-                drafts.map((d) => (
-                  <DraftCard
-                    key={d.draftId}
-                    draft={d}
-                    active={activeDraftId === d.draftId}
-                    onEdit={() => loadDraft(d)}
-                    onDuplicate={() => duplicateDraft(d)}
-                    onDelete={() => deleteDraft(d.draftId)}
-                  />
-                ))
-              )}
-            </div>
+
+            {drafts.length === 0 && !activeDraftId ? (
+              <div className="rounded-xl border border-dashed border-zinc-200 p-4 text-center">
+                <p className="text-xs text-zinc-400">No saved assets yet.</p>
+                <p className="text-[11px] text-zinc-300 mt-1">Click &ldquo;Save Asset&rdquo; to add.</p>
+              </div>
+            ) : (
+              drafts.map((d) => (
+                <DraftCard
+                  key={d.draftId}
+                  draft={d}
+                  active={activeDraftId === d.draftId}
+                  onEdit={() => loadDraft(d)}
+                  onDelete={() => setShowDeleteDraft(d.draftId)}
+                />
+              ))
+            )}
           </div>
 
-          {/* Right: Form */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto pr-1">
-              {/* Asset Information */}
-              <section className="mb-8">
-                <h2 className="text-base font-semibold text-zinc-800 mb-5">Asset Information</h2>
+          {/* Right: form card */}
+          <div className="flex-1 flex flex-col overflow-hidden bg-white rounded-2xl border border-zinc-200 shadow-sm">
+            <StepIndicator step={step} onBack={() => setStep(1)} />
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                  {/* Asset Name */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Asset Name</label>
-                    <input
-                      type="text"
-                      value={form.nama}
-                      onChange={(e) => setField("nama", e.target.value)}
-                      placeholder="e.g. Air Conditioner"
-                      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
-                    />
-                  </div>
-
-                  {/* Asset ID */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Asset ID</label>
-                    <input
-                      type="text"
-                      value={form.idAset}
-                      onChange={(e) => !isEditMode && setField("idAset", e.target.value)}
-                      readOnly={isEditMode}
-                      className={`w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm font-mono text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all ${isEditMode ? "opacity-60 cursor-not-allowed" : ""}`}
-                    />
-                  </div>
-
-                  {/* Current Status */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Current Status</label>
-                    <RadioGroup<"Healthy" | "At Risk" | "Critical">
-                      options={["Healthy", "At Risk", "Critical"]}
-                      value={form.currentStatus}
-                      onChange={(v) => setField("currentStatus", v)}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                  {/* Asset Type */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Asset Type</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={form.tipe}
-                        onChange={(e) => setField("tipe", e.target.value)}
-                        placeholder="e.g. Air Conditioner"
-                        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Category */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Category</label>
-                    <input
-                      type="text"
-                      value={form.kategori}
-                      onChange={(e) => setField("kategori", e.target.value)}
-                      placeholder="e.g. Mechanical"
-                      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all"
-                    />
-                  </div>
-
-                  {/* Installation Date */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Installation Date</label>
-                    <DateField value={form.tglInstalasi} onChange={(v) => setField("tglInstalasi", v)} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Building */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Building</label>
-                    <SelectField
-                      value={form.lokasiGedung}
-                      onChange={(v) => setField("lokasiGedung", v)}
-                      options={BUILDINGS}
-                      placeholder="Select building"
-                    />
-                  </div>
-
-                  {/* Block Number */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Block Number</label>
-                    <SelectField
-                      value={form.lokasiLantai}
-                      onChange={(v) => setField("lokasiLantai", v)}
-                      options={BLOCK_NUMBERS}
-                      placeholder="Select block"
-                    />
-                  </div>
-
-                  {/* Zone */}
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Zone</label>
-                    <RadioGroup<"Timur" | "Barat" | "Utara" | "Selatan">
-                      options={["Timur", "Barat", "Utara", "Selatan"]}
-                      value={form.lokasiZona}
-                      onChange={(v) => setField("lokasiZona", v)}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              {/* Latest Maintenance History */}
-              <section>
-                <h2 className="text-base font-semibold text-zinc-800 mb-5">Latest Maintenance History</h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Maintenance Type</label>
-                    <RadioGroup<"Preventive" | "Repair" | "Replace">
-                      options={["Preventive", "Repair", "Replace"]}
-                      value={form.maintenanceType}
-                      onChange={(v) => setField("maintenanceType", v)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Frequency</label>
-                    <RadioGroup<"Daily" | "Weekly" | "Monthly" | "Yearly" | "Reactive">
-                      options={["Daily", "Weekly", "Monthly", "Yearly", "Reactive"]}
-                      value={form.frequency}
-                      onChange={(v) => setField("frequency", v)}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Last Planned Maintenance</label>
-                    <DateField value={form.lastPlanned} onChange={(v) => setField("lastPlanned", v)} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Last Maintenance Execution</label>
-                    <DateField value={form.lastExecution} onChange={(v) => setField("lastExecution", v)} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Last Done Maintenance</label>
-                    <DateField value={form.lastDone} onChange={(v) => setField("lastDone", v)} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Repair Cost</label>
-                    <CurrencyField
-                      value={form.repairCost}
-                      onChange={(v) => setField("repairCost", v)}
-                      placeholder="Rp 0"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-600 mb-1.5">Replacement Cost</label>
-                    <CurrencyField
-                      value={form.replacementCost}
-                      onChange={(v) => setField("replacementCost", v)}
-                      placeholder="Rp 0"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-zinc-600 mb-1.5">Description</label>
-                  <textarea
-                    value={form.description}
-                    onChange={(e) => setField("description", e.target.value)}
-                    placeholder="Broken inner fan..."
-                    rows={4}
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 transition-all resize-none"
-                  />
-                </div>
-              </section>
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              {step === 1 ? (
+                <AssetInfoStep
+                  form={form}
+                  setField={setField}
+                  dbOptions={dbOptions}
+                  localOptions={localOptions}
+                  addLocalOption={addLocalOption}
+                  nameCheck={nameCheck}
+                  nameCheckLoading={nameCheckLoading}
+                />
+              ) : (
+                <MaintenanceHistoryStep form={form} setField={setField} />
+              )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="shrink-0 border-t border-zinc-100 pt-4 mt-4 flex items-center justify-between">
+            {/* Action buttons */}
+            <div className="shrink-0 border-t border-zinc-100 px-6 py-4 flex items-center justify-between">
               <button
-                onClick={isEditMode ? deleteAsset : () => { setForm(emptyDraft()); setActiveDraftId(null); }}
+                onClick={() => {
+                  if (step === 2 && !isEditMode) { setStep(1); return; }
+                  setShowDeleteDraft(activeDraftId ?? "__current__");
+                }}
                 className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-100 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
               >
                 <Trash2 className="w-4 h-4" />
-                {isEditMode ? "Delete Asset" : "Clear Form"}
+                Delete Asset
               </button>
 
               <div className="flex items-center gap-3">
-                {!isEditMode && (
+                {step === 1 && (
                   <button
-                    onClick={saveDraft}
-                    className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 shadow-sm"
+                    onClick={handleNext}
+                    className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-150"
                   >
-                    <Save className="w-4 h-4" />
-                    Save Asset
+                    Next
                   </button>
                 )}
 
-                <button
-                  onClick={submitAll}
-                  disabled={submitting}
-                  className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-150"
-                >
-                  {submitting
-                    ? <Loader2 className="w-4 h-4 animate-spin" />
-                    : <FileSpreadsheet className="w-4 h-4" />}
-                  {submitting
-                    ? "Submitting…"
-                    : isEditMode
-                    ? "Update Asset"
-                    : `Submit ${drafts.length || 1} Asset(s)`}
-                </button>
+                {step === 2 && (
+                  <>
+                    {!isEditMode && (
+                      <button
+                        onClick={saveDraft}
+                        className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 shadow-sm"
+                      >
+                        <Save className="w-4 h-4" />
+                        Save Asset
+                      </button>
+                    )}
+
+                    <button
+                      onClick={submitAll}
+                      disabled={submitting}
+                      className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-150"
+                    >
+                      {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-4 h-4" />}
+                      {submitting
+                        ? "Submitting…"
+                        : isEditMode
+                        ? "Update Asset"
+                        : `Submit ${totalDrafts} Asset(s)`}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -995,17 +1744,9 @@ function UpdateAssetsContent() {
   );
 }
 
-// Page export (Suspense wrapper required for useSearchParams)                
-
 export default function UpdateAssetsPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-indigo-400" /></div>}>
       <UpdateAssetsContent />
     </Suspense>
   );

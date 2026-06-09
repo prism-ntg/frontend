@@ -140,9 +140,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const {
-    idAset, nama, merek, kategori, subKategori, tipe,
+    idAset, nama, merek, model, kategori, subKategori, tipe,
     tglInstalasi, lokasiGedung, lokasiLantai, lokasiZona,
-    kekritisan, statusJadwal,
+    kekritisan, status, statusJadwal,
   } = body;
 
   if (!idAset) {
@@ -154,6 +154,7 @@ export async function POST(req: NextRequest) {
       idAset,
       nama: nama || null,
       merek: merek || null,
+      model: model || null,
       kategori: kategori || null,
       subKategori: subKategori || null,
       tipe: tipe || null,
@@ -163,7 +164,7 @@ export async function POST(req: NextRequest) {
       lokasiZona: lokasiZona || null,
       kekritisan: kekritisan || null,
       statusJadwal: statusJadwal || null,
-      status: "Aktif",
+      status: status || "Aktif",
     });
     return NextResponse.json({ message: "Asset created", idAset });
   } catch (err: unknown) {

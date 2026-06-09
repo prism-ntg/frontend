@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { asetKomplain } from "@/db/schema";
+import { asetKomplain, masterAset } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export async function GET(
@@ -31,7 +31,6 @@ export async function POST(
   }
   const body = await req.json();
   const {
-    maintenanceType,
     tanggalPerencanaan,
     tanggalPengerjaan,
     tanggalSelesai,
@@ -45,9 +44,16 @@ export async function POST(
   } = body;
 
   try {
+    // Mirror the asset name from master_aset (aset_komplain.nama is a denormalized copy)
+    const [master] = await db
+      .select({ nama: masterAset.nama })
+      .from(masterAset)
+      .where(eq(masterAset.idAset, idAsetInt))
+      .limit(1);
+
     await db.insert(asetKomplain).values({
       idAset: idAsetInt,
-      maintenanceType: maintenanceType || null,
+      nama: master?.nama ?? null,
       tanggalPerencanaan: tanggalPerencanaan || null,
       tanggalPengerjaan: tanggalPengerjaan || null,
       tanggalSelesai: tanggalSelesai || null,

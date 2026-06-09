@@ -7,6 +7,7 @@ import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
   Loader2, RefreshCw, Plus, X, Pencil, AlertTriangle,
   ArrowRight, ArrowDown, ArrowDownUp, CheckCircle2, Wrench, User, Trash2,
+  CalendarDays,
 } from "lucide-react";
 
 // Types                                                                    
@@ -109,6 +110,7 @@ interface ReplaceForm {
 interface Filters {
   kategori: string[];
   tipe: string[];
+  subKategori: string[];
   lokasi: string[];
   jadwal: string[];
 }
@@ -302,43 +304,173 @@ function GeoDeco() {
   );
 }
 
+// "YYYY-MM" → "Mon YYYY"
+function ymToLabel(ym: string): string {
+  const [y, m] = ym.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleString("en-US", { month: "short", year: "numeric" });
+}
+
+// Shift a "YYYY-MM" string by n months
+function addMonthsYM(ym: string, n: number): string {
+  const [y, m] = ym.split("-").map(Number);
+  const d = new Date(y, m - 1 + n, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+// Period picker for the downtime chart — same behaviour as the dashboard's
+// DateRangeFilter (pick a start month, window is start +11). Rendered through a
+// portal so the panel's overflow-y-auto can't clip the dropdown.
+function DowntimePeriodFilter({ startMonth, onChange }: { startMonth: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const toMonth = addMonthsYM(startMonth, 11);
+
+  const openMenu = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+    }
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const reposition = () => {
+      if (!btnRef.current) return;
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+    };
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (btnRef.current?.contains(t) || t.closest("[data-dt-period]")) return;
+      setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("scroll", reposition, true);
+      window.removeEventListener("resize", reposition);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={() => (open ? setOpen(false) : openMenu())}
+        className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-600 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600 transition-colors duration-150 cursor-pointer shadow-sm"
+      >
+        <CalendarDays className="w-3 h-3 text-zinc-400 shrink-0" />
+        <span>{ymToLabel(startMonth)} – {ymToLabel(toMonth)}</span>
+        <ChevronDown className={`w-3 h-3 text-zinc-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {typeof document !== "undefined" && createPortal(
+        <div
+          data-dt-period
+          className="fixed z-[200] w-60 rounded-2xl border border-zinc-100 bg-white p-4 shadow-2xl"
+          style={{
+            top: pos.top, right: pos.right,
+            opacity: open ? 1 : 0,
+            transform: open ? "scale(1)" : "scale(0.96)",
+            pointerEvents: open ? "auto" : "none",
+            transformOrigin: "top right",
+            transition: "opacity 150ms cubic-bezier(0.23,1,0.32,1), transform 150ms cubic-bezier(0.23,1,0.32,1)",
+          }}
+        >
+          <div className="mb-3">
+            <p className="text-sm font-semibold text-zinc-800">Select Period</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5">Chart always displays 12 months</p>
+          </div>
+          <div className="space-y-2.5">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold mb-1.5">Start Month</p>
+              <input
+                type="month"
+                value={startMonth}
+                onChange={e => { if (e.target.value) onChange(e.target.value); }}
+                className="w-full text-xs border border-zinc-200 rounded-xl px-3 py-2 text-zinc-700 bg-zinc-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent cursor-pointer font-medium"
+              />
+            </div>
+            <div className="flex items-center gap-2 text-zinc-300">
+              <div className="flex-1 h-px bg-zinc-100" />
+              <span className="text-[10px] text-zinc-400">auto</span>
+              <div className="flex-1 h-px bg-zinc-100" />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold mb-1.5">End Month</p>
+              <div className="w-full rounded-xl px-3 py-2 bg-indigo-50 border border-indigo-100 flex items-center justify-between">
+                <span className="text-xs font-semibold text-indigo-700">{ymToLabel(toMonth)}</span>
+                <span className="text-[10px] text-indigo-400 bg-indigo-100 rounded-full px-1.5 py-0.5">+11 mo</span>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setOpen(false)}
+            className="mt-3 w-full rounded-xl bg-indigo-600 text-white text-xs font-semibold py-2 hover:bg-indigo-700 active:scale-[0.97] transition duration-150 cursor-pointer"
+          >
+            Apply
+          </button>
+        </div>,
+        document.body,
+      )}
+    </>
+  );
+}
+
 function DowntimeChart({ logs }: { logs: KomplainLog[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
   const [reduceMotion] = useState(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
+
+  // Default window: the rightmost (12th) month is the month of the most recent
+  // completion (tanggal_selesai); start = that month − 11. A rolling 12-month
+  // window keeps cross-year maintenance visible (started Dec, finished Jan).
+  const [startMonth, setStartMonth] = useState(() => {
+    const last = logs.reduce<Date | null>((acc, l) => {
+      const raw = l.tanggalSelesai ?? l.tanggalPengerjaan;
+      if (!raw) return acc;
+      const d = new Date(raw);
+      return !acc || d > acc ? d : acc;
+    }, null);
+    const base = last ?? new Date();
+    const d = new Date(base.getFullYear(), base.getMonth() - 11, 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-  // Reference year = the year of the most recent maintenance completion (fallback to
-  // work date, then current year). The chart always spans Jan–Dec of that one year.
-  const lastDate = logs.reduce<Date | null>((acc, l) => {
-    const raw = l.tanggalSelesai ?? l.tanggalPengerjaan;
-    if (!raw) return acc;
-    const d = new Date(raw);
-    return !acc || d > acc ? d : acc;
-  }, null);
-  const year = (lastDate ?? new Date()).getFullYear();
+  const [sy, sm] = startMonth.split("-").map(Number);
+  const startAbs = sy * 12 + (sm - 1);
 
-  // Downtime (days) per month, bucketed by the month work started, within the year.
+  // Downtime (days) per month, bucketed by the month work started, within the window.
   const dayMs = 86_400_000;
   const byMonth = Array.from({ length: 12 }, () => 0);
   for (const log of logs) {
     if (!log.tanggalPengerjaan) continue;
     const start = new Date(log.tanggalPengerjaan);
-    if (start.getFullYear() !== year) continue;
+    const idx = start.getFullYear() * 12 + start.getMonth() - startAbs;
+    if (idx < 0 || idx > 11) continue;
     const end = log.tanggalSelesai ? new Date(log.tanggalSelesai) : null;
     const days = end ? Math.max(0, Math.round((end.getTime() - start.getTime()) / dayMs)) : 0;
-    byMonth[start.getMonth()] += days;
+    byMonth[idx] += days;
   }
-  const data = byMonth.map((value, i) => ({
-    value,
-    label: new Date(year, i, 1).toLocaleString("en-US", { month: "short" }),
-    short: new Date(year, i, 1).toLocaleString("en-US", { month: "narrow" }),
-  }));
+  const data = byMonth.map((value, i) => {
+    const d = new Date(sy, sm - 1 + i, 1);
+    return {
+      value,
+      label: d.toLocaleString("en-US", { month: "short", year: "numeric" }),
+      short: d.toLocaleString("en-US", { month: "narrow" }),
+    };
+  });
 
   if (logs.length === 0) {
     return <p className="py-8 text-center text-[11px] text-zinc-400">No maintenance records yet</p>;
@@ -370,8 +502,8 @@ function DowntimeChart({ logs }: { logs: KomplainLog[] }) {
 
   return (
     <div>
-      <div className="flex justify-end mb-0.5">
-        <span className="text-[10px] font-medium text-zinc-400">{year}</span>
+      <div className="flex justify-end mb-1.5">
+        <DowntimePeriodFilter startMonth={startMonth} onChange={v => { setStartMonth(v); setHovered(null); }} />
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 150 }}
         onMouseLeave={() => setHovered(null)}>
@@ -425,7 +557,7 @@ function DowntimeChart({ logs }: { logs: KomplainLog[] }) {
           <g pointerEvents="none">
             <rect x={tipX} y={tipY} width={TW} height={TH} rx="6" fill="#0f172a" />
             <text x={tipX + TW / 2} y={tipY + 13} textAnchor="middle" fontSize="8" fill="#94a3b8">
-              {bars[hovered].label} {year}
+              {bars[hovered].label}
             </text>
             <text x={tipX + TW / 2} y={tipY + 27} textAnchor="middle" fontSize="11" fontWeight="700" fill="white">
               {bars[hovered].value} {bars[hovered].value === 1 ? "day" : "days"}
@@ -556,13 +688,31 @@ function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: (
   );
 }
 
+// Counts up from 0 to value with an ease-out curve (same as the dashboard KPIs).
+function AnimatedCount({ value, duration = 600 }: { value: number; duration?: number }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (value === 0) return;
+    let frame = 0;
+    const totalFrames = Math.round(duration / 16);
+    const timer = setInterval(() => {
+      frame++;
+      const eased = 1 - Math.pow(1 - Math.min(frame / totalFrames, 1), 3);
+      setDisplay(Math.round(eased * value));
+      if (frame >= totalFrames) clearInterval(timer);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [value, duration]);
+  return <>{display.toLocaleString()}</>;
+}
+
 // Animated count badge for the active severity tab.
 // A CSS keyframe (defined in globals.css) replays on every mount — reliable across
 // re-renders where a single rAF toggle would sometimes skip the transition.
 function TabCountBadge({ count }: { count: number }) {
   return (
-    <span className="animate-badge-pop ml-1.5 inline-block rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] text-indigo-600">
-      {count.toLocaleString()}
+    <span className="animate-badge-pop ml-1.5 inline-block rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] text-indigo-600 tabular-nums">
+      <AnimatedCount value={count} />
     </span>
   );
 }
@@ -655,7 +805,7 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
 
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Downtime Overview</p>
-        <DowntimeChart logs={logs} />
+        <DowntimeChart key={asset.idAset} logs={logs} />
       </div>
 
       <div>
@@ -868,8 +1018,9 @@ function EditAssetForm({
 
         <div>
           <label className="text-xs font-medium text-zinc-700 mb-1 block">Sub-category*</label>
-          <input value={form.subKategori} onChange={e => setForm(f => ({ ...f, subKategori: e.target.value }))}
-            placeholder="e.g. Control Panel" className={inputCls} disabled={readOnly} />
+          <FilterCombobox block disabled={readOnly} value={form.subKategori}
+            onChange={v => setForm(f => ({ ...f, subKategori: v }))}
+            options={filters.subKategori} placeholder="Select sub-category" />
         </div>
 
         <div>
@@ -1026,14 +1177,14 @@ function RepairFormFields({ form, setForm }: {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-zinc-700 mb-1 block">Spareparts Involved</label>
+        <label className="text-xs font-medium text-zinc-700 mb-1 block">Spareparts Involved*</label>
         <input value={form.sparePartDigunakan}
           onChange={e => setForm(f => ({ ...f, sparePartDigunakan: e.target.value }))}
           placeholder="e.g. Thermostat, remote battery" className={inputCls} />
       </div>
 
       <div>
-        <label className="text-xs font-medium text-zinc-700 mb-1 block">Technicians Involved</label>
+        <label className="text-xs font-medium text-zinc-700 mb-1 block">Technicians Involved*</label>
         <input value={form.teknisiPelaksana}
           onChange={e => setForm(f => ({ ...f, teknisiPelaksana: e.target.value }))}
           placeholder="e.g. Technician 1, Technician 2" className={inputCls} />
@@ -1172,13 +1323,20 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
     }
   }, [type]);
 
-  const repairReq = [repair.tanggalPengerjaan, repair.tanggalSelesai, repair.jenisKerusakan, repair.severity, repair.biayaPerbaikan];
+  const repairReq = [repair.tanggalPengerjaan, repair.tanggalSelesai, repair.jenisKerusakan, repair.severity, repair.biayaPerbaikan, repair.sparePartDigunakan, repair.teknisiPelaksana];
   const repairAllFilled = repairReq.every(v => v.trim() !== "");
   const repairAnyFilled = Object.values(repair).some(v => v.trim() !== "");
 
   const replaceReq = [replace.tanggalPengerjaan, replace.prefix, replace.alasanPenggantian, replace.biayaPenggantian];
   const replaceAllFilled = replaceReq.every(v => v.trim() !== "");
-  const replaceAnyFilled = replaceReq.some(v => v.trim() !== "");
+  // prefix is auto-derived from the asset name, so a fresh form isn't "dirty" yet —
+  // only count it as user input once it differs from that initial value.
+  const initialPrefix = asset.nama?.replace(/-\d+$/, "") ?? "";
+  const replaceAnyFilled =
+    replace.tanggalPengerjaan.trim() !== "" ||
+    replace.alasanPenggantian.trim() !== "" ||
+    replace.biayaPenggantian.trim() !== "" ||
+    replace.prefix.trim() !== initialPrefix.trim();
 
   // Report dirty state up so the page can guard against navigating away with unsaved input
   const dirty = repairAnyFilled || replaceAnyFilled;
@@ -1664,7 +1822,7 @@ export default function AssetsPage() {
   const [total, setTotal] = useState(0);
   const [severityCounts, setSeverityCounts] = useState({ all: 0, Fatal: 0, AtRisk: 0, Healthy: 0 });
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<Filters>({ kategori: [], tipe: [], lokasi: [], jadwal: [] });
+  const [filters, setFilters] = useState<Filters>({ kategori: [], tipe: [], subKategori: [], lokasi: [], jadwal: [] });
   const [selectedKategori, setSelectedKategori] = useState("");
   const [selectedTipe, setSelectedTipe] = useState("");
   const [selectedLokasi, setSelectedLokasi] = useState("");
@@ -1732,6 +1890,7 @@ export default function AssetsPage() {
       .then(data => setFilters({
         kategori: Array.isArray(data.kategori) ? data.kategori : [],
         tipe: Array.isArray(data.tipe) ? data.tipe : [],
+        subKategori: Array.isArray(data.subKategori) ? data.subKategori : [],
         lokasi: Array.isArray(data.lokasi) ? data.lokasi : [],
         jadwal: Array.isArray(data.jadwal) ? data.jadwal : [],
       }))
@@ -2075,8 +2234,6 @@ export default function AssetsPage() {
     pageNums.push(totalPages - 1, totalPages);
   }
 
-  const showCurrentLife = panelView === "maintenance-history" || panelView === "add-maintenance";
-
   return (
     <div className="-m-4 md:-m-8 flex overflow-hidden" style={{ height: "calc(100svh - 5rem - 2rem)" }}>
 
@@ -2094,17 +2251,18 @@ export default function AssetsPage() {
             return (
               <div
                 key={tab}
-                className={`overflow-hidden transition-[max-width,opacity] duration-300 ${hideTab ? "max-w-0 opacity-0 pointer-events-none" : "max-w-[160px] opacity-100"}`}
-                style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+                className={`grid transition-[grid-template-columns,opacity] duration-420 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none ${hideTab ? "grid-cols-[0fr] opacity-0 pointer-events-none" : "grid-cols-[1fr] opacity-100"}`}
               >
-                <button
-                  ref={el => { riskTabRefs.current[i] = el; }}
-                  onClick={() => { setSeverityFilter(tab); setPage(1); }}
-                  className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${isActive ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"}`}
-                >
-                  {tab}
-                  {isActive && <TabCountBadge count={tabCount} />}
-                </button>
+                <div className="overflow-hidden min-w-0">
+                  <button
+                    ref={el => { riskTabRefs.current[i] = el; }}
+                    onClick={() => { setSeverityFilter(tab); setPage(1); }}
+                    className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${isActive ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"}`}
+                  >
+                    {tab}
+                    {isActive && <TabCountBadge count={tabCount} />}
+                  </button>
+                </div>
               </div>
             );
           })}
@@ -2191,9 +2349,7 @@ export default function AssetsPage() {
                 <tr className="border-b border-zinc-100 bg-zinc-50 text-left">
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Asset</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Category</th>
-                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">
-                    {showCurrentLife ? "Current Life" : "Installation Date"}
-                  </th>
+                  <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Current Life</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Location</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Priority</th>
                   <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">Health Status</th>
@@ -2257,11 +2413,7 @@ export default function AssetsPage() {
                         </td>
                         <td className="px-4 py-3 text-xs text-zinc-600">{a.kategori ?? "—"}</td>
                         <td className="px-4 py-3 text-xs text-zinc-500">
-                          {showCurrentLife
-                            ? currentLife(a.tglInstalasi)
-                            : a.tglInstalasi
-                            ? new Date(a.tglInstalasi).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                            : "—"}
+                          {currentLife(a.tglInstalasi)}
                         </td>
                         <td className="px-4 py-3 text-xs text-zinc-500">
                           {[a.lokasiGedung, a.lokasiLantai, a.lokasiZona].filter(Boolean).join(", ") || "—"}
