@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   const statusCond =
     status === "inactive"
-      ? (sql`${masterAset.status} != 'Aktif'` as ReturnType<typeof eq>)
+      ? (sql`${masterAset.status} NOT IN ('Aktif', 'Under Maintenance')` as ReturnType<typeof eq>)
       : eq(masterAset.status, status);
   const conditions: ReturnType<typeof eq>[] = [statusCond];
   if (kategori) conditions.push(eq(masterAset.kategori, kategori));

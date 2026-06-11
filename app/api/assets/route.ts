@@ -30,7 +30,8 @@ export async function GET(req: NextRequest) {
   const conditions: ReturnType<typeof eq>[] = [];
 
   if (statusParam === "inactive") {
-    conditions.push(sql`${masterAset.status} != 'Aktif'` as ReturnType<typeof eq>);
+    // Exclude Aktif and Under Maintenance — those have their own tabs
+    conditions.push(sql`${masterAset.status} NOT IN ('Aktif', 'Under Maintenance')` as ReturnType<typeof eq>);
   } else {
     conditions.push(eq(masterAset.status, statusParam));
   }

@@ -12,7 +12,7 @@ import {
 
 // Types                                                                    
 
-type PanelView = "overview" | "edit" | "maintenance-history" | "add-maintenance";
+type PanelView = "overview" | "edit" | "maintenance-history" | "add-maintenance" | "finish-maintenance";
 
 interface Asset {
   id: number;
@@ -107,6 +107,36 @@ interface ReplaceForm {
   biayaPenggantian: string;
 }
 
+interface StartRepairForm {
+  tanggalPerencanaan: string;
+  tanggalPengerjaan: string;
+}
+
+interface FinishRepairForm {
+  tanggalSelesai: string;
+  jenisKerusakan: string;
+  penyebab: string;
+  severity: string;
+  biayaPerbaikan: string;
+  sparePartDigunakan: string;
+  teknisiPelaksana: string;
+}
+
+interface UnderMaintenanceAsset {
+  id: number;
+  idAset: number;
+  nama: string | null;
+  kategori: string | null;
+  tipe: string | null;
+  lokasiGedung: string | null;
+  lokasiLantai: string | null;
+  lokasiZona: string | null;
+  kekritisan: string | null;
+  ticketId: number | null;
+  tanggalPerencanaan: string | null;
+  tanggalPengerjaan: string | null;
+}
+
 interface Filters {
   kategori: string[];
   tipe: string[];
@@ -158,6 +188,7 @@ const SEVERITY_BADGE: Record<string, string> = {
 const STATUS_OPTIONS = ["Active", "Non-active"];
 const STATUS_ID_TO_EN: Record<string, string> = {
   Aktif: "Active", Rusak: "Non-active", Diganti: "Non-active", Dihapus: "Non-active",
+  "Under Maintenance": "Under Maintenance",
 };
 
 // Zone — kept in Indonesian for both display and storage
@@ -165,6 +196,11 @@ const ZONE_OPTIONS = ["Timur", "Barat", "Utara", "Selatan"];
 
 // Priority to company — stored in master_aset.kekritisan (same values as the Priority column)
 const PRIORITY_OPTIONS = ["Critical", "Major", "Minor"];
+
+// Tomorrow's date as YYYY-MM-DD — used as max on all date inputs
+function maxDateStr(): string {
+  return new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+}
 
 function severityToEn(dbVal: string | null): string | null {
   if (!dbVal) return null;
@@ -1037,7 +1073,7 @@ function EditAssetForm({
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Installation Date*</label>
-            <input type="date" value={form.tglInstalasi}
+            <input type="date" max={maxDateStr()} value={form.tglInstalasi}
               onChange={e => setForm(f => ({ ...f, tglInstalasi: e.target.value }))} className={inputCls} disabled={readOnly} />
           </div>
         </div>
@@ -1114,17 +1150,17 @@ function RepairFormFields({ form, setForm }: {
         <div className="flex-1 space-y-2.5">
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Planned Maintenance</label>
-            <input type="date" value={form.tanggalPerencanaan}
+            <input type="date" max={maxDateStr()} value={form.tanggalPerencanaan}
               onChange={e => setForm(f => ({ ...f, tanggalPerencanaan: e.target.value }))} className={inputCls} />
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Maintenance Execution*</label>
-            <input type="date" value={form.tanggalPengerjaan}
+            <input type="date" max={maxDateStr()} value={form.tanggalPengerjaan}
               onChange={e => setForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))} className={inputCls} />
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 mb-1 block">Maintenance Done*</label>
-            <input type="date" value={form.tanggalSelesai}
+            <input type="date" max={maxDateStr()} value={form.tanggalSelesai}
               onChange={e => setForm(f => ({ ...f, tanggalSelesai: e.target.value }))} className={inputCls} />
           </div>
         </div>
@@ -1210,7 +1246,7 @@ function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
     <div className="space-y-3.5">
       <div>
         <label className="text-xs font-medium text-zinc-700 mb-1 block">Execution Date*</label>
-        <input type="date" value={form.tanggalPengerjaan}
+        <input type="date" max={maxDateStr()} value={form.tanggalPengerjaan}
           onChange={e => setForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))}
           className={inputCls} />
       </div>
@@ -1284,7 +1320,7 @@ function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
   );
 }
 
-// Add Maintenance Form                                                      
+// Add Maintenance Form (Start Maintenance ticketing)
 
 function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, onDirtyChange, onToast }: {
   asset: Asset;
@@ -1295,7 +1331,8 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
   onToast: (type: "success" | "error", message: string) => void;
 }) {
   const [type, setType] = useState<"repair" | "replace">(initialType);
-  const [repair, setRepair] = useState<RepairForm>(INIT_REPAIR);
+  // Repair now uses a simplified 2-field start form
+  const [startForm, setStartForm] = useState<StartRepairForm>({ tanggalPerencanaan: "", tanggalPengerjaan: "" });
   const [replace, setReplace] = useState<ReplaceForm>({
     ...INIT_REPLACE,
     prefix: asset.nama?.replace(/-\d+$/, "") ?? "",
@@ -1303,7 +1340,6 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
   const [nextIdAset, setNextIdAset] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showWarning, setShowWarning] = useState(false);
   const repairBtnRef = useRef<HTMLButtonElement>(null);
   const replaceBtnRef = useRef<HTMLButtonElement>(null);
   const [pill, setPill] = useState<{ left: number; width: number; ready: boolean; animate: boolean }>({ left: 0, width: 0, ready: false, animate: false });
@@ -1323,14 +1359,11 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
     }
   }, [type]);
 
-  const repairReq = [repair.tanggalPengerjaan, repair.tanggalSelesai, repair.jenisKerusakan, repair.severity, repair.biayaPerbaikan, repair.sparePartDigunakan, repair.teknisiPelaksana];
-  const repairAllFilled = repairReq.every(v => v.trim() !== "");
-  const repairAnyFilled = Object.values(repair).some(v => v.trim() !== "");
+  const startRepairDirty = startForm.tanggalPengerjaan.trim() !== "" || startForm.tanggalPerencanaan.trim() !== "";
+  const startRepairReady = startForm.tanggalPengerjaan.trim() !== "";
 
   const replaceReq = [replace.tanggalPengerjaan, replace.prefix, replace.alasanPenggantian, replace.biayaPenggantian];
   const replaceAllFilled = replaceReq.every(v => v.trim() !== "");
-  // prefix is auto-derived from the asset name, so a fresh form isn't "dirty" yet —
-  // only count it as user input once it differs from that initial value.
   const initialPrefix = asset.nama?.replace(/-\d+$/, "") ?? "";
   const replaceAnyFilled =
     replace.tanggalPengerjaan.trim() !== "" ||
@@ -1338,79 +1371,76 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
     replace.biayaPenggantian.trim() !== "" ||
     replace.prefix.trim() !== initialPrefix.trim();
 
-  // Report dirty state up so the page can guard against navigating away with unsaved input
-  const dirty = repairAnyFilled || replaceAnyFilled;
-  useEffect(() => {
-    onDirtyChange?.(dirty);
-  }, [dirty, onDirtyChange]);
+  const dirty = startRepairDirty || replaceAnyFilled;
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
 
   async function handleSave() {
     if (type === "repair") {
-      if (!repairAnyFilled) return;
-      if (!repairAllFilled) { setShowWarning(true); return; }
-    } else {
-      if (!replaceAnyFilled) return;
-      if (!replaceAllFilled) { setShowWarning(true); return; }
+      if (!startRepairReady) return;
+      setSaving(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}/start-maintenance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tanggalPerencanaan: startForm.tanggalPerencanaan || null,
+            tanggalPengerjaan: startForm.tanggalPengerjaan,
+          }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message ?? "Failed to start maintenance");
+        onSave();
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setError(msg);
+        onToast("error", `Couldn't start maintenance: ${msg}`);
+      } finally {
+        setSaving(false);
+      }
+      return;
     }
 
+    // Replace flow (unchanged)
+    if (!replaceAnyFilled) return;
+    if (!replaceAllFilled) {
+      onToast("error", "Please fill all required fields");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
-      const body = type === "repair"
-        ? {
-            maintenanceType: "Repair",
-            tanggalPerencanaan: repair.tanggalPerencanaan || null,
-            tanggalPengerjaan: repair.tanggalPengerjaan,
-            tanggalSelesai: repair.tanggalSelesai,
-            jenisKerusakan: repair.jenisKerusakan,
-            penyebab: repair.penyebab || null,
-            severity: SEVERITY_EN_TO_ID[repair.severity] ?? repair.severity,
-            severityScore: SEVERITY_SCORE_MAP[repair.severity] ?? null,
-            biayaPerbaikan: parseBiaya(repair.biayaPerbaikan),
-            sparePartDigunakan: repair.sparePartDigunakan || null,
-            teknisiPelaksana: repair.teknisiPelaksana || null,
-          }
-        : null;
-
-      const isReplace = type === "replace";
-      const endpoint = isReplace
-        ? `/api/assets/${encodeURIComponent(asset.idAset)}/replace`
-        : `/api/assets/${encodeURIComponent(asset.idAset)}/komplain`;
-      const replaceBody = isReplace ? {
-        prefix: replace.prefix,
-        tanggalPenggantian: replace.tanggalPengerjaan,
-        alasanPenggantian: replace.alasanPenggantian,
-        biayaPenggantian: parseBiaya(replace.biayaPenggantian),
-      } : null;
-
-      const res = await fetch(endpoint, {
+      const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}/replace`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(isReplace ? replaceBody : body),
+        body: JSON.stringify({
+          prefix: replace.prefix,
+          tanggalPenggantian: replace.tanggalPengerjaan,
+          alasanPenggantian: replace.alasanPenggantian,
+          biayaPenggantian: parseBiaya(replace.biayaPenggantian),
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message ?? "Failed to save");
-      onSave(isReplace ? { newIdAset: json.newIdAset, newNama: json.newNama } : undefined);
+      onSave({ newIdAset: json.newIdAset, newNama: json.newNama });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
-      onToast("error", `Couldn't save maintenance log: ${msg}`);
+      onToast("error", `Couldn't save replacement log: ${msg}`);
     } finally {
       setSaving(false);
     }
   }
 
+  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-medium text-zinc-800">Add Maintenance Log</p>
-          {type === "replace" && (
-            <button onClick={onCancel} aria-label="Cancel"
-              className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-500 hover:text-zinc-600 transition-colors">
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+          <p className="text-xs font-medium text-zinc-800">
+            {type === "repair" ? "Start Maintenance Ticket" : "Add Maintenance Log"}
+          </p>
         </div>
 
         {error && (
@@ -1445,10 +1475,37 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
           </div>
         </div>
 
-        {type === "repair"
-          ? <RepairFormFields form={repair} setForm={setRepair} />
-          : <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} nextIdAset={nextIdAset} />
-        }
+        {type === "repair" ? (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] text-amber-700 leading-relaxed">
+              Asset will be marked <strong>Under Maintenance</strong> until you finish the ticket.
+              Remaining details (severity, cost, technician) are filled when completing.
+            </div>
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center pt-[1.65rem] pb-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                <div className="flex-1 w-px bg-indigo-200 my-1" />
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0" />
+              </div>
+              <div className="flex-1 space-y-2.5">
+                <div>
+                  <label className="text-xs font-medium text-zinc-700 mb-1 block">Planned Date</label>
+                  <input type="date" max={maxDateStr()} value={startForm.tanggalPerencanaan}
+                    onChange={e => setStartForm(f => ({ ...f, tanggalPerencanaan: e.target.value }))}
+                    className={inputCls} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-zinc-700 mb-1 block">Execution Date*</label>
+                  <input type="date" max={maxDateStr()} value={startForm.tanggalPengerjaan}
+                    onChange={e => setStartForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))}
+                    className={inputCls} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} nextIdAset={nextIdAset} />
+        )}
       </div>
 
       <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
@@ -1456,25 +1513,162 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
           className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           Cancel
         </button>
-        <button onClick={handleSave} disabled={saving}
+        <button onClick={handleSave} disabled={saving || (type === "repair" ? !startRepairReady : !replaceAllFilled)}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           {saving && <Loader2 className="w-3 h-3 animate-spin" />}
-          Save Log
+          {type === "repair" ? "Start Maintenance" : "Save Log"}
         </button>
       </div>
-
-      {showWarning && createPortal(
-        <IncompleteWarningModal
-          onContinue={() => setShowWarning(false)}
-          onLeave={() => { setShowWarning(false); onCancel(); }}
-        />,
-        document.body,
-      )}
     </div>
   );
 }
 
-// Maintenance History Item                                                   
+// Finish Maintenance Form
+
+const INIT_FINISH: FinishRepairForm = {
+  tanggalSelesai: "", jenisKerusakan: "", penyebab: "",
+  severity: "", biayaPerbaikan: "", sparePartDigunakan: "", teknisiPelaksana: "",
+};
+
+function FinishMaintenanceForm({ asset, onSave, onCancel, onToast }: {
+  asset: Asset;
+  onSave: () => void;
+  onCancel: () => void;
+  onToast: (type: "success" | "error", message: string) => void;
+}) {
+  const [form, setForm] = useState<FinishRepairForm>(INIT_FINISH);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const required = [form.tanggalSelesai, form.jenisKerusakan, form.severity, form.biayaPerbaikan, form.sparePartDigunakan, form.teknisiPelaksana];
+  const allFilled = required.every(v => v.trim() !== "");
+
+  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
+
+  async function handleSave() {
+    if (!allFilled) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}/finish-maintenance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tanggalSelesai: form.tanggalSelesai,
+          jenisKerusakan: form.jenisKerusakan,
+          penyebab: form.penyebab || null,
+          severity: SEVERITY_EN_TO_ID[form.severity] ?? form.severity,
+          severityScore: SEVERITY_SCORE_MAP[form.severity] ?? null,
+          biayaPerbaikan: parseBiaya(form.biayaPerbaikan),
+          sparePartDigunakan: form.sparePartDigunakan || null,
+          teknisiPelaksana: form.teknisiPelaksana || null,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? "Failed to complete maintenance");
+      onSave();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      onToast("error", `Couldn't finish maintenance: ${msg}`);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 space-y-3.5">
+        <p className="text-xs font-medium text-zinc-800">Complete Maintenance Ticket</p>
+
+        {error && (
+          <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+        )}
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">Completion Date*</label>
+          <input type="date" max={maxDateStr()} value={form.tanggalSelesai}
+            onChange={e => setForm(f => ({ ...f, tanggalSelesai: e.target.value }))} className={inputCls} />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">What&apos;s Fixed*</label>
+          <div className="relative">
+            <textarea value={form.jenisKerusakan} rows={2}
+              onChange={e => setForm(f => ({ ...f, jenisKerusakan: e.target.value.slice(0, 90) }))}
+              placeholder="Fixed outdoor fan..."
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 resize-none transition-[border-color,box-shadow] bg-white" />
+            <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">{form.jenisKerusakan.length}/90</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">Damage Cause</label>
+          <div className="relative">
+            <textarea value={form.penyebab} rows={2}
+              onChange={e => setForm(f => ({ ...f, penyebab: e.target.value.slice(0, 90) }))}
+              placeholder="Someone knocked too hard..."
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 resize-none transition-[border-color,box-shadow] bg-white" />
+            <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">{form.penyebab.length}/90</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1.5 block">Severity Level*</label>
+          <div className="flex gap-1.5">
+            {SEVERITY_OPTIONS.map(s => (
+              <button key={s} type="button" onClick={() => setForm(f => ({ ...f, severity: s }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-[border-color,background-color,color,box-shadow] duration-150 active:scale-[0.97] ${
+                  form.severity === s ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm" : "border-zinc-200 bg-white text-zinc-500 hover:border-indigo-300 hover:text-indigo-600"
+                }`}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">Repair Cost*</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500">Rp.</span>
+            <input type="text" inputMode="numeric" value={form.biayaPerbaikan} placeholder="100.000"
+              onChange={e => setForm(f => ({ ...f, biayaPerbaikan: formatRupiahInput(e.target.value) }))}
+              className="w-full rounded-lg border border-zinc-200 pl-9 pr-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white" />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">Spareparts Involved*</label>
+          <input value={form.sparePartDigunakan}
+            onChange={e => setForm(f => ({ ...f, sparePartDigunakan: e.target.value }))}
+            placeholder="e.g. Thermostat, remote battery" className={inputCls} />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 mb-1 block">Technicians Involved*</label>
+          <input value={form.teknisiPelaksana}
+            onChange={e => setForm(f => ({ ...f, teknisiPelaksana: e.target.value }))}
+            placeholder="e.g. Technician 1, Technician 2" className={inputCls} />
+        </div>
+      </div>
+
+      <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
+        <button onClick={onCancel}
+          className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+          Cancel
+        </button>
+        <button onClick={handleSave} disabled={saving || !allFilled}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+          {saving && <Loader2 className="w-3 h-3 animate-spin" />}
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          Complete Maintenance
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Maintenance History Item
 
 function MaintenanceHistoryItem({ entry, asset, expanded, onToggle }: {
   entry: MaintenanceEntry;
@@ -1847,6 +2041,12 @@ export default function AssetsPage() {
     typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("search") ?? "") : ""
   );
 
+  // Under Maintenance tab
+  const [mainView, setMainView] = useState<"assets" | "under-maintenance">("assets");
+  const [underMaintenanceAssets, setUnderMaintenanceAssets] = useState<UnderMaintenanceAsset[]>([]);
+  const [underMaintenanceLoading, setUnderMaintenanceLoading] = useState(false);
+  const [underMaintenanceCount, setUnderMaintenanceCount] = useState(0);
+
   // Panel state
   const [panelView, setPanelView] = useState<PanelView>("overview");
   const [expandedLogId, setExpandedLogId] = useState<number | null>(null);
@@ -1988,6 +2188,20 @@ export default function AssetsPage() {
     }
   }, [buildCountParams]);
 
+  const fetchUnderMaintenance = useCallback(async () => {
+    setUnderMaintenanceLoading(true);
+    try {
+      const res = await fetch("/api/assets/under-maintenance");
+      const json = await res.json();
+      setUnderMaintenanceAssets(json.data ?? []);
+      setUnderMaintenanceCount(json.total ?? 0);
+    } catch {
+      /* non-critical */
+    } finally {
+      setUnderMaintenanceLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -2001,6 +2215,15 @@ export default function AssetsPage() {
     })();
     return () => { cancelled = true; };
   }, [buildCountParams]);
+
+  // Keep under-maintenance count badge fresh on every load + when user visits the tab
+  useEffect(() => {
+    fetchUnderMaintenance();
+  }, [fetchUnderMaintenance]);
+
+  useEffect(() => {
+    if (mainView === "under-maintenance") fetchUnderMaintenance();
+  }, [mainView, fetchUnderMaintenance]);
 
   // Severity tab indicator — re-measures on tab change, count change, and when the
   // Active/Inactive toggle collapses or expands the tab row.
@@ -2041,6 +2264,13 @@ export default function AssetsPage() {
     const el = panelTabRefs.current[activeIdx];
     if (!el) return;
     setPanelIndicator({ left: el.offsetLeft + 8, width: el.offsetWidth - 16, ready: true });
+  }, [panelView, modalAsset]);
+
+  // When opening finish-maintenance directly from a card, switch to finish-maintenance view
+  useEffect(() => {
+    if (panelView === "finish-maintenance" && modalAsset?.status !== "Under Maintenance") {
+      setPanelView("maintenance-history");
+    }
   }, [panelView, modalAsset]);
 
   async function runPrediction() {
@@ -2200,7 +2430,30 @@ export default function AssetsPage() {
     setPanelView("maintenance-history");
     fetchAssets();
     fetchCounts();
+    fetchUnderMaintenance();
     pushToast("success", "Maintenance log saved");
+  }
+
+  async function handleFinishSave() {
+    if (!modalAsset) return;
+    setModalAsset(prev => prev ? { ...prev, status: "Aktif" } : null);
+    setModalLoading(true);
+    try {
+      const [resK, resR] = await Promise.all([
+        fetch(`/api/assets/${encodeURIComponent(modalAsset.idAset)}/komplain`),
+        fetch(`/api/assets/${encodeURIComponent(modalAsset.idAset)}/replace`),
+      ]);
+      const [jsonK, jsonR] = await Promise.all([resK.json(), resR.json()]);
+      setKomplainLogs(jsonK.data ?? []);
+      setReplaceLogs(jsonR.data ?? []);
+    } finally {
+      setModalLoading(false);
+    }
+    setPanelView("maintenance-history");
+    fetchAssets();
+    fetchCounts();
+    fetchUnderMaintenance();
+    pushToast("success", "Maintenance completed!");
   }
 
   const handleFilterChange = (type: "kategori" | "tipe" | "lokasi" | "jadwal" | "kekritisan", value: string) => {
@@ -2256,7 +2509,7 @@ export default function AssetsPage() {
                 <div className="overflow-hidden min-w-0">
                   <button
                     ref={el => { riskTabRefs.current[i] = el; }}
-                    onClick={() => { setSeverityFilter(tab); setPage(1); }}
+                    onClick={() => { setSeverityFilter(tab); setPage(1); setMainView("assets"); }}
                     className={`px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${isActive ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"}`}
                   >
                     {tab}
@@ -2266,10 +2519,30 @@ export default function AssetsPage() {
               </div>
             );
           })}
-          {riskIndicator.ready && (
+          {riskIndicator.ready && mainView === "assets" && (
             <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-300"
               style={{ transform: `translateX(${riskIndicator.left}px)`, width: `${riskIndicator.width}px`, transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }} />
           )}
+
+          {/* Under Maintenance tab */}
+          <button
+            onClick={() => setMainView(v => v === "under-maintenance" ? "assets" : "under-maintenance")}
+            className={`relative ml-2 px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap flex items-center gap-1.5 ${
+              mainView === "under-maintenance" ? "text-amber-600" : "text-zinc-500 hover:text-zinc-600"
+            }`}
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            Under Maintenance
+            <span className={`ml-0.5 inline-block rounded-full px-1.5 py-0.5 text-[10px] tabular-nums ${
+              mainView === "under-maintenance" ? "bg-amber-100 text-amber-600" : "bg-zinc-100 text-zinc-500"
+            }`}>
+              {underMaintenanceCount}
+            </span>
+            {mainView === "under-maintenance" && (
+              <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-500 rounded-full" />
+            )}
+          </button>
+
           {/* Active / Inactive toggle — sliding pill (same as the Maintenance Type toggle) */}
           <div className="ml-auto mb-1 relative inline-flex rounded-full border border-zinc-200 bg-zinc-50 p-0.5">
             {statusPill.ready && (
@@ -2290,6 +2563,7 @@ export default function AssetsPage() {
                   setActiveStatus(s);
                   setSeverityFilter("All Assets");
                   setPage(1);
+                  setMainView("assets");
                 }}
                 className={`relative z-10 px-3 py-1 rounded-full text-xs font-medium transition-colors duration-150 ${
                   activeStatus === s ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
@@ -2301,7 +2575,145 @@ export default function AssetsPage() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Under Maintenance card grid */}
+        {mainView === "under-maintenance" && (
+          <div className="flex-1 overflow-y-auto">
+            {underMaintenanceLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-1">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="animate-pulse rounded-2xl border border-zinc-100 bg-white p-5 space-y-3">
+                    <div className="h-3 w-32 rounded bg-zinc-200" />
+                    <div className="h-2.5 w-24 rounded bg-zinc-100" />
+                    <div className="h-px bg-zinc-100" />
+                    <div className="h-2.5 w-20 rounded bg-zinc-100" />
+                    <div className="h-2.5 w-28 rounded bg-zinc-100" />
+                    <div className="flex gap-2 pt-2">
+                      <div className="flex-1 h-8 rounded-lg bg-zinc-100" />
+                      <div className="flex-1 h-8 rounded-lg bg-zinc-100" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : underMaintenanceAssets.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full py-20 text-center">
+                <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-3">
+                  <Wrench className="w-6 h-6 text-amber-400" />
+                </div>
+                <p className="text-sm font-medium text-zinc-600">No assets under maintenance</p>
+                <p className="text-xs text-zinc-400 mt-1">When you start a maintenance ticket, assets will appear here.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-1">
+                {underMaintenanceAssets.map(a => (
+                  <div key={a.idAset}
+                    className="rounded-2xl border border-amber-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+                    {/* Card accent bar */}
+                    <div className="h-1 bg-gradient-to-r from-amber-400 to-amber-300 shrink-0" />
+                    <div className="p-4 flex flex-col gap-3 flex-1">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-zinc-900 truncate">{a.nama ?? `Asset #${a.idAset}`}</p>
+                          <p className="text-[11px] text-zinc-400 mt-0.5 truncate">
+                            {[a.tipe, a.kategori].filter(Boolean).join(" · ") || "—"}
+                          </p>
+                        </div>
+                        {a.kekritisan && (
+                          <span className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                            a.kekritisan === "Critical" ? "bg-red-50 text-red-600 border-red-200"
+                            : a.kekritisan === "Major" ? "bg-orange-50 text-orange-600 border-orange-200"
+                            : "bg-yellow-50 text-yellow-600 border-yellow-200"
+                          }`}>
+                            {a.kekritisan}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Location */}
+                      <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                        <span className="truncate">
+                          {[a.lokasiGedung, a.lokasiLantai, a.lokasiZona].filter(Boolean).join(", ") || "—"}
+                        </span>
+                      </div>
+
+                      <div className="border-t border-zinc-100" />
+
+                      {/* Ticket dates */}
+                      <div className="grid grid-cols-2 gap-2 text-[11px]">
+                        <div>
+                          <p className="text-zinc-400 mb-0.5">Execution Date</p>
+                          <p className="font-medium text-zinc-700">
+                            {a.tanggalPengerjaan
+                              ? new Date(a.tanggalPengerjaan).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
+                              : "—"}
+                          </p>
+                        </div>
+                        {a.tanggalPerencanaan && (
+                          <div>
+                            <p className="text-zinc-400 mb-0.5">Planned</p>
+                            <p className="font-medium text-zinc-700">
+                              {new Date(a.tanggalPerencanaan).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Status pill */}
+                      <div className="flex items-center gap-1.5">
+                        <span className="flex items-center gap-1 rounded-full bg-amber-100 border border-amber-200 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse inline-block" />
+                          Under Maintenance
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2 mt-auto pt-1">
+                        <button
+                          onClick={() => {
+                            const asset = {
+                              id: a.id, idAset: a.idAset, nama: a.nama,
+                              merek: null, model: null, kategori: a.kategori,
+                              subKategori: null, tipe: a.tipe,
+                              tglInstalasi: null, lokasiGedung: a.lokasiGedung,
+                              lokasiLantai: a.lokasiLantai, lokasiZona: a.lokasiZona,
+                              kekritisan: a.kekritisan, status: "Under Maintenance",
+                              statusJadwal: null, confidence: null, latestSeverity: null,
+                            } satisfies Asset;
+                            openModal(asset);
+                          }}
+                          className="flex-1 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => {
+                            const asset = {
+                              id: a.id, idAset: a.idAset, nama: a.nama,
+                              merek: null, model: null, kategori: a.kategori,
+                              subKategori: null, tipe: a.tipe,
+                              tglInstalasi: null, lokasiGedung: a.lokasiGedung,
+                              lokasiLantai: a.lokasiLantai, lokasiZona: a.lokasiZona,
+                              kekritisan: a.kekritisan, status: "Under Maintenance",
+                              statusJadwal: null, confidence: null, latestSeverity: null,
+                            } satisfies Asset;
+                            openModal(asset).then(() => animateToPanelView("finish-maintenance"));
+                          }}
+                          className="flex-1 py-2 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Finish
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Filters + Table — hidden when Under Maintenance tab is active */}
+        {mainView === "assets" && <>
         <div className="flex flex-wrap gap-2 mb-4 shrink-0">
           <div className="relative flex-1 min-w-40">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 pointer-events-none" />
@@ -2424,7 +2836,13 @@ export default function AssetsPage() {
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${healthStatus.css}`}>{healthStatus.label}</span>
+                          {a.status === "Under Maintenance" ? (
+                            <span className="rounded-full px-2.5 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 border border-amber-200">
+                              Under Maintenance
+                            </span>
+                          ) : (
+                            <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${healthStatus.css}`}>{healthStatus.label}</span>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-xs font-semibold text-zinc-700">{freqLabel(a.statusJadwal)}</td>
                       </tr>
@@ -2470,6 +2888,7 @@ export default function AssetsPage() {
         {lastPredictedAt && (
           <p className="mt-2 text-[10px] text-zinc-500 shrink-0">Prediction last run: {lastPredictedAt}</p>
         )}
+        </>}
       </div>
 
       {/*    Right: Detail Panel    */}
@@ -2509,6 +2928,12 @@ export default function AssetsPage() {
                 <p className="text-xs text-zinc-500 mt-1">
                   {[modalAsset.kategori, modalAsset.lokasiGedung].filter(Boolean).join(" · ") || "—"}
                 </p>
+                {modalAsset.status === "Under Maintenance" && (
+                  <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    Under Maintenance
+                  </span>
+                )}
               </div>
               <button onClick={() => guardedNav(closePanel)} aria-label="Close panel"
                 className="p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-600 active:scale-95 transition-[background-color,color,transform] duration-150 shrink-0">
@@ -2529,9 +2954,9 @@ export default function AssetsPage() {
             <button ref={el => { panelTabRefs.current[1] = el; }}
               onClick={() => guardedNav(() => animateToPanelView("maintenance-history"))}
               className={`px-3 py-2.5 text-xs font-medium transition-colors duration-150 ${
-                (panelView === "maintenance-history" || panelView === "add-maintenance") ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
+                (panelView === "maintenance-history" || panelView === "add-maintenance" || panelView === "finish-maintenance") ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
               }`}>
-              {panelView === "add-maintenance" ? "Maintenance" : "Maintenance History"}
+              {panelView === "add-maintenance" ? "Maintenance" : panelView === "finish-maintenance" ? "Finish Ticket" : "Maintenance History"}
             </button>
             {panelIndicator.ready && (
               <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-200"
@@ -2563,6 +2988,13 @@ export default function AssetsPage() {
             {panelView === "maintenance-history" && (
               <div className="flex flex-col h-full">
                 <div className="flex-1 overflow-y-auto p-4">
+                  {/* Under Maintenance status banner */}
+                  {modalAsset.status === "Under Maintenance" && (
+                    <div className="mb-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                      <p className="text-[11px] text-amber-700 font-medium">Asset is currently under maintenance</p>
+                    </div>
+                  )}
                   <MaintenanceHistoryList
                     entries={mergeEntries(komplainLogs, replaceLogs)}
                     loading={modalLoading}
@@ -2574,11 +3006,18 @@ export default function AssetsPage() {
                   />
                 </div>
                 <div className="shrink-0 border-t border-zinc-100 px-4 py-3 bg-white">
-                  <button onClick={() => goToAddMaintenance("repair")}
-                    disabled={modalAsset.status === "Diganti" || modalAsset.status === "Dihapus"}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 transition-[background-color] duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:bg-indigo-600">
-                    <Plus className="w-3.5 h-3.5" /> Add Maintenance
-                  </button>
+                  {modalAsset.status === "Under Maintenance" ? (
+                    <button onClick={() => animateToPanelView("finish-maintenance")}
+                      className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-[background-color] duration-150 active:scale-[0.98]">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Finish Maintenance
+                    </button>
+                  ) : (
+                    <button onClick={() => goToAddMaintenance("repair")}
+                      disabled={modalAsset.status === "Diganti" || modalAsset.status === "Dihapus"}
+                      className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 transition-[background-color] duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:bg-indigo-600">
+                      <Plus className="w-3.5 h-3.5" /> Add Maintenance
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -2587,9 +3026,24 @@ export default function AssetsPage() {
               <AddMaintenanceForm
                 asset={modalAsset}
                 initialType={addMaintenanceInitialType}
-                onSave={handleMaintenanceSave}
+                onSave={result => {
+                  // If it was a start-maintenance (repair), update the modal asset status
+                  if (!result?.newIdAset) {
+                    setModalAsset(prev => prev ? { ...prev, status: "Under Maintenance" } : null);
+                  }
+                  handleMaintenanceSave(result);
+                }}
                 onCancel={() => { setMaintenanceDirty(false); setPanelView("maintenance-history"); }}
                 onDirtyChange={setMaintenanceDirty}
+                onToast={pushToast}
+              />
+            )}
+
+            {panelView === "finish-maintenance" && (
+              <FinishMaintenanceForm
+                asset={modalAsset}
+                onSave={handleFinishSave}
+                onCancel={() => animateToPanelView("maintenance-history")}
                 onToast={pushToast}
               />
             )}
