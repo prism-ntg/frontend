@@ -10,7 +10,7 @@ import ReportsIcon from "@/public/report.webp";
 import DashboardIconActive from "@/public/dashboardActive.webp";
 import assetsIconActive from "@/public/assetsActive.webp";
 import reportsIconActive from "@/public/reportsActive.webp";
-import { LogOut } from "lucide-react";
+import { LogOut, ArrowLeftRight, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
@@ -87,6 +87,35 @@ export function AppSidebar() {
               </Link>
             );
           })}
+
+          {/* Divider */}
+          <div className="pt-3 pb-1">
+            <p className="px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">Logs</p>
+          </div>
+
+          <Link
+            href="/logs/replacement"
+            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+              pathname.startsWith("/logs/replacement")
+                ? "bg-white text-[#3F65ED]"
+                : "text-gray-300 hover:bg-white/10"
+            }`}
+          >
+            <ArrowLeftRight className="w-5 h-5 shrink-0" />
+            <span className="font-medium">Replacement Log</span>
+          </Link>
+
+          <Link
+            href="/logs/maintenance"
+            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+              pathname.startsWith("/logs/maintenance")
+                ? "bg-white text-[#3F65ED]"
+                : "text-gray-300 hover:bg-white/10"
+            }`}
+          >
+            <Wrench className="w-5 h-5 shrink-0" />
+            <span className="font-medium">Maintenance Log</span>
+          </Link>
         </nav>
         <div className="p-4 mt-auto">
           <button

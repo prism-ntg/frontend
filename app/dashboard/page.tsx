@@ -29,6 +29,11 @@ interface Stats {
   topAssets: TopAsset[];
   maintenanceByMonth: MonthCount[];
 }
+interface BuildingCost {
+  gedung: string;
+  totalBiayaPerbaikan: number;
+  totalKomplain: number;
+}
 
 // Helpers                                                                   
 
@@ -650,6 +655,116 @@ function FilterCombobox({ value, onChange, options, placeholder }: {
   );
 }
 
+// Cost formatting helper
+
+function formatCost(value: number): string {
+  if (value >= 1_000_000_000) return `Rp ${(value / 1_000_000_000).toFixed(1)} M`;
+  if (value >= 1_000_000) return `Rp ${(value / 1_000_000).toFixed(1)} jt`;
+  if (value >= 1_000) return `Rp ${Math.round(value / 1_000)} rb`;
+  return `Rp ${value.toLocaleString()}`;
+}
+
+// Building cost constants
+
+const COST_YEARS = Array.from(
+  { length: new Date().getFullYear() - 2019 },
+  (_, i) => String(2020 + i),
+);
+const COST_MONTHS = [
+  { value: "1", label: "Jan" }, { value: "2", label: "Feb" },
+  { value: "3", label: "Mar" }, { value: "4", label: "Apr" },
+  { value: "5", label: "May" }, { value: "6", label: "Jun" },
+  { value: "7", label: "Jul" }, { value: "8", label: "Aug" },
+  { value: "9", label: "Sep" }, { value: "10", label: "Oct" },
+  { value: "11", label: "Nov" }, { value: "12", label: "Dec" },
+];
+
+// Building Costs Chart
+
+function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading: boolean }) {
+  const [mounted, setMounted] = useState(false);
+  const [hovered, setHovered] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (loading) { setMounted(false); return; }
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
+  }, [loading, data]);
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="animate-pulse">
+            <div className="flex justify-between mb-1">
+              <div className="h-3 w-32 rounded bg-slate-100" />
+              <div className="h-3 w-24 rounded bg-slate-100" />
+            </div>
+            <div className="h-8 rounded-lg bg-slate-100" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="h-32 flex items-center justify-center text-xs text-slate-400">
+        No cost data for selected period
+      </div>
+    );
+  }
+
+  const maxCost = Math.max(...data.map(d => d.totalBiayaPerbaikan), 1);
+  const COLORS = ["#4F75FF", "#6366f1", "#8b5cf6", "#a78bfa", "#c4b5fd"];
+
+  return (
+    <div className="space-y-3">
+      {data.map((item, i) => {
+        const widthPct = item.totalBiayaPerbaikan > 0
+          ? Math.max((item.totalBiayaPerbaikan / maxCost) * 100, 2)
+          : 0;
+        const isHov = hovered === i;
+        const color = COLORS[i % COLORS.length];
+        return (
+          <div
+            key={item.gedung}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            className="cursor-default"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-medium text-slate-600 truncate max-w-[220px]">
+                {item.gedung}
+              </span>
+              <div className="flex items-center gap-3 shrink-0 ml-2">
+                <span className="text-[11px] text-slate-400">{item.totalKomplain} komplain</span>
+                <span
+                  className="text-xs font-semibold tabular-nums transition-colors duration-150"
+                  style={{ color: isHov ? color : "#475569" }}
+                >
+                  {formatCost(item.totalBiayaPerbaikan)}
+                </span>
+              </div>
+            </div>
+            <div className="h-8 w-full rounded-lg bg-slate-50 overflow-hidden border border-slate-100">
+              <div
+                className="h-full rounded-lg"
+                style={{
+                  width: mounted ? `${widthPct}%` : "0%",
+                  backgroundColor: color,
+                  opacity: hovered !== null && !isHov ? 0.35 : 1,
+                  transition: `width 0.7s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.07}s, opacity 0.2s ease`,
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // Dashboard Page
 
 export default function Dashboard() {
@@ -659,6 +774,10 @@ export default function Dashboard() {
   const [topAssetsLoc, setTopAssetsLoc] = useState("");
   const [topAssetsList, setTopAssetsList] = useState<TopAsset[] | null>(null);
   const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [buildingCosts, setBuildingCosts] = useState<BuildingCost[]>([]);
+  const [buildingYear, setBuildingYear] = useState(() => String(new Date().getFullYear()));
+  const [buildingMonth, setBuildingMonth] = useState("");
+  const [buildingLoading, setBuildingLoading] = useState(false);
   const router = useRouter();
 
   const [fromMonth, setFromMonth] = useState(() => {
@@ -700,6 +819,18 @@ export default function Dashboard() {
       .then(d => setTopAssetsList(d.topAssets ?? []))
       .catch(console.error);
   }, [topAssetsLoc]);
+
+  useEffect(() => {
+    setBuildingLoading(true);
+    const params = new URLSearchParams();
+    if (buildingYear) params.set("year", buildingYear);
+    if (buildingMonth) params.set("month", buildingMonth);
+    fetch(`/api/assets/costs-by-building?${params}`)
+      .then(r => r.json())
+      .then(d => setBuildingCosts(d.data ?? []))
+      .catch(console.error)
+      .finally(() => setBuildingLoading(false));
+  }, [buildingYear, buildingMonth]);
 
   if (loading) {
     return (
@@ -885,19 +1016,19 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-red-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-red-500 mb-2">Fatal</p>
             <p className="text-3xl font-bold text-red-600 tabular-nums"><AnimatedNumber value={critical} /></p>
-            <p className="text-[11px] text-red-400 mt-1.5">Fatal Complaints</p>
+            <p className="text-[11px] text-red-400 mt-1.5">Assets w/ Critical Severity</p>
           </div>
           <div className="group rounded-xl border border-amber-200 bg-amber-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-amber-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-amber-500 mb-2">At Risk</p>
             <p className="text-3xl font-bold text-amber-600 tabular-nums"><AnimatedNumber value={atRisk} /></p>
-            <p className="text-[11px] text-amber-400 mt-1.5">Serious &amp; Medium Complaints</p>
+            <p className="text-[11px] text-amber-400 mt-1.5">Assets w/ Serious / Medium</p>
           </div>
           <div className="group rounded-xl border border-blue-200 bg-blue-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-blue-500 mb-2">Healthy</p>
             <p className="text-3xl font-bold text-blue-600 tabular-nums"><AnimatedNumber value={healthy} /></p>
-            <p className="text-[11px] text-blue-400 mt-1.5">Mild Complaints</p>
+            <p className="text-[11px] text-blue-400 mt-1.5">Assets w/ Mild Only</p>
           </div>
         </div>
 
@@ -965,6 +1096,34 @@ export default function Dashboard() {
             <p className="text-xs text-slate-400">{pct(jadwal.Reactive)}%</p>
           </div>
         </div>
+      </div>
+
+      {/* Row 4: Cost Distribution by Building */}
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-start justify-between mb-4 gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">Cost Distribution by Building</p>
+            <p className="text-xs text-slate-400 mt-0.5">Total repair costs per location</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <select
+              value={buildingYear}
+              onChange={e => setBuildingYear(e.target.value)}
+              className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 cursor-pointer font-medium"
+            >
+              {COST_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+            <select
+              value={buildingMonth}
+              onChange={e => setBuildingMonth(e.target.value)}
+              className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 cursor-pointer font-medium"
+            >
+              <option value="">All Months</option>
+              {COST_MONTHS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <CostsByBuildingChart data={buildingCosts} loading={buildingLoading} />
       </div>
 
       {/* Row 3: Health Bars + Donut + Top Assets */}

@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     topAssetRows,
     maintenanceRows,
     [recentRow],
-    severityRows,
+    severityAssetRows,
   ] = await Promise.all([
     db.select({ total: count() })
       .from(masterAset)
@@ -91,10 +91,18 @@ export async function GET(request: Request) {
         )
       ),
 
-    // Severity counts from aset_komplain (for KPI cards)
-    db.select({ severity: asetKomplain.severity, total: count() })
-      .from(asetKomplain)
-      .groupBy(asetKomplain.severity),
+    // Count assets by worst complaint severity (LEFT JOIN from master_aset so every asset is considered)
+    db.select({
+      idAset: masterAset.idAset,
+      fatalCount: sql<number>`SUM(CASE WHEN ${asetKomplain.severity} = 'Fatal' THEN 1 ELSE 0 END)`,
+      atRiskCount: sql<number>`SUM(CASE WHEN ${asetKomplain.severity} IN ('Berat','Sedang') THEN 1 ELSE 0 END)`,
+      healthyCount: sql<number>`SUM(CASE WHEN ${asetKomplain.severity} = 'Ringan' THEN 1 ELSE 0 END)`,
+    })
+      .from(masterAset)
+      .leftJoin(asetKomplain, eq(masterAset.idAset, asetKomplain.idAset))
+      .where(eq(masterAset.status, "Aktif"))
+      .groupBy(masterAset.idAset)
+      .having(sql`COUNT(${asetKomplain.id}) > 0`),
   ]);
 
   // byKekritisan: Critical / Major / Minor individually (from master_aset)
@@ -105,12 +113,13 @@ export async function GET(request: Request) {
     else if (r.kekritisan === "Minor") minor = r.total;
   }
 
-  // bySeverity: Fatal=Critical, Berat+Sedang=At Risk, Ringan=Healthy (from aset_komplain)
+  // bySeverity: count distinct assets by worst complaint severity
+  // Fatal (critical) > Berat/Sedang (at risk) > Ringan (healthy)
   let criticalSev = 0, atRiskSev = 0, healthySev = 0;
-  for (const r of severityRows) {
-    if (r.severity === "Fatal") criticalSev += r.total;
-    else if (r.severity === "Berat" || r.severity === "Sedang") atRiskSev += r.total;
-    else if (r.severity === "Ringan") healthySev += r.total;
+  for (const r of severityAssetRows) {
+    if (Number(r.fatalCount) > 0) criticalSev++;
+    else if (Number(r.atRiskCount) > 0) atRiskSev++;
+    else if (Number(r.healthyCount) > 0) healthySev++;
   }
 
   const jadwal: Record<string, number> = {
