@@ -28,7 +28,7 @@ interface AssetDraft {
   lokasiLantai: string;
   lokasiZona: "Timur" | "Barat" | "Utara" | "Selatan" | "";
   // Step 2
-  logType: "repair" | "replacement" | "";
+  logType: "repair" | "";
   lastPlanned: string;
   lastExecFrom: string;
   lastExecTo: string;
@@ -38,12 +38,6 @@ interface AssetDraft {
   repairCost: string;
   spareParts: string;
   technician: string;
-  replacementDate: string;
-  replacementCause: string;
-  replacementCost: string;
-  prevAssetName: string;
-  prevManufacturer: string;
-  prevModel: string;
 }
 
 interface DropdownOptions {
@@ -84,12 +78,6 @@ function emptyDraft(): AssetDraft {
     repairCost: "",
     spareParts: "",
     technician: "",
-    replacementDate: "",
-    replacementCause: "",
-    replacementCost: "",
-    prevAssetName: "",
-    prevManufacturer: "",
-    prevModel: "",
   };
 }
 
@@ -944,11 +932,6 @@ function MaintenanceHistoryStep({
 }) {
   const labelClass = "block text-xs font-medium text-zinc-600 mb-1.5";
 
-  function switchLogType(t: "repair" | "replacement") {
-    if (form.logType === t) return;
-    setField("logType", t);
-  }
-
   const severityColorMap: Record<string, string> = {
     Fatal: "border-red-400 bg-red-50 text-red-600 shadow-sm",
     Serious: "border-orange-300 bg-orange-50 text-orange-600 shadow-sm",
@@ -958,42 +941,12 @@ function MaintenanceHistoryStep({
 
   return (
     <div className="space-y-6">
-      {/* Log type toggle */}
-      <div>
-        <p className="text-sm font-medium text-zinc-700 mb-2">
-          Latest Maintenance Log{" "}
-          <span className="text-xs font-normal text-zinc-400">(optional)</span>
-        </p>
-        <div className="relative flex rounded-xl border border-zinc-200 bg-zinc-100 overflow-hidden text-sm w-full max-w-xs">
-          <div
-            className={`absolute inset-y-0 w-1/2 bg-white rounded-lg shadow-sm border border-zinc-200 transition-transform duration-200 ${
-              form.logType === "replacement" ? "translate-x-full" : "translate-x-0"
-            }`}
-          />
-          <button
-            type="button"
-            onClick={() => switchLogType("repair")}
-            className={`relative z-10 flex-1 px-4 py-2 font-medium transition-colors duration-150 text-center ${
-              form.logType !== "replacement" ? "text-zinc-900" : "text-zinc-500"
-            }`}
-          >
-            Repair Log
-          </button>
-          <button
-            type="button"
-            onClick={() => switchLogType("replacement")}
-            className={`relative z-10 flex-1 px-4 py-2 font-medium transition-colors duration-150 text-center ${
-              form.logType === "replacement" ? "text-zinc-900" : "text-zinc-500"
-            }`}
-          >
-            Replacement Log
-          </button>
-        </div>
-      </div>
+      <p className="text-sm font-medium text-zinc-700">
+        Latest Maintenance Log{" "}
+        <span className="text-xs font-normal text-zinc-400">(optional)</span>
+      </p>
 
-      {/* Repair Log */}
-      {form.logType !== "replacement" && (
-        <div className="space-y-5">
+      <div className="space-y-5">
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className={labelClass}>Last Planned Maintenance</label>
@@ -1047,7 +1000,7 @@ function MaintenanceHistoryStep({
               <div className="flex flex-wrap gap-2">
                 {(["Fatal", "Serious", "Sedang", "Ringan"] as const).map((s) => {
                   const displayLabel: Record<string, string> = {
-                    Fatal: "Fatal", Serious: "Serious", Sedang: "Medium", Ringan: "Healthy",
+                    Fatal: "Fatal", Serious: "Serious", Sedang: "Medium", Ringan: "Mild",
                   };
                   const active = form.severity === s;
                   return (
@@ -1102,113 +1055,6 @@ function MaintenanceHistoryStep({
             </div>
           </div>
         </div>
-      )}
-
-      {/* Replacement Log (auto-filled, read-only) */}
-      {form.logType === "replacement" && (
-        <div className="flex gap-6">
-          {/* Left: replacement fields */}
-          <div className="flex-1 space-y-5">
-            <div>
-              <label className={labelClass}>Replacement Execution</label>
-              <DateField value={form.replacementDate} onChange={(v) => setField("replacementDate", v)} disabled />
-            </div>
-            <div>
-              <label className={labelClass}>Replacement Cause</label>
-              <textarea
-                value={form.replacementCause}
-                readOnly
-                placeholder="Obsoletely broken..."
-                rows={4}
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600 placeholder:text-zinc-400 resize-none cursor-not-allowed"
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Total Repair Cost</label>
-              <CurrencyField value={form.replacementCost} onChange={() => {}} disabled />
-            </div>
-            {form.replacementDate && (
-              <div className="rounded-lg bg-indigo-50 border border-indigo-100 px-3 py-2 flex items-center gap-2">
-                <CheckCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                <p className="text-xs text-indigo-600">Successfully merged previous asset&apos;s maintenance history</p>
-              </div>
-            )}
-          </div>
-
-          {/* Right: Previous Asset panel */}
-          <div className="w-64 shrink-0">
-            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3">
-              <p className="text-xs font-semibold text-zinc-700">Previous Asset</p>
-
-              <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Name</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={form.prevAssetName}
-                    readOnly
-                    placeholder="—"
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 pr-8 cursor-not-allowed"
-                  />
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
-                </div>
-                {form.prevAssetName && (
-                  <p className="text-[10px] text-indigo-500 mt-1">Previous asset detected on database!</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Manufacturer</label>
-                <input
-                  type="text"
-                  value={form.prevManufacturer}
-                  readOnly
-                  placeholder="—"
-                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-zinc-500 mb-1">Model</label>
-                <input
-                  type="text"
-                  value={form.prevModel}
-                  readOnly
-                  placeholder="—"
-                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600 cursor-not-allowed"
-                />
-              </div>
-
-              {/* Arrow divider */}
-              <div className="flex items-center gap-2 py-1">
-                <div className="flex-1 border-t border-dashed border-zinc-300" />
-                <div className="w-5 h-5 rounded-full border border-zinc-300 bg-white flex items-center justify-center">
-                  <ChevronDown className="w-3 h-3 text-zinc-400" />
-                </div>
-                <div className="flex-1 border-t border-dashed border-zinc-300" />
-              </div>
-
-              <p className="text-xs font-semibold text-zinc-700">Current Asset</p>
-              <div className="rounded-lg border border-zinc-200 bg-white p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-xs font-semibold text-zinc-800">
-                      {form.namaPrefix
-                        ? formatAssetName(form.namaPrefix, form.nextIdAset ?? 0)
-                        : "—"}
-                    </p>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">{form.tipe || "—"}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-zinc-600">{form.merek || "—"}</p>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">{form.assetModel || "—"}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -1361,12 +1207,6 @@ function UpdateAssetsContent() {
           repairCost: latest?.biayaPerbaikan != null ? String(Math.round(latest.biayaPerbaikan)) : "",
           spareParts: latest?.sparePartDigunakan ?? "",
           technician: latest?.teknisiPelaksana ?? "",
-          replacementDate: "",
-          replacementCause: "",
-          replacementCost: "",
-          prevAssetName: "",
-          prevManufacturer: "",
-          prevModel: "",
         };
         setForm(draft);
         setDrafts([draft]);
@@ -1399,21 +1239,6 @@ function UpdateAssetsContent() {
         const data = await res.json();
         setNameCheck(data);
         setField("nextIdAset", data.nextId);
-
-        const repRes = await fetch(`/api/assets/replacement-check?prefix=${encodeURIComponent(form.namaPrefix)}`);
-        const repData = await repRes.json();
-        if (repData.found) {
-          const toDate = (v: string | null | undefined) => (v ? String(v).substring(0, 10) : "");
-          setForm((f) => ({
-            ...f,
-            replacementDate: toDate(repData.data.tanggalPenggantian),
-            replacementCause: repData.data.alasanPenggantian ?? "",
-            replacementCost: repData.data.biayaPenggantian != null ? String(Math.round(repData.data.biayaPenggantian)) : "",
-            prevAssetName: repData.data.prevAssetName ?? "",
-            prevManufacturer: repData.data.prevManufacturer ?? "",
-            prevModel: repData.data.prevModel ?? "",
-          }));
-        }
       } catch {
         // ignore
       } finally {
@@ -1528,9 +1353,7 @@ function UpdateAssetsContent() {
 
         if (res.ok) {
           ok++;
-          const hasRepair = d.logType !== "replacement" && (
-            d.lastPlanned || d.lastExecFrom || d.damageDesc || d.repairCost || d.severity
-          );
+          const hasRepair = !!(d.lastPlanned || d.lastExecFrom || d.damageDesc || d.repairCost || d.severity);
           if (hasRepair) {
             await fetch(`/api/assets/${encodeURIComponent(String(assignedId))}/komplain`, {
               method: "POST",

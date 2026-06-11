@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CalendarDays, ChevronDown, ChevronRight, PlusSquare, Sparkles, SquarePen } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronRight, PlusSquare, Sparkles, SquarePen, X } from "lucide-react";
 
 // Types                                                                     
 
@@ -561,12 +562,103 @@ function FreqTile({ label, value, pct }: { label: string; value: number; pct: nu
   );
 }
 
-// Dashboard Page                                                            
+// Location Filter Combobox
+
+function FilterCombobox({ value, onChange, options, placeholder }: {
+  value: string; onChange: (v: string) => void; options: string[]; placeholder: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [dropVis, setDropVis] = useState(false);
+  const [query, setQuery] = useState("");
+  const [rect, setRect] = useState<{ left: number; top: number; width: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const updateRect = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setRect({ left: r.left, top: r.bottom + 4, width: r.width });
+  }, []);
+
+  useEffect(() => {
+    function onDown(e: MouseEvent) {
+      const t = e.target as Node;
+      if (containerRef.current?.contains(t) || dropdownRef.current?.contains(t)) return;
+      setOpen(false); setQuery("");
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    updateRect();
+    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", updateRect);
+    return () => {
+      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, [open, updateRect]);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setDropVis(open));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
+
+  const filtered = query ? options.filter(o => o.toLowerCase().includes(query.toLowerCase())) : options;
+  const listId = `cb-dash-${placeholder.replace(/\s+/g, "-").toLowerCase()}`;
+
+  function pick(v: string) { onChange(v); setOpen(false); setQuery(""); }
+  function clear(e: React.MouseEvent) { e.stopPropagation(); onChange(""); setOpen(false); setQuery(""); }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className={`flex items-center rounded-lg border shadow-sm transition-[border-color,box-shadow,background-color] duration-150 ${
+        open ? "border-indigo-300 ring-2 ring-indigo-100 bg-white" : value ? "border-indigo-200 bg-indigo-50/50" : "border-slate-200 bg-white hover:border-slate-300"
+      }`}>
+        <input type="text" value={open ? query : value} placeholder={placeholder}
+          role="combobox" aria-expanded={open} aria-controls={listId} aria-label={placeholder} aria-autocomplete="list"
+          onChange={e => { setQuery(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          className={`w-28 min-w-0 bg-transparent pl-3 py-1.5 text-xs focus:outline-none placeholder:text-slate-400 ${value && !open ? "text-indigo-600 font-medium" : "text-slate-700"}`} />
+        {value && !open
+          ? <button onClick={clear} aria-label="Clear location filter" className="px-2 text-slate-400 hover:text-slate-600 transition-colors"><X className="w-3 h-3" /></button>
+          : <ChevronDown className={`mr-2 w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+        }
+      </div>
+      {open && rect && createPortal(
+        <div ref={dropdownRef} id={listId} role="listbox"
+          style={{ position: "fixed", left: rect.left, top: rect.top, minWidth: rect.width, transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+          className={`z-[100] w-max max-w-56 rounded-xl border border-slate-100 bg-white shadow-lg origin-top transition-[opacity,transform] duration-150 ${dropVis ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
+          <div className="max-h-52 overflow-y-auto py-1">
+            {filtered.length === 0
+              ? <p className="px-3 py-2.5 text-xs text-slate-400 italic">No matches</p>
+              : filtered.map(o => (
+                <button key={o} role="option" aria-selected={value === o} onMouseDown={e => e.preventDefault()} onClick={() => pick(o)}
+                  className={`w-full text-left px-3 py-1.5 text-xs transition-colors duration-100 ${value === o ? "bg-indigo-50 text-indigo-600 font-medium" : "text-slate-600 hover:bg-slate-50"}`}>
+                  {o}
+                </button>
+              ))
+            }
+          </div>
+        </div>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
+// Dashboard Page
 
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [userName, setUserName] = useState("User");
   const [loading, setLoading] = useState(true);
+  const [topAssetsLoc, setTopAssetsLoc] = useState("");
+  const [topAssetsList, setTopAssetsList] = useState<TopAsset[] | null>(null);
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
   const router = useRouter();
 
   const [fromMonth, setFromMonth] = useState(() => {
@@ -588,16 +680,26 @@ export default function Dashboard() {
     Promise.all([
       fetch("/api/assets/stats").then(r => r.json()),
       fetch("/api/auth/me").then(r => r.json()),
+      fetch("/api/assets/filters").then(r => r.json()),
     ])
-      .then(([statsData, meData]) => {
+      .then(([statsData, meData, filtersData]) => {
         setStats(statsData);
         const u = meData?.user;
         if (u?.name) setUserName(u.name.split(" ")[0]);
         else if (u?.email) setUserName(u.email.split("@")[0]);
+        setLocationOptions(filtersData.lokasi ?? []);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!topAssetsLoc) return;
+    fetch(`/api/assets/stats?location=${encodeURIComponent(topAssetsLoc)}`)
+      .then(r => r.json())
+      .then(d => setTopAssetsList(d.topAssets ?? []))
+      .catch(console.error);
+  }, [topAssetsLoc]);
 
   if (loading) {
     return (
@@ -735,7 +837,7 @@ export default function Dashboard() {
   const kekritisanMinor    = stats?.byKekritisan.minor ?? 0;
   const jadwal             = stats?.byJadwal ?? { Harian: 0, Mingguan: 0, Bulanan: 0, Tahunan: 0, Reactive: 0 };
   const categories         = stats?.byKategori ?? [];
-  const topAssets          = stats?.topAssets ?? [];
+  const topAssets          = topAssetsLoc ? (topAssetsList ?? []) : (stats?.topAssets ?? []);
   const allMaintenance     = stats?.maintenanceByMonth ?? [];
   const recentlyAdded      = stats?.recentlyAdded ?? 0;
 
@@ -894,13 +996,21 @@ export default function Dashboard() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-slate-700">Top Assets by Complaint</p>
-            <button
-              onClick={() => router.push("/assets")}
-              className="p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
-              title="View all assets"
-            >
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </button>
+            <div className="flex items-center gap-2">
+              <FilterCombobox
+                value={topAssetsLoc}
+                onChange={setTopAssetsLoc}
+                options={locationOptions}
+                placeholder="All Locations"
+              />
+              <button
+                onClick={() => router.push(topAssetsLoc ? `/assets?search=` : "/assets")}
+                className="p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                title="View all assets"
+              >
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-12 gap-1 mb-2 px-0.5">

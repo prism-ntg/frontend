@@ -5,7 +5,10 @@ import { eq, count, and, sql, isNotNull } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const locationFilter = searchParams.get("location") || null;
+
   const [
     [totalRow],
     kekritisanRows,
@@ -55,7 +58,9 @@ export async function GET() {
     })
       .from(masterAset)
       .leftJoin(asetKomplain, eq(masterAset.idAset, asetKomplain.idAset))
-      .where(eq(masterAset.status, "Aktif"))
+      .where(locationFilter
+        ? and(eq(masterAset.status, "Aktif"), eq(masterAset.lokasiGedung, locationFilter))
+        : eq(masterAset.status, "Aktif"))
       .groupBy(
         masterAset.idAset,
         masterAset.nama,
