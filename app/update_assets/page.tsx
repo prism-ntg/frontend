@@ -598,7 +598,10 @@ function CsvPanel({ onSubmitSuccess }: { onSubmitSuccess: (n: number) => void })
       const res = await fetch("/api/assets/import", { method: "POST", body: fd });
       const json = await res.json();
       setResult({ created: json.created ?? 0, errors: json.errors ?? [] });
-      if (json.created > 0) onSubmitSuccess(json.created);
+      if (json.created > 0) {
+        onSubmitSuccess(json.created);
+        fetch("/api/assets/predict", { method: "POST" }).catch(() => {});
+      }
     } catch {
       setResult({ created: 0, errors: ["Network error — please try again"] });
     } finally {
@@ -1382,6 +1385,7 @@ function UpdateAssetsContent() {
     setSubmitting(false);
     if (ok > 0) {
       showToast(`${ok} asset(s) submitted successfully${fail > 0 ? `, ${fail} failed` : ""}`, true);
+      fetch("/api/assets/predict", { method: "POST" }).catch(() => {});
       setTimeout(() => router.push("/assets"), 1500);
     } else {
       showToast(`Submission failed (${fail} error${fail > 1 ? "s" : ""})`, false);

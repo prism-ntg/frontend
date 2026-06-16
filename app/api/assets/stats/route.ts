@@ -33,11 +33,16 @@ export async function GET(request: Request) {
       .where(eq(masterAset.status, "Aktif"))
       .groupBy(masterAset.statusJadwal),
 
-    db.select({ kategori: masterAset.kategori, total: count() })
+    db.select({
+        kategori: masterAset.kategori,
+        total: count(masterAset.id),
+        maintenanceCount: sql<number>`COUNT(aset_komplain.id)`,
+      })
       .from(masterAset)
+      .leftJoin(asetKomplain, eq(masterAset.idAset, asetKomplain.idAset))
       .where(eq(masterAset.status, "Aktif"))
       .groupBy(masterAset.kategori)
-      .orderBy(sql`count(*) DESC`)
+      .orderBy(sql`count(master_aset.id) DESC`)
       .limit(5),
 
     // Top assets by complaint count; latest severity via correlated subquery
@@ -137,7 +142,7 @@ export async function GET(request: Request) {
     bySeverity: { critical: criticalSev, atRisk: atRiskSev, healthy: healthySev },
     byKekritisan: { critical, major, minor },
     byJadwal: jadwal,
-    byKategori: kategoriRows.map(r => ({ name: r.kategori ?? "Other", count: r.total })),
+    byKategori: kategoriRows.map(r => ({ name: r.kategori ?? "Other", count: r.total, maintenanceCount: Number(r.maintenanceCount) })),
     topAssets: topAssetRows,
     maintenanceByMonth: maintenanceRows,
   });

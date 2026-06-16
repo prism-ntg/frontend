@@ -20,17 +20,17 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
         setError(data?.message ?? "Invalid credentials. Please try again.");
+      } else {
+        const dest = data.role === "teknisi" ? "/technician/tickets" : "/dashboard";
+        window.location.href = dest;
       }
     } catch {
       setError("Unable to connect. Please try again.");
     } finally {
       setLoading(false);
-      if (!error) {
-        window.location.href = "/dashboard";
-      }
     }
   }
 
@@ -341,32 +341,24 @@ export default function Login() {
               <div style={{ flex: 1, height: 1, backgroundColor: "#e4e4e7" }} />
             </div>
 
-            <a
-              href="/register"
-              style={{
-                display: "block",
-                width: "100%",
-                boxSizing: "border-box",
-                padding: "10px 0",
-                textAlign: "center",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#3b82f6",
-                backgroundColor: "#eff6ff",
-                border: "1px solid #bfdbfe",
-                borderRadius: 8,
-                textDecoration: "none",
-                transition: "background-color 0.15s",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#dbeafe")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "#eff6ff")
-              }
-            >
-              Create an account
-            </a>
+            <div style={{ display: "flex", gap: 8 }}>
+              <a
+                href="/register"
+                style={{ flex: 1, boxSizing: "border-box", padding: "10px 0", textAlign: "center", fontSize: 13, fontWeight: 500, color: "#3b82f6", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, textDecoration: "none" }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#dbeafe")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#eff6ff")}
+              >
+                Admin
+              </a>
+              <a
+                href="/register/teknisi"
+                style={{ flex: 1, boxSizing: "border-box", padding: "10px 0", textAlign: "center", fontSize: 13, fontWeight: 500, color: "#6366f1", backgroundColor: "#eef2ff", border: "1px solid #c7d2fe", borderRadius: 8, textDecoration: "none" }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#e0e7ff")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#eef2ff")}
+              >
+                Teknisi
+              </a>
+            </div>
           </div>
         </div>
 

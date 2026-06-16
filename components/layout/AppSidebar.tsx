@@ -10,130 +10,193 @@ import ReportsIcon from "@/public/report.webp";
 import DashboardIconActive from "@/public/dashboardActive.webp";
 import assetsIconActive from "@/public/assetsActive.webp";
 import reportsIconActive from "@/public/reportsActive.webp";
-import { LogOut, ArrowLeftRight, Wrench } from "lucide-react";
+import { LogOut, ArrowLeftRight, Wrench, ClipboardList, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const NAV_LINKS = [
+  { name: "Dashboard", href: "/dashboard", icon: DashboardIcon, iconActive: DashboardIconActive },
+  { name: "Assets",    href: "/assets",    icon: AssetsIcon,    iconActive: assetsIconActive    },
+  { name: "AI Reports",href: "/reports",   icon: ReportsIcon,   iconActive: reportsIconActive   },
+];
+
+const LOG_LINKS = [
+  { name: "Replacement Log",  href: "/logs/replacement", Icon: ArrowLeftRight },
+  { name: "Maintenance Log",  href: "/logs/maintenance", Icon: Wrench         },
+];
+
+const ADMIN_LINKS = [
+  { name: "Technicians", href: "/admin/technicians", Icon: Users },
+];
 
 export function AppSidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname  = usePathname();
+  const router    = useRouter();
   const { isOpen, setIsOpen } = useSidebar();
+  const [role, setRole] = useState<"admin" | "teknisi" | null>(null);
 
-  const links = [
-    {
-      name: "Dashboard",
-      href: "/dashboard",
-      icon: DashboardIcon,
-      iconActive: DashboardIconActive,
-    },
-    {
-      name: "Assets",
-      href: "/assets",
-      icon: AssetsIcon,
-      iconActive: assetsIconActive,
-    },
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(r => r.json())
+      .then(d => setRole(d?.user?.role ?? "admin"))
+      .catch(() => setRole("admin"));
+  }, []);
 
-    {
-      name: "AI Reports",
-      href: "/reports",
-      icon: ReportsIcon,
-      iconActive: reportsIconActive,
-    },
-  ];
+  async function handleLogout() {
+    try { await fetch("/api/auth/logout", { method: "POST" }); } catch {}
+    router.push("/");
+  }
+
+  const isTeknisi = role === "teknisi";
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <aside
-        className={`w-64 md:w-1/8 shrink-0 bg-[#333333] text-white flex flex-col h-screen overflow-y-auto fixed md:static inset-y-0 left-0 z-50 transition-transform duration-300 ${
+        className={`w-56 shrink-0 flex flex-col h-screen fixed md:static inset-y-0 left-0 z-50 transition-transform duration-300 ease-out select-none ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
+        style={{ background: "linear-gradient(175deg, #0e1420 0%, #111827 60%, #0f172a 100%)" }}
       >
-        <div className="p-6">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <span className="text-blue-400 text-3xl">
-              <img src="/icon.webp" alt="" />
-            </span>{" "}
-            PRISM_
-          </h1>
-        </div>
-        <nav className="flex-1 px-4 py-8 space-y-2">
-          {links.map((link) => {
-            const isActive =
-              pathname.startsWith(link.href) ||
-              (pathname === "/" && link.href === "/dashboard");
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? "bg-white text-[#3F65ED]"
-                    : "text-gray hover:bg-white/10"
-                }`}
+        {/* Indigo glow at top */}
+        <div
+          className="absolute top-0 inset-x-0 h-40 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 50% -30%, rgba(99,102,241,0.22) 0%, transparent 70%)" }}
+        />
+
+        {/* ── Brand ── */}
+        <div className="relative px-4 pt-5 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border border-indigo-500/25"
+              style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.25), rgba(99,102,241,0.08))" }}>
+              <img src="/icon.webp" alt="" style={{ width: 18, height: 18 }} />
+            </div>
+            <div className="leading-none">
+              <span
+                className="text-[15px] font-bold tracking-tight"
+                style={{ background: "linear-gradient(90deg, #f1f5f9 0%, #a5b4fc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
               >
-                <Image
-                  src={isActive ? link.iconActive : link.icon}
-                  alt={link.name}
-                  className="w-5 h-5"
-                />
-                <span className="font-medium">{link.name}</span>
-              </Link>
-            );
-          })}
-
-          {/* Divider */}
-          <div className="pt-3 pb-1">
-            <p className="px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">Logs</p>
+                PRISM
+              </span>
+              <span className="text-indigo-400 font-extrabold text-[15px]">_</span>
+            </div>
           </div>
+          {isTeknisi && (
+            <div className="mt-2 px-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-indigo-400/70">Teknisi Portal</span>
+            </div>
+          )}
+        </div>
 
-          <Link
-            href="/logs/replacement"
-            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-              pathname.startsWith("/logs/replacement")
-                ? "bg-white text-[#3F65ED]"
-                : "text-gray-300 hover:bg-white/10"
-            }`}
-          >
-            <ArrowLeftRight className="w-5 h-5 shrink-0" />
-            <span className="font-medium">Replacement Log</span>
-          </Link>
+        {/* Top divider */}
+        <div className="mx-4 h-px mb-3" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.08), transparent)" }} />
 
-          <Link
-            href="/logs/maintenance"
-            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-              pathname.startsWith("/logs/maintenance")
-                ? "bg-white text-[#3F65ED]"
-                : "text-gray-300 hover:bg-white/10"
-            }`}
-          >
-            <Wrench className="w-5 h-5 shrink-0" />
-            <span className="font-medium">Maintenance Log</span>
-          </Link>
+        {/* ── Navigation ── */}
+        <nav className="flex-1 px-2.5 overflow-y-auto space-y-0.5">
+
+          {isTeknisi ? (
+            /* Teknisi nav: only tickets */
+            <>
+              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Menu</p>
+              <NavItem href="/technician/tickets" label="Tiket Saya" isActive={pathname.startsWith("/technician/tickets")}>
+                <ClipboardList style={{ width: 15, height: 15 }} />
+              </NavItem>
+            </>
+          ) : (
+            /* Admin nav: full navigation */
+            <>
+              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Main</p>
+
+              {NAV_LINKS.map((link) => {
+                const isActive = pathname.startsWith(link.href) || (pathname === "/" && link.href === "/dashboard");
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                      isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/[0.045]"
+                    }`}
+                    style={isActive ? { background: "rgba(99,102,241,0.18)" } : undefined}
+                  >
+                    {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] rounded-r-full bg-indigo-400" />}
+                    <Image src={isActive ? link.iconActive : link.icon} alt={link.name} className="shrink-0" style={{ width: 16, height: 16, opacity: isActive ? 1 : 0.6 }} />
+                    {link.name}
+                  </Link>
+                );
+              })}
+
+              {/* Records section */}
+              <div className="pt-4 pb-1.5">
+                <div className="mx-2 h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
+                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Records</p>
+              </div>
+
+              {LOG_LINKS.map(({ name, href, Icon }) => {
+                const isActive = pathname.startsWith(href);
+                return (
+                  <NavItem key={name} href={href} label={name} isActive={isActive}>
+                    <Icon style={{ width: 15, height: 15, opacity: isActive ? 0.9 : 0.5 }} />
+                  </NavItem>
+                );
+              })}
+
+              {/* Admin section */}
+              <div className="pt-4 pb-1.5">
+                <div className="mx-2 h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
+                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Admin</p>
+              </div>
+
+              {ADMIN_LINKS.map(({ name, href, Icon }) => {
+                const isActive = pathname.startsWith(href);
+                return (
+                  <NavItem key={name} href={href} label={name} isActive={isActive}>
+                    <Icon style={{ width: 15, height: 15, opacity: isActive ? 0.9 : 0.5 }} />
+                  </NavItem>
+                );
+              })}
+            </>
+          )}
         </nav>
-        <div className="p-4 mt-auto">
+
+        {/* ── Bottom: Logout ── */}
+        <div className="mx-4 h-px mt-3" style={{ background: "rgba(255,255,255,0.05)" }} />
+        <div className="px-2.5 py-4">
           <button
-            onClick={async () => {
-              try {
-                await fetch("/api/auth/logout", { method: "POST" });
-                router.push("/");
-              } catch (error) {
-                console.error("Failed to logout", error);
-              }
-            }}
-            className="flex items-center gap-4 px-4 py-3 rounded-lg transition-colors w-full text-left text-gray-300 hover:bg-white/10 hover:text-white"
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium text-white/30 hover:text-white/65 hover:bg-white/[0.045] transition-all duration-150"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <LogOut style={{ width: 15, height: 15 }} className="shrink-0" />
+            Logout
           </button>
         </div>
       </aside>
     </>
+  );
+}
+
+function NavItem({ href, label, isActive, children }: {
+  href: string;
+  label: string;
+  isActive: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+        isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/[0.045]"
+      }`}
+      style={isActive ? { background: "rgba(99,102,241,0.18)" } : undefined}
+    >
+      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] rounded-r-full bg-indigo-400" />}
+      <span className="shrink-0">{children}</span>
+      {label}
+    </Link>
   );
 }

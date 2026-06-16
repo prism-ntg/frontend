@@ -4,10 +4,7 @@ import { users } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback_secret_for_development_only"
-);
+import { JWT_SECRET } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +29,6 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
     if (!passwordMatch) {
       return NextResponse.json(
         { message: "Invalid email or password" },
@@ -40,14 +36,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = await new SignJWT({ id: user.id, email: user.email })
+    if (user.status !== "active") {
+      return NextResponse.json(
+        { message: "Akun Anda menunggu persetujuan admin." },
+        { status: 403 }
+      );
+    }
+
+    const token = await new SignJWT({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("24h")
       .sign(JWT_SECRET);
 
     const res = NextResponse.json(
-      { message: "Login successful" },
+      { message: "Login successful", role: user.role },
       { status: 200 }
     );
 
@@ -57,7 +64,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 60 * 60 * 24, // 24 hours
+      maxAge: 60 * 60 * 24,
     });
     return res;
   } catch (error) {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { asetKomplain, masterAset } from "@/db/schema";
-import { eq, desc, like, count, and } from "drizzle-orm";
+import { eq, desc, like, count, and, isNull, or, ne } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -14,14 +14,15 @@ export async function GET(request: Request) {
   const gedung   = searchParams.get("gedung")   ?? "";
   const offset   = (page - 1) * limit;
 
-  const conditions = [];
+  // Only show historical records (no ticketStatus) and completed tickets
+  const conditions = [
+    or(isNull(asetKomplain.ticketStatus), eq(asetKomplain.ticketStatus, "completed")),
+  ];
   if (search)   conditions.push(like(asetKomplain.nama, `%${search}%`));
   if (severity) conditions.push(eq(asetKomplain.severity, severity));
   if (gedung)   conditions.push(eq(masterAset.lokasiGedung, gedung));
 
-  const whereClause = conditions.length > 0
-    ? (conditions.length === 1 ? conditions[0] : and(...conditions))
-    : undefined;
+  const whereClause = and(...conditions);
 
   const [[{ total }], rows, gedungRows] = await Promise.all([
     db

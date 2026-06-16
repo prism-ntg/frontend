@@ -8,7 +8,7 @@ import { CalendarDays, ChevronDown, ChevronRight, PlusSquare, Sparkles, SquarePe
 // Types                                                                     
 
 interface MonthCount { month: string; total: number }
-interface CategoryCount { name: string; count: number }
+interface CategoryCount { name: string; count: number; maintenanceCount?: number }
 interface TopAsset {
   idAset: number;
   nama: string | null;
@@ -469,14 +469,19 @@ function DonutChart({ categories, total }: { categories: CategoryCount[]; total:
         {categories.map((cat, i) => (
           <div
             key={cat.name}
-            className={`flex items-center gap-2 text-xs rounded-md px-1.5 py-0.5 transition-colors duration-150 cursor-pointer ${hovered === i ? "bg-slate-50" : ""}`}
+            className={`flex items-center gap-2 text-xs rounded-md px-1.5 py-1 transition-colors duration-150 cursor-pointer ${hovered === i ? "bg-slate-50" : ""}`}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
           >
             <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: CAT_COLORS[i % CAT_COLORS.length] }} />
-            <span className="text-slate-600 flex-1 truncate">{cat.name}</span>
-            <span className="text-slate-500 font-medium tabular-nums">{cat.count.toLocaleString()}</span>
-            <span className="text-slate-400 w-9 text-right tabular-nums">
+            <div className="flex-1 min-w-0">
+              <span className="text-slate-600 truncate block">{cat.name}</span>
+              {cat.maintenanceCount !== undefined && (
+                <span className="text-[10px] text-slate-400 tabular-nums">{cat.maintenanceCount.toLocaleString()} maintenance</span>
+              )}
+            </div>
+            <span className="text-slate-500 font-medium tabular-nums shrink-0">{cat.count.toLocaleString()}</span>
+            <span className="text-slate-400 w-9 text-right tabular-nums shrink-0">
               {Math.round((cat.count / total) * 100)}%
             </span>
           </div>
@@ -683,7 +688,6 @@ const COST_MONTHS = [
 
 function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading: boolean }) {
   const [mounted, setMounted] = useState(false);
-  const [hovered, setHovered] = useState<number | null>(null);
 
   useEffect(() => {
     if (loading) { setMounted(false); return; }
@@ -693,14 +697,12 @@ function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading
 
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {[1, 2, 3].map(i => (
-          <div key={i} className="animate-pulse">
-            <div className="flex justify-between mb-1">
-              <div className="h-3 w-32 rounded bg-slate-100" />
-              <div className="h-3 w-24 rounded bg-slate-100" />
-            </div>
-            <div className="h-8 rounded-lg bg-slate-100" />
+          <div key={i} className="flex items-center gap-3 animate-pulse">
+            <div className="h-3 w-28 rounded bg-slate-100 shrink-0" />
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100" />
+            <div className="h-3 w-16 rounded bg-slate-100 shrink-0" />
           </div>
         ))}
       </div>
@@ -709,7 +711,7 @@ function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading
 
   if (data.length === 0) {
     return (
-      <div className="h-32 flex items-center justify-center text-xs text-slate-400">
+      <div className="h-20 flex items-center justify-center text-xs text-slate-400">
         No cost data for selected period
       </div>
     );
@@ -719,44 +721,28 @@ function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading
   const COLORS = ["#4F75FF", "#6366f1", "#8b5cf6", "#a78bfa", "#c4b5fd"];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {data.map((item, i) => {
         const widthPct = item.totalBiayaPerbaikan > 0
           ? Math.max((item.totalBiayaPerbaikan / maxCost) * 100, 2)
           : 0;
-        const isHov = hovered === i;
         const color = COLORS[i % COLORS.length];
         return (
-          <div
-            key={item.gedung}
-            onMouseEnter={() => setHovered(i)}
-            onMouseLeave={() => setHovered(null)}
-            className="cursor-default"
-          >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-slate-600 truncate max-w-[220px]">
-                {item.gedung}
-              </span>
-              <div className="flex items-center gap-3 shrink-0 ml-2">
-                <span className="text-[11px] text-slate-400">{item.totalKomplain} komplain</span>
-                <span
-                  className="text-xs font-semibold tabular-nums transition-colors duration-150"
-                  style={{ color: isHov ? color : "#475569" }}
-                >
-                  {formatCost(item.totalBiayaPerbaikan)}
-                </span>
-              </div>
-            </div>
-            <div className="h-8 w-full rounded-lg bg-slate-50 overflow-hidden border border-slate-100">
+          <div key={item.gedung} className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 truncate w-28 shrink-0">{item.gedung}</span>
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
               <div
-                className="h-full rounded-lg"
+                className="h-full rounded-full"
                 style={{
                   width: mounted ? `${widthPct}%` : "0%",
                   backgroundColor: color,
-                  opacity: hovered !== null && !isHov ? 0.35 : 1,
-                  transition: `width 0.7s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.07}s, opacity 0.2s ease`,
+                  transition: `width 0.6s cubic-bezier(0.34,1.1,0.64,1) ${i * 0.06}s`,
                 }}
               />
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[10px] text-slate-400 tabular-nums">{item.totalKomplain}×</span>
+              <span className="text-[11px] font-semibold text-slate-600 tabular-nums w-24 text-right">{formatCost(item.totalBiayaPerbaikan)}</span>
             </div>
           </div>
         );

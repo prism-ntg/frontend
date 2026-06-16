@@ -6,6 +6,8 @@ export const users = mysqlTable('users', {
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: text('password').notNull(),
+  role: varchar('role', { length: 50 }).notNull().default('admin'),
+  status: varchar('status', { length: 50 }).notNull().default('active'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -44,6 +46,9 @@ export const asetKomplain = mysqlTable('aset_komplain', {
   biayaPerbaikan: float('biaya_perbaikan'),
   sparePartDigunakan: text('spare_part_digunakan'),
   teknisiPelaksana: varchar('teknisi_pelaksana', { length: 255 }),
+  // Ticketing system fields (null = historical/legacy records)
+  ticketStatus: varchar('ticket_status', { length: 50 }),
+  assignedUserId: int('assigned_user_id'),
 });
 
 export const riwayatPenggantianAset = mysqlTable('riwayat_penggantian_aset', {
@@ -64,6 +69,17 @@ export const katalogHarga = mysqlTable('katalog_harga', {
   hargaBeli: float('harga_beli'),
 });
 
+export const notifications = mysqlTable('notifications', {
+  id: int('id').autoincrement().primaryKey(),
+  userId: int('user_id').notNull().references(() => users.id),
+  type: varchar('type', { length: 50 }).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  isRead: int('is_read').notNull().default(0),
+  relatedTicketId: int('related_ticket_id'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const chatMessage = mysqlTable('chat_messages', {
   id: int('id').autoincrement().primaryKey(),
   userId: int('user_id').notNull().references(() => users.id),
@@ -75,6 +91,7 @@ export const chatMessage = mysqlTable('chat_messages', {
 
 export const userRelations = relations(users, ({ many }) => ({
   chatMessages: many(chatMessage),
+  notifications: many(notifications),
 }));
 
 export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
@@ -89,6 +106,7 @@ export const masterAsetRelations = relations(masterAset, ({ many }) => ({
 
 export const asetKomplainRelations = relations(asetKomplain, ({ one }) => ({
   masterAset: one(masterAset, { fields: [asetKomplain.idAset], references: [masterAset.idAset] }),
+  assignedUser: one(users, { fields: [asetKomplain.assignedUserId], references: [users.id] }),
 }));
 
 export const riwayatPenggantianAsetRelations = relations(riwayatPenggantianAset, ({ one }) => ({

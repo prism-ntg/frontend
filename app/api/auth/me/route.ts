@@ -1,36 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { getCurrentUser } from "@/lib/auth";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback_secret_for_development_only"
-);
-
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get("token")?.value;
-
-  if (!token) {
+  const authUser = await getCurrentUser(request);
+  if (!authUser) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
     const userRecord = await db.query.users.findFirst({
-      where: eq(users.id, Number(payload.id)),
-      columns: { name: true, email: true },
+      where: eq(users.id, authUser.id),
+      columns: { name: true, email: true, role: true, status: true },
     });
+
     return NextResponse.json({
       user: {
-        id: payload.id,
-        email: payload.email ?? userRecord?.email,
+        id: authUser.id,
+        email: authUser.email,
         name: userRecord?.name,
+        role: userRecord?.role ?? authUser.role,
       },
-    }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+    });
+  } catch {
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

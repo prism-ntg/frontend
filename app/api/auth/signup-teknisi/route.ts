@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../../db";
-import { users } from "../../../../db/schema";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "User already exists" },
+        { message: "Email sudah terdaftar" },
         { status: 409 }
       );
     }
@@ -32,16 +32,16 @@ export async function POST(req: NextRequest) {
       name,
       email,
       password: hashedPassword,
-      role: "admin",
-      status: "active",
+      role: "teknisi",
+      status: "pending",
     });
 
     return NextResponse.json(
-      { message: "User created successfully" },
+      { message: "Pendaftaran berhasil. Tunggu persetujuan admin." },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error("Signup teknisi error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

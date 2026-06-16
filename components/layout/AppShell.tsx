@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1 flex w-full flex-col h-screen overflow-hidden bg-[#F7F7F8]">
           <AppHeader />
           <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F5F5FC]">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-8 min-h-[calc(100vh-6rem)]">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-8 min-h-[calc(100vh-3.5rem)]">
               {children}
             </div>
           </div>

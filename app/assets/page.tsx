@@ -12,7 +12,7 @@ import {
 
 // Types                                                                    
 
-type PanelView = "overview" | "edit" | "maintenance-history" | "add-maintenance" | "finish-maintenance";
+type PanelView = "overview" | "edit" | "maintenance-history" | "add-maintenance" | "finish-maintenance" | "replace";
 
 interface Asset {
   id: number;
@@ -109,7 +109,12 @@ interface ReplaceForm {
 
 interface StartRepairForm {
   tanggalPerencanaan: string;
-  tanggalPengerjaan: string;
+  assignedUserId: string;
+}
+
+interface TeknosiOption {
+  id: number;
+  name: string;
 }
 
 interface FinishRepairForm {
@@ -798,7 +803,6 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
   }
 
   const age = assetAgeParts(asset.tglInstalasi);
-  const conf = asset.confidence != null ? Math.round(asset.confidence * 100) : null;
   const last = lastMaintenance(logs);
   const next = nextRecommended(last, asset.statusJadwal);
 
@@ -812,9 +816,11 @@ function OverviewContent({ asset, logs, loading }: { asset: Asset; logs: Komplai
           </p>
         </div>
         <div>
-          <p className="text-[11px] text-zinc-500 mb-0.5">Confidence</p>
+          <p className="text-[11px] text-zinc-500 mb-0.5">Total Maintenance</p>
           <p className="text-2xl font-bold text-zinc-800">
-            {conf != null ? `${conf}%` : <span className="text-zinc-500 text-sm font-medium">Run Predict</span>}
+            {loading ? <span className="text-zinc-400 text-sm font-normal">—</span> : (
+              <>{logs.length}<span className="text-xs font-normal text-zinc-500 ml-1">records</span></>
+            )}
           </p>
         </div>
       </div>
@@ -1320,93 +1326,45 @@ function ReplaceFormFields({ form, setForm, asset, nextIdAset }: {
   );
 }
 
-// Add Maintenance Form (Start Maintenance ticketing)
+// Standalone Replace Panel (separate tab from maintenance)
 
-function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, onDirtyChange, onToast }: {
+function ReplacePanelContent({ asset, onSave, onCancel, onDirtyChange, onToast }: {
   asset: Asset;
-  initialType?: "repair" | "replace";
   onSave: (result?: { newIdAset?: number; newNama?: string }) => void;
   onCancel: () => void;
   onDirtyChange?: (dirty: boolean) => void;
   onToast: (type: "success" | "error", message: string) => void;
 }) {
-  const [type, setType] = useState<"repair" | "replace">(initialType);
-  // Repair now uses a simplified 2-field start form
-  const [startForm, setStartForm] = useState<StartRepairForm>({ tanggalPerencanaan: "", tanggalPengerjaan: "" });
+  const initialPrefix = asset.nama?.replace(/-\d+$/, "") ?? "";
   const [replace, setReplace] = useState<ReplaceForm>({
     ...INIT_REPLACE,
-    prefix: asset.nama?.replace(/-\d+$/, "") ?? "",
+    prefix: initialPrefix,
   });
   const [nextIdAset, setNextIdAset] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const repairBtnRef = useRef<HTMLButtonElement>(null);
-  const replaceBtnRef = useRef<HTMLButtonElement>(null);
-  const [pill, setPill] = useState<{ left: number; width: number; ready: boolean; animate: boolean }>({ left: 0, width: 0, ready: false, animate: false });
 
   useEffect(() => {
-    const btn = type === "repair" ? repairBtnRef.current : replaceBtnRef.current;
-    if (!btn) return;
-    setPill(prev => ({ left: btn.offsetLeft, width: btn.offsetWidth, ready: true, animate: prev.ready }));
-  }, [type]);
-
-  useEffect(() => {
-    if (type === "replace") {
-      fetch("/api/assets/next-id")
-        .then(r => r.json())
-        .then(d => setNextIdAset(d.nextId ?? null))
-        .catch(() => setNextIdAset(null));
-    }
-  }, [type]);
-
-  const startRepairDirty = startForm.tanggalPengerjaan.trim() !== "" || startForm.tanggalPerencanaan.trim() !== "";
-  const startRepairReady = startForm.tanggalPengerjaan.trim() !== "";
+    fetch("/api/assets/next-id")
+      .then(r => r.json())
+      .then(d => setNextIdAset(d.nextId ?? null))
+      .catch(() => setNextIdAset(null));
+  }, []);
 
   const replaceReq = [replace.tanggalPengerjaan, replace.prefix, replace.alasanPenggantian, replace.biayaPenggantian];
   const replaceAllFilled = replaceReq.every(v => v.trim() !== "");
-  const initialPrefix = asset.nama?.replace(/-\d+$/, "") ?? "";
   const replaceAnyFilled =
     replace.tanggalPengerjaan.trim() !== "" ||
     replace.alasanPenggantian.trim() !== "" ||
     replace.biayaPenggantian.trim() !== "" ||
     replace.prefix.trim() !== initialPrefix.trim();
 
-  const dirty = startRepairDirty || replaceAnyFilled;
-  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => { onDirtyChange?.(replaceAnyFilled); }, [replaceAnyFilled, onDirtyChange]);
+
+  const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
 
   async function handleSave() {
-    if (type === "repair") {
-      if (!startRepairReady) return;
-      setSaving(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/assets/${encodeURIComponent(asset.idAset)}/start-maintenance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            tanggalPerencanaan: startForm.tanggalPerencanaan || null,
-            tanggalPengerjaan: startForm.tanggalPengerjaan,
-          }),
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.message ?? "Failed to start maintenance");
-        onSave();
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        setError(msg);
-        onToast("error", `Couldn't start maintenance: ${msg}`);
-      } finally {
-        setSaving(false);
-      }
-      return;
-    }
-
-    // Replace flow (unchanged)
-    if (!replaceAnyFilled) return;
-    if (!replaceAllFilled) {
-      onToast("error", "Please fill all required fields");
-      return;
-    }
+    if (!replaceAllFilled) { onToast("error", "Please fill all required fields"); return; }
     setSaving(true);
     setError(null);
     try {
@@ -1426,97 +1384,136 @@ function AddMaintenanceForm({ asset, initialType = "repair", onSave, onCancel, o
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
-      onToast("error", `Couldn't save replacement log: ${msg}`);
+      onToast("error", `Couldn't save replacement: ${msg}`);
     } finally {
       setSaving(false);
     }
   }
 
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4">
+        <p className="text-xs font-medium text-zinc-800 mb-3">Replace Asset</p>
+        {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">{error}</p>}
+        <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} nextIdAset={nextIdAset} />
+      </div>
+      <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
+        <button onClick={onCancel} className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+          Cancel
+        </button>
+        <button onClick={handleSave} disabled={saving || !replaceAllFilled}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700 disabled:opacity-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+          {saving && <Loader2 className="w-3 h-3 animate-spin" />}
+          Replace Asset
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Add Maintenance Form (Start Maintenance ticketing)
+
+function AddMaintenanceForm({ asset, onSave, onCancel, onDirtyChange, onToast }: {
+  asset: Asset;
+  initialType?: "repair" | "replace";
+  onSave: (result?: { newIdAset?: number; newNama?: string }) => void;
+  onCancel: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
+  onToast: (type: "success" | "error", message: string) => void;
+}) {
+  const [startForm, setStartForm] = useState<StartRepairForm>({ tanggalPerencanaan: "", assignedUserId: "" });
+  const [teknisiList, setTeknisiList] = useState<TeknosiOption[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/technicians?status=active")
+      .then(r => r.json())
+      .then(d => setTeknisiList(d.data ?? []))
+      .catch(() => {});
+  }, []);
+
+  const dirty = startForm.assignedUserId.trim() !== "" || startForm.tanggalPerencanaan.trim() !== "";
+  const ready = startForm.assignedUserId.trim() !== "";
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+
   const inputCls = "w-full rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
+
+  async function handleSave() {
+    if (!ready) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/tickets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idAset: asset.idAset,
+          tanggalPerencanaan: startForm.tanggalPerencanaan || null,
+          assignedUserId: Number(startForm.assignedUserId),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? "Failed to start maintenance");
+      onSave();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      onToast("error", `Couldn't start maintenance: ${msg}`);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-medium text-zinc-800">
-            {type === "repair" ? "Start Maintenance Ticket" : "Add Maintenance Log"}
-          </p>
-        </div>
-
-        {error && (
-          <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">{error}</p>
-        )}
-
-        <div className="mb-4">
-          <p className="text-xs font-medium text-zinc-600 mb-2">Maintenance Type</p>
-          <div className="relative inline-flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5">
-            {pill.ready && (
-              <span
-                className="absolute inset-y-0.5 rounded-md bg-white shadow-sm pointer-events-none"
-                style={{
-                  left: `${pill.left}px`,
-                  width: `${pill.width}px`,
-                  ...(pill.animate && { transition: "left 200ms cubic-bezier(0.23, 1, 0.32, 1), width 200ms cubic-bezier(0.23, 1, 0.32, 1)" }),
-                }}
-              />
-            )}
-            <button ref={repairBtnRef} onClick={() => setType("repair")}
-              className={`relative z-10 px-4 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 ${
-                type === "repair" ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
-              }`}>
-              Repair
-            </button>
-            <button ref={replaceBtnRef} onClick={() => setType("replace")}
-              className={`relative z-10 px-4 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 ${
-                type === "replace" ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700"
-              }`}>
-              Replace
-            </button>
+        <p className="text-xs font-medium text-zinc-800 mb-3">Buat Tiket Maintenance</p>
+        {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">{error}</p>}
+        <div className="space-y-4">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] text-amber-700 leading-relaxed">
+            Asset akan ditandai <strong>Under Maintenance</strong> dan tiket dikirim ke teknisi yang ditugaskan.
+            Teknisi akan mengisi detail kerusakan dan biaya saat menyelesaikan tiket.
           </div>
-        </div>
-
-        {type === "repair" ? (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] text-amber-700 leading-relaxed">
-              Asset will be marked <strong>Under Maintenance</strong> until you finish the ticket.
-              Remaining details (severity, cost, technician) are filled when completing.
+          <div className="flex gap-3">
+            <div className="flex flex-col items-center pt-[1.65rem] pb-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+              <div className="flex-1 w-px bg-indigo-200 my-1" />
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0" />
             </div>
-            <div className="flex gap-3">
-              <div className="flex flex-col items-center pt-[1.65rem] pb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                <div className="flex-1 w-px bg-indigo-200 my-1" />
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0" />
+            <div className="flex-1 space-y-2.5">
+              <div>
+                <label className="text-xs font-medium text-zinc-700 mb-1 block">Planned Date</label>
+                <input type="date" value={startForm.tanggalPerencanaan}
+                  onChange={e => setStartForm(f => ({ ...f, tanggalPerencanaan: e.target.value }))}
+                  className={inputCls} />
               </div>
-              <div className="flex-1 space-y-2.5">
-                <div>
-                  <label className="text-xs font-medium text-zinc-700 mb-1 block">Planned Date</label>
-                  <input type="date" max={maxDateStr()} value={startForm.tanggalPerencanaan}
-                    onChange={e => setStartForm(f => ({ ...f, tanggalPerencanaan: e.target.value }))}
-                    className={inputCls} />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-700 mb-1 block">Execution Date*</label>
-                  <input type="date" max={maxDateStr()} value={startForm.tanggalPengerjaan}
-                    onChange={e => setStartForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))}
-                    className={inputCls} />
-                </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-700 mb-1 block">Assign Teknisi*</label>
+                <select value={startForm.assignedUserId}
+                  onChange={e => setStartForm(f => ({ ...f, assignedUserId: e.target.value }))}
+                  className={inputCls}>
+                  <option value="">Pilih teknisi…</option>
+                  {teknisiList.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+                {teknisiList.length === 0 && (
+                  <p className="text-[10px] text-zinc-400 mt-1">Belum ada teknisi aktif. Tambahkan teknisi di menu Admin.</p>
+                )}
               </div>
             </div>
           </div>
-        ) : (
-          <ReplaceFormFields form={replace} setForm={setReplace} asset={asset} nextIdAset={nextIdAset} />
-        )}
+        </div>
       </div>
-
       <div className="shrink-0 border-t border-zinc-100 px-4 py-3 flex items-center justify-end gap-2 bg-white">
-        <button onClick={onCancel}
-          className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
+        <button onClick={onCancel} className="px-4 py-2 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-600 hover:bg-zinc-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           Cancel
         </button>
-        <button onClick={handleSave} disabled={saving || (type === "repair" ? !startRepairReady : !replaceAllFilled)}
+        <button onClick={handleSave} disabled={saving || !ready}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 active:scale-[0.97] transition-[background-color,transform] duration-150">
           {saving && <Loader2 className="w-3 h-3 animate-spin" />}
-          {type === "repair" ? "Start Maintenance" : "Save Log"}
+          Kirim Tiket
         </button>
       </div>
     </div>
@@ -2260,7 +2257,9 @@ export default function AssetsPage() {
 
   // Panel tab sliding indicator
   useEffect(() => {
-    const activeIdx = (panelView === "overview" || panelView === "edit") ? 0 : 1;
+    const activeIdx =
+      (panelView === "overview" || panelView === "edit") ? 0 :
+      (panelView === "replace") ? 2 : 1;
     const el = panelTabRefs.current[activeIdx];
     if (!el) return;
     setPanelIndicator({ left: el.offsetLeft + 8, width: el.offsetWidth - 16, ready: true });
@@ -2292,6 +2291,10 @@ export default function AssetsPage() {
       setPredicting(false);
     }
   }
+
+  // Auto-run prediction on mount to cover existing DB assets and newly added ones
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { void runPrediction(); }, []);
 
   function mergeEntries(komplain: KomplainLog[], replace: ReplaceLog[]): MaintenanceEntry[] {
     const fromKomplain: MaintenanceEntry[] = komplain.map(k => ({
@@ -2388,8 +2391,12 @@ export default function AssetsPage() {
   }
 
   function goToAddMaintenance(type: "repair" | "replace") {
-    setAddMaintenanceInitialType(type);
-    setPanelView("add-maintenance");
+    if (type === "replace") {
+      animateToPanelView("replace");
+    } else {
+      setAddMaintenanceInitialType(type);
+      animateToPanelView("add-maintenance");
+    }
   }
 
   function handleEditSave(updated: Partial<Asset>) {
@@ -2739,11 +2746,11 @@ export default function AssetsPage() {
               <X className="w-3 h-3" /> Reset
             </button>
           )}
-          <button onClick={runPrediction} disabled={predicting} title="Run AI Prediction"
-            className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-500 shadow-sm hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 active:scale-95 disabled:opacity-50 transition-[background-color,border-color,color,transform] duration-150">
-            {predicting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            {predicting ? "Running…" : "Predict"}
-          </button>
+          {predicting && (
+            <span className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-400 shadow-sm">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing…
+            </span>
+          )}
         </div>
 
         {predMsg && (
@@ -2956,7 +2963,15 @@ export default function AssetsPage() {
               className={`px-3 py-2.5 text-xs font-medium transition-colors duration-150 ${
                 (panelView === "maintenance-history" || panelView === "add-maintenance" || panelView === "finish-maintenance") ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
               }`}>
-              {panelView === "add-maintenance" ? "Maintenance" : panelView === "finish-maintenance" ? "Finish Ticket" : "Maintenance History"}
+              {panelView === "add-maintenance" ? "Maintenance" : panelView === "finish-maintenance" ? "Finish Ticket" : "History"}
+            </button>
+            <button ref={el => { panelTabRefs.current[2] = el; }}
+              onClick={() => guardedNav(() => animateToPanelView("replace"))}
+              disabled={modalAsset.status === "Diganti" || modalAsset.status === "Dihapus" || modalAsset.status === "Under Maintenance"}
+              className={`px-3 py-2.5 text-xs font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${
+                panelView === "replace" ? "text-indigo-600" : "text-zinc-500 hover:text-zinc-600"
+              }`}>
+              Replace
             </button>
             {panelIndicator.ready && (
               <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 bg-indigo-600 rounded-full transition-[transform,width] duration-200"
@@ -3044,6 +3059,16 @@ export default function AssetsPage() {
                 asset={modalAsset}
                 onSave={handleFinishSave}
                 onCancel={() => animateToPanelView("maintenance-history")}
+                onToast={pushToast}
+              />
+            )}
+
+            {panelView === "replace" && (
+              <ReplacePanelContent
+                asset={modalAsset}
+                onSave={result => { handleMaintenanceSave(result); }}
+                onCancel={() => { setMaintenanceDirty(false); animateToPanelView("overview"); }}
+                onDirtyChange={setMaintenanceDirty}
                 onToast={pushToast}
               />
             )}
