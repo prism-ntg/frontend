@@ -23,9 +23,9 @@ function isOverdue(ticket: Ticket) {
 }
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  open:        { label: "Baru",       cls: "bg-blue-50 text-blue-600 border-blue-200" },
-  in_progress: { label: "Dikerjakan", cls: "bg-amber-50 text-amber-600 border-amber-200" },
-  completed:   { label: "Selesai",    cls: "bg-green-50 text-green-600 border-green-200" },
+  open:        { label: "New",         cls: "bg-blue-50 text-blue-600 border-blue-200"   },
+  in_progress: { label: "In Progress", cls: "bg-amber-50 text-amber-600 border-amber-200" },
+  completed:   { label: "Completed",   cls: "bg-green-50 text-green-600 border-green-200" },
 };
 
 function StatusBadge({ status }: { status: string | null }) {
@@ -42,7 +42,9 @@ function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left rounded-xl border bg-white p-4 hover:shadow-sm transition-all group ${overdue ? "border-red-200 hover:border-red-300" : "border-slate-100 hover:border-indigo-200"}`}
+      className={`w-full text-left rounded-xl border bg-white p-4 hover:shadow-sm transition-all group cursor-pointer ${
+        overdue ? "border-red-200 hover:border-red-300" : "border-slate-100 hover:border-indigo-200"
+      }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -50,7 +52,7 @@ function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }
             <StatusBadge status={ticket.ticketStatus} />
             {overdue && (
               <span className="flex items-center gap-1 text-[11px] text-red-500 font-semibold">
-                <AlertTriangle className="w-3 h-3" /> Lewat Jadwal
+                <AlertTriangle className="w-3 h-3" /> Overdue
               </span>
             )}
             <span className="text-[11px] text-slate-300">#{ticket.id}</span>
@@ -67,7 +69,7 @@ function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }
             {ticket.tanggalPerencanaan && (
               <span className={`flex items-center gap-1 text-[11px] ${overdue ? "text-red-400" : "text-slate-400"}`}>
                 <Calendar className="w-3 h-3" />
-                Rencana: {new Date(ticket.tanggalPerencanaan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                Planned: {new Date(ticket.tanggalPerencanaan).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
               </span>
             )}
           </div>
@@ -75,6 +77,23 @@ function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }
         <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 shrink-0 mt-1 transition-colors" />
       </div>
     </button>
+  );
+}
+
+function TicketSkeleton() {
+  return (
+    <div className="rounded-xl border border-slate-100 bg-white p-4 motion-safe:animate-pulse">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-5 bg-slate-100 rounded-full w-16" />
+        <div className="h-3 bg-slate-100 rounded w-8" />
+      </div>
+      <div className="h-4 bg-slate-100 rounded w-2/3 mb-1.5" />
+      <div className="h-3 bg-slate-100 rounded w-1/3 mb-3" />
+      <div className="flex gap-3">
+        <div className="h-3 bg-slate-100 rounded w-24" />
+        <div className="h-3 bg-slate-100 rounded w-28" />
+      </div>
+    </div>
   );
 }
 
@@ -97,20 +116,20 @@ export default function TechnicianTicketsPage() {
 
   useEffect(() => { void load(); }, [load]);
 
-  const active   = tickets.filter(t => t.ticketStatus !== "completed");
-  const history  = tickets.filter(t => t.ticketStatus === "completed");
-  const overdue  = active.filter(isOverdue);
+  const active  = tickets.filter(t => t.ticketStatus !== "completed");
+  const history = tickets.filter(t => t.ticketStatus === "completed");
+  const overdue = active.filter(isOverdue);
 
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
-          <ClipboardList className="w-4.5 h-4.5 text-indigo-500" style={{ width: 18, height: 18 }} />
+          <ClipboardList style={{ width: 18, height: 18 }} className="text-indigo-500" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-800">Tiket Saya</h1>
-          <p className="text-[12px] text-slate-400">Daftar maintenance yang ditugaskan kepada Anda</p>
+          <h1 className="text-xl font-bold text-slate-800">My Tickets</h1>
+          <p className="text-[12px] text-slate-400">Maintenance tasks assigned to you</p>
         </div>
       </div>
 
@@ -120,23 +139,23 @@ export default function TechnicianTicketsPage() {
           <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-red-700">
-              {overdue.length} tiket melewati tanggal rencana
+              {overdue.length} ticket{overdue.length > 1 ? "s" : ""} past the planned date
             </p>
-            <p className="text-[12px] text-red-500 mt-0.5">Segera lakukan maintenance pada aset berikut.</p>
+            <p className="text-[12px] text-red-500 mt-0.5">Please complete maintenance on these assets promptly.</p>
           </div>
         </div>
       )}
 
       {/* View tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-100 pb-0">
+      <div className="flex items-center gap-1 border-b border-slate-100">
         {([
-          { key: "active",  label: "Aktif",   count: active.length,  Icon: ClipboardList },
-          { key: "history", label: "Riwayat", count: history.length, Icon: History },
+          { key: "active",  label: "Active",  count: active.length,  Icon: ClipboardList },
+          { key: "history", label: "History", count: history.length, Icon: History       },
         ] as const).map(({ key, label, count, Icon: Ico }) => (
           <button
             key={key}
             onClick={() => setView(key)}
-            className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium border-b-2 -mb-px transition-colors ${
+            className={`flex items-center gap-1.5 px-3 min-h-11 text-[12px] font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
               view === key
                 ? "border-indigo-500 text-indigo-600"
                 : "border-transparent text-slate-400 hover:text-slate-600"
@@ -144,7 +163,9 @@ export default function TechnicianTicketsPage() {
           >
             <Ico className="w-3.5 h-3.5" />
             {label}
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${view === key ? "bg-indigo-100 text-indigo-600" : "bg-slate-100 text-slate-400"}`}>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+              view === key ? "bg-indigo-100 text-indigo-600" : "bg-slate-100 text-slate-400"
+            }`}>
               {count}
             </span>
           </button>
@@ -154,28 +175,26 @@ export default function TechnicianTicketsPage() {
       {/* Ticket list */}
       {loading ? (
         <div className="space-y-3">
-          {[1,2,3].map(i => (
-            <div key={i} className="rounded-xl border border-slate-100 bg-white p-4 animate-pulse">
-              <div className="h-4 bg-slate-100 rounded w-1/3 mb-2" />
-              <div className="h-3 bg-slate-50 rounded w-1/2" />
-            </div>
-          ))}
+          <TicketSkeleton />
+          <TicketSkeleton />
+          <TicketSkeleton />
         </div>
       ) : view === "active" ? (
         active.length === 0 ? (
           <div className="rounded-xl border border-slate-100 bg-white px-6 py-12 text-center">
             <Wrench className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-400">Tidak ada tiket aktif</p>
-            <p className="text-[12px] text-slate-300 mt-1">Tiket baru akan muncul di sini saat ditugaskan</p>
+            <p className="text-sm font-medium text-slate-400">No active tickets</p>
+            <p className="text-[12px] text-slate-400 mt-1">New tickets will appear here when assigned</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Overdue first */}
             {overdue.length > 0 && (
               <>
-                <p className="text-[10px] font-bold uppercase tracking-wide text-red-400">Lewat Jadwal</p>
-                {overdue.map(t => <TicketCard key={t.id} ticket={t} onClick={() => router.push(`/technician/tickets/${t.id}`)} />)}
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-4">Lainnya</p>
+                <p className="text-[10px] font-bold uppercase tracking-wide text-red-400">Overdue</p>
+                {overdue.map(t => (
+                  <TicketCard key={t.id} ticket={t} onClick={() => router.push(`/technician/tickets/${t.id}`)} />
+                ))}
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-4">Others</p>
               </>
             )}
             {active.filter(t => !isOverdue(t)).map(t => (
@@ -184,24 +203,23 @@ export default function TechnicianTicketsPage() {
           </div>
         )
       ) : (
-        /* History view */
         history.length === 0 ? (
           <div className="rounded-xl border border-slate-100 bg-white px-6 py-12 text-center">
             <History className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-400">Belum ada riwayat</p>
-            <p className="text-[12px] text-slate-300 mt-1">Riwayat maintenance yang selesai akan tampil di sini</p>
+            <p className="text-sm font-medium text-slate-400">No history yet</p>
+            <p className="text-[12px] text-slate-400 mt-1">Completed maintenance history will appear here</p>
           </div>
         ) : (
           <div className="rounded-xl border border-slate-100 bg-white overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-100">
-              <p className="text-xs font-semibold text-slate-600">Riwayat Maintenance Selesai</p>
+              <p className="text-xs font-semibold text-slate-600">Completed Maintenance History</p>
             </div>
-            <div className="divide-y divide-slate-50">
+            <div className="divide-y divide-slate-100">
               {history.map(t => (
                 <button
                   key={t.id}
                   onClick={() => router.push(`/technician/tickets/${t.id}`)}
-                  className="w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group"
+                  className="w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
@@ -219,12 +237,12 @@ export default function TechnicianTicketsPage() {
                         {t.tanggalSelesai && (
                           <span className="flex items-center gap-1 text-[11px] text-green-500">
                             <Calendar className="w-3 h-3" />
-                            Selesai: {new Date(t.tanggalSelesai).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                            Completed: {new Date(t.tanggalSelesai).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                           </span>
                         )}
                       </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 shrink-0 transition-colors" />
                   </div>
                 </button>
               ))}

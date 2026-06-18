@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   Bell, Menu, LayoutDashboard, Package, FileText,
-  ArrowLeftRight, Wrench, ClipboardList, Users, CheckCheck, X
+  ArrowLeftRight, Wrench, ClipboardList, Users, CheckCheck, X,
+  CheckCircle, AlertTriangle
 } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
 
@@ -28,7 +29,7 @@ const PAGE_META: Record<string, { title: string; subtitle: string; Icon: React.E
   "/logs/replacement":    { title: "Replacement Log",  subtitle: "Asset swap & replacement history",     Icon: ArrowLeftRight  },
   "/logs/maintenance":    { title: "Maintenance Log",  subtitle: "Repair and service records",           Icon: Wrench          },
   "/admin/technicians":   { title: "Technicians",      subtitle: "Manage technician accounts",           Icon: Users           },
-  "/technician/tickets":  { title: "Tiket Saya",       subtitle: "Daftar maintenance yang ditugaskan",   Icon: ClipboardList   },
+  "/technician/tickets":  { title: "My Tickets",        subtitle: "Maintenance tasks assigned to you",    Icon: ClipboardList   },
 };
 
 function getPageMeta(path: string) {
@@ -47,18 +48,18 @@ function getInitials(user: UserInfo | null) {
 function timeAgo(date: string) {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Baru saja";
-  if (mins < 60) return `${mins}m yang lalu`;
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}j yang lalu`;
-  return `${Math.floor(hrs / 24)}h yang lalu`;
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
 }
 
-const NOTIF_ICON: Record<string, { bg: string; text: string; symbol: string }> = {
-  ticket_assigned:  { bg: "bg-indigo-50",  text: "text-indigo-500",  symbol: "📋" },
-  ticket_completed: { bg: "bg-green-50",   text: "text-green-500",   symbol: "✅" },
-  ticket_created:   { bg: "bg-blue-50",    text: "text-blue-500",    symbol: "🔔" },
-  ticket_overdue:   { bg: "bg-red-50",     text: "text-red-500",     symbol: "⚠️" },
+const NOTIF_ICON: Record<string, { bg: string; text: string; Icon: React.ElementType }> = {
+  ticket_assigned:  { bg: "bg-indigo-50",  text: "text-indigo-500",  Icon: ClipboardList  },
+  ticket_completed: { bg: "bg-green-50",   text: "text-green-500",   Icon: CheckCircle    },
+  ticket_created:   { bg: "bg-blue-50",    text: "text-blue-500",    Icon: Bell           },
+  ticket_overdue:   { bg: "bg-red-50",     text: "text-red-500",     Icon: AlertTriangle  },
 };
 
 export function AppHeader() {
@@ -123,7 +124,7 @@ export function AppHeader() {
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={toggle}
-          className="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+          className="md:hidden p-2 min-h-11 min-w-11 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -133,7 +134,7 @@ export function AppHeader() {
           </div>
           <div className="min-w-0 leading-none">
             <p className="text-[13px] font-semibold text-slate-800 leading-tight truncate">{meta.title}</p>
-            <p className="text-[10px] text-slate-400 leading-tight truncate hidden sm:block">{meta.subtitle}</p>
+            <p className="text-[10px] text-slate-500 leading-tight truncate hidden sm:block">{meta.subtitle}</p>
           </div>
         </div>
       </div>
@@ -145,7 +146,7 @@ export function AppHeader() {
         <div className="relative" ref={bellRef}>
           <button
             onClick={() => { setBellOpen(v => !v); if (!bellOpen) void loadNotifications(); }}
-            className="relative p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="relative p-2 min-h-11 min-w-11 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             <Bell className="w-[18px] h-[18px]" />
             {unreadCount > 0 && (
@@ -156,23 +157,23 @@ export function AppHeader() {
           </button>
 
           {bellOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl border border-slate-100 shadow-xl z-50 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl border border-slate-100 shadow-xl z-60 overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Bell className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="text-sm font-semibold text-slate-700">Notifikasi</span>
+                  <span className="text-sm font-semibold text-slate-700">Notifications</span>
                   {unreadCount > 0 && (
                     <span className="text-[10px] bg-red-100 text-red-600 font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
-                    <button onClick={markAllRead} className="flex items-center gap-1 text-[11px] text-indigo-500 hover:text-indigo-700 font-medium">
-                      <CheckCheck className="w-3 h-3" /> Baca semua
+                    <button onClick={markAllRead} className="flex items-center gap-1 text-[11px] text-indigo-500 hover:text-indigo-700 font-medium cursor-pointer rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500">
+                      <CheckCheck className="w-3 h-3" /> Mark all read
                     </button>
                   )}
-                  <button onClick={() => setBellOpen(false)} className="text-slate-400 hover:text-slate-600">
+                  <button onClick={() => setBellOpen(false)} className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -183,18 +184,19 @@ export function AppHeader() {
                 {notifications.length === 0 ? (
                   <div className="py-8 text-center">
                     <Bell className="w-8 h-8 text-slate-200 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">Tidak ada notifikasi</p>
+                    <p className="text-xs text-slate-400">No notifications</p>
                   </div>
                 ) : notifications.map(n => {
-                  const icon = NOTIF_ICON[n.type] ?? { bg: "bg-slate-50", text: "text-slate-400", symbol: "🔔" };
+                  const notifIcon = NOTIF_ICON[n.type] ?? { bg: "bg-slate-50", text: "text-slate-400", Icon: Bell };
+                  const { Icon: NotifIcon } = notifIcon;
                   return (
                     <div
                       key={n.id}
                       onClick={() => { if (!n.isRead) void markRead(n.id); }}
                       className={`flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors ${n.isRead ? "opacity-60" : ""}`}
                     >
-                      <div className={`w-7 h-7 rounded-lg ${icon.bg} flex items-center justify-center text-sm shrink-0`}>
-                        {icon.symbol}
+                      <div className={`w-7 h-7 rounded-lg ${notifIcon.bg} flex items-center justify-center shrink-0`}>
+                        <NotifIcon className={`w-3.5 h-3.5 ${notifIcon.text}`} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
@@ -220,6 +222,8 @@ export function AppHeader() {
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0 select-none"
             style={{ background: "linear-gradient(135deg, #6366f1, #818cf8)" }}
+            role="img"
+            aria-label={`${displayName ?? "User"} avatar`}
           >
             {getInitials(user)}
           </div>

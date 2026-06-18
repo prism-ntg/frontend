@@ -19,12 +19,22 @@ export async function PATCH(
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
-  const { action } = await req.json();
-  if (!["approve", "reject"].includes(action)) {
-    return NextResponse.json({ message: "Invalid action" }, { status: 400 });
-  }
+  const body = await req.json();
+  let newStatus: string;
 
-  const newStatus = action === "approve" ? "active" : "rejected";
+  if (body.action) {
+    if (!["approve", "reject"].includes(body.action)) {
+      return NextResponse.json({ message: "Invalid action" }, { status: 400 });
+    }
+    newStatus = body.action === "approve" ? "active" : "rejected";
+  } else if (body.status) {
+    if (!["pending", "active", "rejected"].includes(body.status)) {
+      return NextResponse.json({ message: "Invalid status" }, { status: 400 });
+    }
+    newStatus = body.status;
+  } else {
+    return NextResponse.json({ message: "Invalid request" }, { status: 400 });
+  }
 
   const [target] = await db
     .select({ id: users.id, role: users.role })
@@ -38,5 +48,35 @@ export async function PATCH(
 
   await db.update(users).set({ status: newStatus }).where(eq(users.id, userId));
 
-  return NextResponse.json({ message: `Technician ${action}d successfully` });
+  return NextResponse.json({ message: "Status updated successfully" });
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authUser = await getCurrentUser(req);
+  if (!authUser || authUser.role !== "admin") {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const userId = parseInt(id, 10);
+  if (isNaN(userId)) {
+    return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
+  }
+
+  const [target] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(and(eq(users.id, userId), eq(users.role, "teknisi")))
+    .limit(1);
+
+  if (!target) {
+    return NextResponse.json({ message: "Technician not found" }, { status: 404 });
+  }
+
+  await db.delete(users).where(eq(users.id, userId));
+
+  return NextResponse.json({ message: "Technician deleted successfully" });
 }

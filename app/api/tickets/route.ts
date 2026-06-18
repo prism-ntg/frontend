@@ -70,8 +70,8 @@ export async function GET(req: NextRequest) {
           toInsert.map(t => ({
             userId: authUser.id,
             type: "ticket_overdue",
-            title: "Segera Lakukan Maintenance",
-            message: `Aset ${t.nama ?? `#${t.idAset}`} melewati tanggal rencana maintenance${t.tanggalPerencanaan ? ` (${new Date(t.tanggalPerencanaan).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })})` : ""}. Segera tindak lanjuti.`,
+            title: "Maintenance Overdue",
+            message: `Asset ${t.nama ?? `#${t.idAset}`} has passed its planned maintenance date${t.tanggalPerencanaan ? ` (${new Date(t.tanggalPerencanaan).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })})` : ""}. Please take action.`,
             relatedTicketId: t.id,
           }))
         );
@@ -131,8 +131,8 @@ export async function POST(req: NextRequest) {
   await db.insert(notifications).values({
     userId: assignee.id,
     type: "ticket_assigned",
-    title: "Tiket Maintenance Baru",
-    message: `Anda ditugaskan untuk maintenance aset ${master.nama ?? `#${idAset}`}${tanggalPerencanaan ? `. Rencana: ${new Date(tanggalPerencanaan).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}` : ""}.`,
+    title: "New Maintenance Ticket",
+    message: `You have been assigned to maintain asset ${master.nama ?? `#${idAset}`}${tanggalPerencanaan ? `. Scheduled: ${new Date(tanggalPerencanaan).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}` : ""}.`,
     relatedTicketId: inserted.id,
   });
 
@@ -147,8 +147,8 @@ export async function POST(req: NextRequest) {
       adminUsers.map(a => ({
         userId: a.id,
         type: "ticket_created",
-        title: "Tiket Dikirim ke Teknisi",
-        message: `Tiket maintenance untuk aset ${master.nama ?? `#${idAset}`} telah dikirim ke ${assignee.name}.`,
+        title: "Ticket Assigned to Technician",
+        message: `Maintenance ticket for asset ${master.nama ?? `#${idAset}`} has been assigned to ${assignee.name}.`,
         relatedTicketId: inserted.id,
       }))
     );

@@ -51,7 +51,7 @@ export async function POST(
   } = body;
 
   if (!tanggalSelesai) {
-    return NextResponse.json({ message: "Tanggal selesai wajib diisi" }, { status: 400 });
+    return NextResponse.json({ message: "Completion date is required" }, { status: 400 });
   }
 
   await db.update(asetKomplain).set({
@@ -79,8 +79,8 @@ export async function POST(
       adminUsers.map(a => ({
         userId: a.id,
         type: "ticket_completed",
-        title: "Maintenance Selesai",
-        message: `Aset ${assetName} telah selesai diperbaiki oleh ${techName}.`,
+        title: "Maintenance Completed",
+        message: `Asset ${assetName} has been repaired by ${techName}.`,
         relatedTicketId: ticketId,
       }))
     );
@@ -91,8 +91,8 @@ export async function POST(
     await db.insert(notifications).values({
       userId: ticket.assignedUserId,
       type: "ticket_completed",
-      title: "Tiket Diselesaikan",
-      message: `Tiket maintenance untuk aset ${assetName} telah berhasil diselesaikan.`,
+      title: "Ticket Completed",
+      message: `Your maintenance ticket for asset ${assetName} has been successfully completed.`,
       relatedTicketId: ticketId,
     });
   }

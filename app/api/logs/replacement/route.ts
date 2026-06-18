@@ -1,23 +1,26 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { riwayatPenggantianAset, masterAset } from "@/db/schema";
-import { eq, desc, like, count, or } from "drizzle-orm";
+import { eq, desc, like, count, or, and, gte, lte } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page   = Math.max(1, Number(searchParams.get("page")  ?? 1));
-  const limit  = Math.min(50, Math.max(10, Number(searchParams.get("limit") ?? 20)));
-  const search = searchParams.get("search") ?? "";
-  const offset = (page - 1) * limit;
+  const page     = Math.max(1, Number(searchParams.get("page")  ?? 1));
+  const limit    = Math.min(50, Math.max(10, Number(searchParams.get("limit") ?? 20)));
+  const search   = searchParams.get("search")   ?? "";
+  const dateFrom = searchParams.get("dateFrom") ?? "";
+  const dateTo   = searchParams.get("dateTo")   ?? "";
+  const offset   = (page - 1) * limit;
 
-  const whereClause = search
-    ? or(
-        like(riwayatPenggantianAset.namaAsetLama, `%${search}%`),
-        like(riwayatPenggantianAset.kategori, `%${search}%`),
-      )
-    : undefined;
+  const conditions = [
+    search   ? or(like(riwayatPenggantianAset.namaAsetLama, `%${search}%`), like(riwayatPenggantianAset.kategori, `%${search}%`)) : undefined,
+    dateFrom ? gte(riwayatPenggantianAset.tanggalPenggantian, dateFrom) : undefined,
+    dateTo   ? lte(riwayatPenggantianAset.tanggalPenggantian, dateTo)   : undefined,
+  ].filter(Boolean) as Parameters<typeof and>;
+
+  const whereClause = conditions.length ? and(...conditions) : undefined;
 
   const [[{ total }], rows] = await Promise.all([
     db.select({ total: count() }).from(riwayatPenggantianAset).where(whereClause),

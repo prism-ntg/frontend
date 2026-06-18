@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { asetKomplain, masterAset } from "@/db/schema";
-import { eq, desc, like, count, and, isNull, or, ne } from "drizzle-orm";
+import { eq, desc, like, count, and, isNull, or, ne, gte, lte } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,8 @@ export async function GET(request: Request) {
   const search   = searchParams.get("search")   ?? "";
   const severity = searchParams.get("severity") ?? "";
   const gedung   = searchParams.get("gedung")   ?? "";
+  const dateFrom = searchParams.get("dateFrom") ?? "";
+  const dateTo   = searchParams.get("dateTo")   ?? "";
   const offset   = (page - 1) * limit;
 
   // Only show historical records (no ticketStatus) and completed tickets
@@ -21,6 +23,8 @@ export async function GET(request: Request) {
   if (search)   conditions.push(like(asetKomplain.nama, `%${search}%`));
   if (severity) conditions.push(eq(asetKomplain.severity, severity));
   if (gedung)   conditions.push(eq(masterAset.lokasiGedung, gedung));
+  if (dateFrom) conditions.push(gte(asetKomplain.tanggalPengerjaan, dateFrom));
+  if (dateTo)   conditions.push(lte(asetKomplain.tanggalPengerjaan, dateTo));
 
   const whereClause = and(...conditions);
 

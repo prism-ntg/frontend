@@ -10,6 +10,15 @@ export async function GET(request: Request) {
   const yearParam = searchParams.get("year");
   const monthParam = searchParams.get("month"); // 1–12, optional
 
+  if (searchParams.get("years") === "1") {
+    const rows = await db
+      .selectDistinct({ year: sql<number>`YEAR(${asetKomplain.tanggalSelesai})` })
+      .from(asetKomplain)
+      .where(sql`${asetKomplain.tanggalSelesai} IS NOT NULL`)
+      .orderBy(sql`YEAR(${asetKomplain.tanggalSelesai}) DESC`);
+    return NextResponse.json({ years: rows.map(r => String(r.year)).filter(Boolean) });
+  }
+
   let dateFilter;
   if (yearParam && monthParam) {
     dateFilter = sql`YEAR(${asetKomplain.tanggalSelesai}) = ${Number(yearParam)} AND MONTH(${asetKomplain.tanggalSelesai}) = ${Number(monthParam)}`;

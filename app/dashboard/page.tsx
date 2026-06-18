@@ -177,7 +177,94 @@ function DateRangeFilter({
   );
 }
 
-// Maintenance Bar Chart                                                     
+// Cost Period Filter
+
+function CostPeriodFilter({
+  year, month, years, onYearChange, onMonthChange,
+}: {
+  year: string; month: string; years: string[];
+  onYearChange: (v: string) => void;
+  onMonthChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const monthLabel = month
+    ? COST_MONTHS.find(m => m.value === month)?.label ?? month
+    : "All Months";
+
+  return (
+    <div className="relative shrink-0" ref={ref}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-150 cursor-pointer shadow-sm"
+      >
+        <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <span>{year} — {monthLabel}</span>
+        <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <div
+        className="absolute right-0 top-full mt-2 z-50 bg-white rounded-2xl border border-slate-100 shadow-2xl p-5 w-64"
+        style={{
+          opacity: open ? 1 : 0,
+          transform: open ? "scale(1)" : "scale(0.96)",
+          pointerEvents: open ? "auto" : "none",
+          transformOrigin: "top right",
+          transition: "opacity 150ms cubic-bezier(0.23,1,0.32,1), transform 150ms cubic-bezier(0.23,1,0.32,1)",
+        }}
+      >
+        <div className="mb-4">
+          <p className="text-sm font-semibold text-slate-800">Select Period</p>
+          <p className="text-[11px] text-slate-400 mt-0.5">Filter costs by year and month</p>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mb-1.5">Year</p>
+            <select
+              value={year}
+              onChange={e => onYearChange(e.target.value)}
+              className="w-full text-xs border border-slate-200 rounded-xl px-3 py-2.5 text-slate-700 bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent cursor-pointer font-medium appearance-none"
+            >
+              {years.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mb-1.5">Month</p>
+            <select
+              value={month}
+              onChange={e => onMonthChange(e.target.value)}
+              className="w-full text-xs border border-slate-200 rounded-xl px-3 py-2.5 text-slate-700 bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent cursor-pointer font-medium appearance-none"
+            >
+              <option value="">All Months</option>
+              {COST_MONTHS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setOpen(false)}
+          className="mt-4 w-full rounded-xl bg-indigo-600 text-white text-xs font-semibold py-2.5 hover:bg-indigo-700 active:scale-[0.97] transition duration-150 cursor-pointer"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Maintenance Bar Chart
 
 function niceGridStep(maxVal: number): number {
   // pick a "round" step that yields 4-6 grid lines
@@ -671,10 +758,6 @@ function formatCost(value: number): string {
 
 // Building cost constants
 
-const COST_YEARS = Array.from(
-  { length: new Date().getFullYear() - 2019 },
-  (_, i) => String(2020 + i),
-);
 const COST_MONTHS = [
   { value: "1", label: "Jan" }, { value: "2", label: "Feb" },
   { value: "3", label: "Mar" }, { value: "4", label: "Apr" },
@@ -690,7 +773,10 @@ function CostsByBuildingChart({ data, loading }: { data: BuildingCost[]; loading
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (loading) { setMounted(false); return; }
+    if (loading) {
+      const t = setTimeout(() => setMounted(false), 0);
+      return () => clearTimeout(t);
+    }
     const t = setTimeout(() => setMounted(true), 80);
     return () => clearTimeout(t);
   }, [loading, data]);
@@ -764,6 +850,8 @@ export default function Dashboard() {
   const [buildingYear, setBuildingYear] = useState(() => String(new Date().getFullYear()));
   const [buildingMonth, setBuildingMonth] = useState("");
   const [buildingLoading, setBuildingLoading] = useState(false);
+  const [buildingDataKey, setBuildingDataKey] = useState(0);
+  const [costYears, setCostYears] = useState<string[]>([]);
   const router = useRouter();
 
   const [fromMonth, setFromMonth] = useState(() => {
@@ -786,13 +874,19 @@ export default function Dashboard() {
       fetch("/api/assets/stats").then(r => r.json()),
       fetch("/api/auth/me").then(r => r.json()),
       fetch("/api/assets/filters").then(r => r.json()),
+      fetch("/api/assets/costs-by-building?years=1").then(r => r.json()),
     ])
-      .then(([statsData, meData, filtersData]) => {
+      .then(([statsData, meData, filtersData, yearsData]) => {
         setStats(statsData);
         const u = meData?.user;
         if (u?.name) setUserName(u.name.split(" ")[0]);
         else if (u?.email) setUserName(u.email.split("@")[0]);
         setLocationOptions(filtersData.lokasi ?? []);
+        const availableYears: string[] = yearsData.years ?? [];
+        setCostYears(availableYears);
+        if (availableYears.length > 0 && !availableYears.includes(String(new Date().getFullYear()))) {
+          setBuildingYear(availableYears[0]);
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -807,15 +901,17 @@ export default function Dashboard() {
   }, [topAssetsLoc]);
 
   useEffect(() => {
-    setBuildingLoading(true);
     const params = new URLSearchParams();
     if (buildingYear) params.set("year", buildingYear);
     if (buildingMonth) params.set("month", buildingMonth);
     fetch(`/api/assets/costs-by-building?${params}`)
       .then(r => r.json())
-      .then(d => setBuildingCosts(d.data ?? []))
-      .catch(console.error)
-      .finally(() => setBuildingLoading(false));
+      .then(d => {
+        setBuildingCosts(d.data ?? []);
+        setBuildingDataKey(k => k + 1);
+        setBuildingLoading(false);
+      })
+      .catch(console.error);
   }, [buildingYear, buildingMonth]);
 
   if (loading) {
@@ -1091,25 +1187,15 @@ export default function Dashboard() {
             <p className="text-sm font-semibold text-slate-700">Cost Distribution by Building</p>
             <p className="text-xs text-slate-400 mt-0.5">Total repair costs per location</p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <select
-              value={buildingYear}
-              onChange={e => setBuildingYear(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 cursor-pointer font-medium"
-            >
-              {COST_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-            </select>
-            <select
-              value={buildingMonth}
-              onChange={e => setBuildingMonth(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300 cursor-pointer font-medium"
-            >
-              <option value="">All Months</option>
-              {COST_MONTHS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-            </select>
-          </div>
+          <CostPeriodFilter
+            year={buildingYear}
+            month={buildingMonth}
+            years={costYears}
+            onYearChange={setBuildingYear}
+            onMonthChange={setBuildingMonth}
+          />
         </div>
-        <CostsByBuildingChart data={buildingCosts} loading={buildingLoading} />
+        <CostsByBuildingChart key={buildingDataKey} data={buildingCosts} loading={buildingLoading} />
       </div>
 
       {/* Row 3: Health Bars + Donut + Top Assets */}

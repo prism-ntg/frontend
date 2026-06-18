@@ -2,7 +2,7 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle, Save, MapPin, Calendar, Tag } from "lucide-react";
+import { ArrowLeft, CheckCircle, Save, Calendar, Tag } from "lucide-react";
 
 interface Ticket {
   id: number;
@@ -12,6 +12,8 @@ interface Ticket {
   lokasiLantai: string | null;
   lokasiZona: string | null;
   kategori: string | null;
+  subKategori: string | null;
+  tipe: string | null;
   merek: string | null;
   tanggalPerencanaan: string | null;
   tanggalPengerjaan: string | null;
@@ -36,10 +38,38 @@ interface WorkForm {
   teknisiPelaksana: string;
 }
 
-const SEVERITY_OPTIONS = ["Fatal", "Berat", "Sedang", "Ringan"];
+const SEVERITY_OPTIONS: { value: string; label: string; active: string }[] = [
+  { value: "Fatal",   label: "Fatal",   active: "border-red-400 bg-red-50 text-red-600 shadow-sm"       },
+  { value: "Serious", label: "Serious", active: "border-orange-300 bg-orange-50 text-orange-600 shadow-sm" },
+  { value: "Sedang",  label: "Medium",  active: "border-yellow-300 bg-yellow-50 text-yellow-600 shadow-sm" },
+  { value: "Ringan",  label: "Mild",    active: "border-green-400 bg-green-50 text-green-600 shadow-sm"   },
+];
 
-const inputCls = "w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-[border-color,box-shadow] bg-white";
-const labelCls = "block text-xs font-medium text-slate-600 mb-1.5";
+const SEV_DB_TO_FORM: Record<string, string> = { Berat: "Serious" };
+const SEV_FORM_TO_DB: Record<string, string> = { Serious: "Berat" };
+
+function sevToForm(db: string | null) { return db ? (SEV_DB_TO_FORM[db] ?? db) : ""; }
+function sevToDb(form: string)        { return SEV_FORM_TO_DB[form] ?? form; }
+
+const STATUS_MAP: Record<string, { label: string; cls: string }> = {
+  open:        { label: "New",         cls: "bg-blue-50 text-blue-600 border-blue-200"  },
+  in_progress: { label: "In Progress", cls: "bg-amber-50 text-amber-600 border-amber-200" },
+  completed:   { label: "Completed",   cls: "bg-green-50 text-green-600 border-green-200" },
+};
+
+function StatusBadge({ status }: { status: string | null }) {
+  const m = STATUS_MAP[status ?? ""] ?? { label: status ?? "—", cls: "bg-slate-50 text-slate-500 border-slate-200" };
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${m.cls}`}>
+      {m.label}
+    </span>
+  );
+}
+
+const inputBase = "w-full rounded-lg border px-3 py-2.5 text-sm text-slate-700 focus:outline-none transition-[border-color,box-shadow] bg-white";
+const inputCls  = `${inputBase} border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100`;
+const inputErr  = `${inputBase} border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100`;
+const labelCls  = "block text-xs font-medium text-slate-600 mb-1.5";
 
 function InfoPill({ label, value }: { label: string; value: string | null }) {
   return (
@@ -50,6 +80,8 @@ function InfoPill({ label, value }: { label: string; value: string | null }) {
   );
 }
 
+const REQUIRED_FIELDS = ["tanggalSelesai", "jenisKerusakan", "severity", "biayaPerbaikan", "teknisiPelaksana"] as const;
+
 export default function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -59,6 +91,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     tanggalPengerjaan: "", tanggalSelesai: "", jenisKerusakan: "", severity: "",
     penyebab: "", biayaPerbaikan: "", sparePartDigunakan: "", teknisiPelaksana: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
@@ -68,8 +101,15 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     setTimeout(() => setToast(null), 3500);
   };
 
+  function clearError(field: string) {
+    setFieldErrors(prev => { const n = new Set(prev); n.delete(field); return n; });
+  }
+
+  function field(name: string) {
+    return fieldErrors.has(name) ? inputErr : inputCls;
+  }
+
   const load = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch(`/api/tickets/${id}`);
       if (res.status === 403 || res.status === 404) { router.push("/technician/tickets"); return; }
@@ -77,14 +117,14 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
       const t: Ticket = json.data;
       setTicket(t);
       setForm({
-        tanggalPengerjaan: t.tanggalPengerjaan ?? "",
-        tanggalSelesai: t.tanggalSelesai ?? "",
-        jenisKerusakan: t.jenisKerusakan ?? "",
-        severity: t.severity ?? "",
-        penyebab: t.penyebab ?? "",
-        biayaPerbaikan: t.biayaPerbaikan != null ? String(t.biayaPerbaikan) : "",
+        tanggalPengerjaan: t.tanggalPengerjaan ? t.tanggalPengerjaan.slice(0, 10) : "",
+        tanggalSelesai:    t.tanggalSelesai    ? t.tanggalSelesai.slice(0, 10)    : "",
+        jenisKerusakan:    t.jenisKerusakan    ?? "",
+        severity:          sevToForm(t.severity),
+        penyebab:          t.penyebab          ?? "",
+        biayaPerbaikan:    t.biayaPerbaikan != null ? String(t.biayaPerbaikan) : "",
         sparePartDigunakan: t.sparePartDigunakan ?? "",
-        teknisiPelaksana: t.teknisiPelaksana ?? "",
+        teknisiPelaksana:  t.teknisiPelaksana  ?? "",
       });
     } finally {
       setLoading(false);
@@ -103,25 +143,29 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          severity: sevToDb(form.severity),
           biayaPerbaikan: form.biayaPerbaikan ? Number(form.biayaPerbaikan.replace(/\D/g, "")) : null,
         }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message);
-      showToast("Progress disimpan");
+      showToast("Progress saved");
       void load();
     } catch (e) {
-      showToast(e instanceof Error ? e.message : "Gagal menyimpan", false);
+      showToast(e instanceof Error ? e.message : "Failed to save", false);
     } finally {
       setSaving(false);
     }
   }
 
   async function handleComplete() {
-    if (!form.tanggalSelesai || !form.jenisKerusakan || !form.severity || !form.biayaPerbaikan || !form.teknisiPelaksana) {
-      showToast("Lengkapi semua field wajib (*) sebelum menyelesaikan", false);
+    const errors = new Set(REQUIRED_FIELDS.filter(f => !form[f]));
+    if (errors.size > 0) {
+      setFieldErrors(errors);
+      showToast("Please complete all required fields (*) before finishing", false);
       return;
     }
+    setFieldErrors(new Set());
     setCompleting(true);
     try {
       const res = await fetch(`/api/tickets/${id}/complete`, {
@@ -129,15 +173,16 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          severity: sevToDb(form.severity),
           biayaPerbaikan: Number(form.biayaPerbaikan.replace(/\D/g, "")),
         }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message);
-      showToast("Maintenance selesai! Tiket ditutup.");
+      showToast("Maintenance complete! Ticket closed.");
       void load();
     } catch (e) {
-      showToast(e instanceof Error ? e.message : "Gagal menyelesaikan", false);
+      showToast(e instanceof Error ? e.message : "Failed to complete", false);
     } finally {
       setCompleting(false);
     }
@@ -145,10 +190,30 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse">
-        <div className="h-8 bg-slate-100 rounded w-1/4" />
-        <div className="h-32 bg-slate-50 rounded-xl" />
-        <div className="h-64 bg-slate-50 rounded-xl" />
+      <div className="space-y-4 max-w-2xl">
+        <div className="h-8 bg-slate-100 rounded w-1/4 motion-safe:animate-pulse" />
+        <div className="rounded-xl border border-slate-100 bg-white p-4 space-y-3 motion-safe:animate-pulse">
+          <div className="h-3 bg-slate-100 rounded w-24" />
+          <div className="flex gap-3">
+            <div className="w-9 h-9 bg-slate-100 rounded-lg shrink-0" />
+            <div className="flex-1 space-y-1.5">
+              <div className="h-4 bg-slate-100 rounded w-1/2" />
+              <div className="h-3 bg-slate-100 rounded w-1/3" />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[...Array(6)].map((_, i) => <div key={i} className="h-12 bg-slate-100 rounded-lg" />)}
+          </div>
+        </div>
+        <div className="rounded-xl border border-slate-100 bg-white p-4 space-y-4 motion-safe:animate-pulse">
+          <div className="h-3 bg-slate-100 rounded w-24" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-10 bg-slate-100 rounded-lg" />
+            <div className="h-10 bg-slate-100 rounded-lg" />
+          </div>
+          <div className="h-10 bg-slate-100 rounded-lg" />
+          <div className="h-10 bg-slate-100 rounded-lg" />
+        </div>
       </div>
     );
   }
@@ -157,142 +222,216 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   return (
     <div className="space-y-5 max-w-2xl">
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-lg ${toast.ok ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
+        <div className={`fixed top-4 right-4 z-9999 px-4 py-3 rounded-xl text-sm font-medium shadow-lg ${toast.ok ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
           {toast.msg}
         </div>
       )}
 
       {/* Back + header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => router.push("/technician/tickets")} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+        <button
+          onClick={() => router.push("/technician/tickets")}
+          aria-label="Back to tickets"
+          className="p-2.5 min-h-11 min-w-11 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center"
+        >
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-lg font-bold text-slate-800">Tiket #{ticket.id}</h1>
-          <p className="text-[12px] text-slate-400">
-            Status: {ticket.ticketStatus === "completed" ? "Selesai" : ticket.ticketStatus === "in_progress" ? "Sedang Dikerjakan" : "Baru"}
-          </p>
+          <h1 className="text-lg font-bold text-slate-800">Ticket #{ticket.id}</h1>
+          <div className="mt-0.5"><StatusBadge status={ticket.ticketStatus} /></div>
         </div>
         {isCompleted && (
           <span className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 border border-green-200 text-xs font-medium text-green-600">
-            <CheckCircle className="w-3.5 h-3.5" /> Selesai
+            <CheckCircle className="w-3.5 h-3.5" /> Completed
           </span>
         )}
       </div>
 
       {/* Asset info card */}
       <div className="rounded-xl border border-slate-100 bg-white p-4 space-y-3">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Informasi Aset</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Asset Information</p>
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
             <Tag className="w-4 h-4 text-indigo-400" />
           </div>
           <div>
-            <p className="text-base font-semibold text-slate-800">{ticket.nama}</p>
-            <p className="text-[12px] text-slate-400">{ticket.merek} · {ticket.kategori}</p>
+            <p className="text-base font-semibold text-slate-800">{ticket.nama ?? "—"}</p>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <InfoPill label="Gedung" value={ticket.lokasiGedung} />
-          <InfoPill label="Lantai" value={ticket.lokasiLantai} />
+        <div className="grid grid-cols-3 gap-2">
+          <InfoPill label="Building"     value={ticket.lokasiGedung} />
+          <InfoPill label="Floor"        value={ticket.lokasiLantai} />
+          <InfoPill label="Brand"        value={ticket.merek} />
+          <InfoPill label="Category"     value={ticket.kategori} />
+          <InfoPill label="Sub-Category" value={ticket.subKategori} />
+          <InfoPill label="Type"         value={ticket.tipe} />
         </div>
         {ticket.tanggalPerencanaan && (
           <div className="flex items-center gap-2 text-[12px] text-indigo-500">
             <Calendar className="w-3.5 h-3.5" />
-            Tanggal rencana: {new Date(ticket.tanggalPerencanaan).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+            Planned date: {new Date(ticket.tanggalPerencanaan).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
           </div>
         )}
       </div>
 
       {/* Work form */}
       <div className="rounded-xl border border-slate-100 bg-white p-4 space-y-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Detail Pengerjaan</p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Work Details</p>
+          <p className="text-[10px] text-slate-400">* Required fields</p>
+        </div>
 
         {isCompleted && (
           <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 text-[12px] text-green-700">
-            Tiket ini sudah selesai. Data tidak dapat diubah lagi.
+            This ticket is completed. No further changes can be made.
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className={labelCls}>Tanggal Pengerjaan</label>
-            <input type="date" value={form.tanggalPengerjaan} disabled={isCompleted}
-              onChange={e => setForm(f => ({ ...f, tanggalPengerjaan: e.target.value }))}
-              className={inputCls} />
+            <label className={labelCls}>Execution Date</label>
+            <input
+              type="date"
+              value={form.tanggalPengerjaan}
+              disabled={isCompleted}
+              onChange={e => { clearError("tanggalPengerjaan"); setForm(f => ({ ...f, tanggalPengerjaan: e.target.value })); }}
+              className={field("tanggalPengerjaan")}
+            />
           </div>
           <div>
-            <label className={labelCls}>Tanggal Selesai *</label>
-            <input type="date" value={form.tanggalSelesai} disabled={isCompleted}
-              onChange={e => setForm(f => ({ ...f, tanggalSelesai: e.target.value }))}
-              className={inputCls} />
+            <label className={labelCls}>Completion Date *</label>
+            <input
+              type="date"
+              value={form.tanggalSelesai}
+              disabled={isCompleted}
+              onChange={e => { clearError("tanggalSelesai"); setForm(f => ({ ...f, tanggalSelesai: e.target.value })); }}
+              className={field("tanggalSelesai")}
+            />
+            {fieldErrors.has("tanggalSelesai") && (
+              <p className="text-[11px] text-red-500 mt-1">Completion date is required</p>
+            )}
           </div>
         </div>
 
         <div>
-          <label className={labelCls}>Jenis Kerusakan *</label>
-          <input type="text" value={form.jenisKerusakan} disabled={isCompleted}
-            onChange={e => setForm(f => ({ ...f, jenisKerusakan: e.target.value }))}
-            placeholder="Deskripsikan jenis kerusakan"
-            className={inputCls} />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={labelCls}>Severity *</label>
-            <select value={form.severity} disabled={isCompleted}
-              onChange={e => setForm(f => ({ ...f, severity: e.target.value }))}
-              className={inputCls}>
-              <option value="">Pilih severity</option>
-              {SEVERITY_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className={labelCls}>Teknisi Pelaksana *</label>
-            <input type="text" value={form.teknisiPelaksana} disabled={isCompleted}
-              onChange={e => setForm(f => ({ ...f, teknisiPelaksana: e.target.value }))}
-              placeholder="Nama teknisi"
-              className={inputCls} />
-          </div>
+          <label className={labelCls}>Damage Type *</label>
+          <input
+            type="text"
+            value={form.jenisKerusakan}
+            disabled={isCompleted}
+            onChange={e => { clearError("jenisKerusakan"); setForm(f => ({ ...f, jenisKerusakan: e.target.value })); }}
+            placeholder="Describe the type of damage"
+            className={field("jenisKerusakan")}
+          />
+          {fieldErrors.has("jenisKerusakan") && (
+            <p className="text-[11px] text-red-500 mt-1">Damage type is required</p>
+          )}
         </div>
 
         <div>
-          <label className={labelCls}>Penyebab</label>
-          <textarea value={form.penyebab} disabled={isCompleted}
+          <label className={labelCls}>Severity *</label>
+          <div className="flex flex-wrap gap-2">
+            {SEVERITY_OPTIONS.map(({ value, label, active }) => (
+              <button
+                key={value}
+                type="button"
+                disabled={isCompleted}
+                onClick={() => { clearError("severity"); setForm(f => ({ ...f, severity: value })); }}
+                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 cursor-pointer disabled:opacity-50 ${
+                  form.severity === value
+                    ? active
+                    : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {fieldErrors.has("severity") && (
+            <p className="text-[11px] text-red-500 mt-1">Severity is required</p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelCls}>Assigned Technician *</label>
+          <input
+            type="text"
+            value={form.teknisiPelaksana}
+            disabled={isCompleted}
+            onChange={e => { clearError("teknisiPelaksana"); setForm(f => ({ ...f, teknisiPelaksana: e.target.value })); }}
+            placeholder="Technician name"
+            className={field("teknisiPelaksana")}
+          />
+          {fieldErrors.has("teknisiPelaksana") && (
+            <p className="text-[11px] text-red-500 mt-1">Technician name is required</p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelCls}>Cause</label>
+          <textarea
+            value={form.penyebab}
+            disabled={isCompleted}
             onChange={e => setForm(f => ({ ...f, penyebab: e.target.value }))}
-            rows={3} placeholder="Deskripsikan penyebab kerusakan"
-            className={inputCls + " resize-none"} />
+            rows={3}
+            placeholder="Describe the cause of damage"
+            className={inputCls + " resize-none"}
+          />
         </div>
 
         <div>
-          <label className={labelCls}>Biaya Perbaikan *</label>
-          <input type="number" value={form.biayaPerbaikan} disabled={isCompleted}
-            onChange={e => setForm(f => ({ ...f, biayaPerbaikan: e.target.value }))}
-            placeholder="0"
-            className={inputCls} />
+          <label className={labelCls}>Repair Cost *</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-medium select-none pointer-events-none">Rp</span>
+            <input
+              type="text"
+              value={form.biayaPerbaikan ? Number(form.biayaPerbaikan).toLocaleString("id-ID") : ""}
+              disabled={isCompleted}
+              onChange={e => {
+                clearError("biayaPerbaikan");
+                const digits = e.target.value.replace(/\D/g, "");
+                setForm(f => ({ ...f, biayaPerbaikan: digits }));
+              }}
+              placeholder="0"
+              className={`${field("biayaPerbaikan")} pl-9`}
+            />
+          </div>
+          {fieldErrors.has("biayaPerbaikan") && (
+            <p className="text-[11px] text-red-500 mt-1">Repair cost is required</p>
+          )}
         </div>
 
         <div>
-          <label className={labelCls}>Spare Part Digunakan</label>
-          <input type="text" value={form.sparePartDigunakan} disabled={isCompleted}
+          <label className={labelCls}>Spare Parts Used</label>
+          <input
+            type="text"
+            value={form.sparePartDigunakan}
+            disabled={isCompleted}
             onChange={e => setForm(f => ({ ...f, sparePartDigunakan: e.target.value }))}
-            placeholder="Daftar spare part yang digunakan"
-            className={inputCls} />
+            placeholder="List spare parts used"
+            className={inputCls}
+          />
         </div>
       </div>
 
       {/* Actions */}
       {!isCompleted && (
         <div className="flex items-center gap-3">
-          <button onClick={handleSave} disabled={saving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2.5 min-h-11 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors cursor-pointer"
+          >
             <Save className="w-4 h-4" />
-            {saving ? "Menyimpan…" : "Simpan Progress"}
+            {saving ? "Saving…" : "Save Progress"}
           </button>
-          <button onClick={handleComplete} disabled={completing || saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-600 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50 transition-colors">
+          <button
+            onClick={handleComplete}
+            disabled={completing || saving}
+            className="flex items-center gap-2 px-5 py-2.5 min-h-11 rounded-xl bg-green-600 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50 transition-colors cursor-pointer"
+          >
             <CheckCircle className="w-4 h-4" />
-            {completing ? "Memproses…" : "Selesaikan Maintenance"}
+            {completing ? "Processing…" : "Complete Maintenance"}
           </button>
         </div>
       )}

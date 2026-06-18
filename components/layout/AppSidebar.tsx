@@ -59,7 +59,7 @@ export function AppSidebar() {
       )}
 
       <aside
-        className={`w-56 shrink-0 flex flex-col h-screen fixed md:static inset-y-0 left-0 z-50 transition-transform duration-300 ease-out select-none ${
+        className={`w-56 shrink-0 flex flex-col h-screen fixed md:static inset-y-0 left-0 z-50 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out select-none ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
         style={{ background: "linear-gradient(175deg, #0e1420 0%, #111827 60%, #0f172a 100%)" }}
@@ -73,23 +73,17 @@ export function AppSidebar() {
         {/* ── Brand ── */}
         <div className="relative px-4 pt-5 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border border-indigo-500/25"
-              style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.25), rgba(99,102,241,0.08))" }}>
-              <img src="/icon.webp" alt="" style={{ width: 18, height: 18 }} />
-            </div>
-            <div className="leading-none">
-              <span
-                className="text-[15px] font-bold tracking-tight"
-                style={{ background: "linear-gradient(90deg, #f1f5f9 0%, #a5b4fc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-              >
-                PRISM
-              </span>
-              <span className="text-indigo-400 font-extrabold text-[15px]">_</span>
-            </div>
+            <Image src="/Logo.png" alt="PRISM" width={32} height={32} style={{ objectFit: "contain" }} className="shrink-0" />
+            <span
+              className="text-[20px] font-bold tracking-tight leading-none"
+              style={{ background: "linear-gradient(90deg, #f1f5f9 0%, #a5b4fc 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+            >
+              PRISM
+            </span>
           </div>
           {isTeknisi && (
             <div className="mt-2 px-1">
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-indigo-400/70">Teknisi Portal</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-indigo-400/70">Technician Portal</span>
             </div>
           )}
         </div>
@@ -103,15 +97,15 @@ export function AppSidebar() {
           {isTeknisi ? (
             /* Teknisi nav: only tickets */
             <>
-              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Menu</p>
-              <NavItem href="/technician/tickets" label="Tiket Saya" isActive={pathname.startsWith("/technician/tickets")}>
+              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">Menu</p>
+              <NavItem href="/technician/tickets" label="My Tickets" isActive={pathname.startsWith("/technician/tickets")}>
                 <ClipboardList style={{ width: 15, height: 15 }} />
               </NavItem>
             </>
           ) : (
             /* Admin nav: full navigation */
             <>
-              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Main</p>
+              <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">Main</p>
 
               {NAV_LINKS.map((link) => {
                 const isActive = pathname.startsWith(link.href) || (pathname === "/" && link.href === "/dashboard");
@@ -119,12 +113,12 @@ export function AppSidebar() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                      isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/[0.045]"
+                    className={`relative flex items-center gap-3 px-3 py-2.5 min-h-11 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1 focus-visible:ring-offset-[#111827] ${
+                      isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/4.5"
                     }`}
                     style={isActive ? { background: "rgba(99,102,241,0.18)" } : undefined}
                   >
-                    {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] rounded-r-full bg-indigo-400" />}
+                    {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.75 h-5 rounded-r-full bg-indigo-400" />}
                     <Image src={isActive ? link.iconActive : link.icon} alt={link.name} className="shrink-0" style={{ width: 16, height: 16, opacity: isActive ? 1 : 0.6 }} />
                     {link.name}
                   </Link>
@@ -134,7 +128,7 @@ export function AppSidebar() {
               {/* Records section */}
               <div className="pt-4 pb-1.5">
                 <div className="mx-2 h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
-                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Records</p>
+                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">Records</p>
               </div>
 
               {LOG_LINKS.map(({ name, href, Icon }) => {
@@ -149,7 +143,7 @@ export function AppSidebar() {
               {/* Admin section */}
               <div className="pt-4 pb-1.5">
                 <div className="mx-2 h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
-                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/20">Admin</p>
+                <p className="px-2 mb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">Admin</p>
               </div>
 
               {ADMIN_LINKS.map(({ name, href, Icon }) => {
@@ -169,7 +163,7 @@ export function AppSidebar() {
         <div className="px-2.5 py-4">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium text-white/30 hover:text-white/65 hover:bg-white/[0.045] transition-all duration-150"
+            className="flex items-center gap-3 px-3 py-2.5 min-h-11 w-full rounded-xl text-sm font-medium text-white/30 hover:text-white/65 hover:bg-white/4.5 transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1 focus-visible:ring-offset-[#111827]"
           >
             <LogOut style={{ width: 15, height: 15 }} className="shrink-0" />
             Logout
@@ -189,13 +183,13 @@ function NavItem({ href, label, isActive, children }: {
   return (
     <Link
       href={href}
-      className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-        isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/[0.045]"
+      className={`relative flex items-center gap-3 px-3 py-2.5 min-h-11 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1 focus-visible:ring-offset-[#111827] ${
+        isActive ? "text-white" : "text-white/40 hover:text-white/75 hover:bg-white/4.5"
       }`}
       style={isActive ? { background: "rgba(99,102,241,0.18)" } : undefined}
     >
-      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] rounded-r-full bg-indigo-400" />}
-      <span className="shrink-0">{children}</span>
+      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.75 h-5 rounded-r-full bg-indigo-400" />}
+      <span className={`shrink-0 ${isActive ? "text-indigo-400" : ""}`}>{children}</span>
       {label}
     </Link>
   );

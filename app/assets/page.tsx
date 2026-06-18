@@ -2,7 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
   Loader2, RefreshCw, Plus, X, Pencil, AlertTriangle,
@@ -2009,6 +2009,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 // Main Page
 
 export default function AssetsPage() {
+  const urlParams = useSearchParams();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [total, setTotal] = useState(0);
   const [severityCounts, setSeverityCounts] = useState({ all: 0, Fatal: 0, AtRisk: 0, Healthy: 0 });
@@ -2030,7 +2031,9 @@ export default function AssetsPage() {
   const [replaceLogs, setReplaceLogs] = useState<ReplaceLog[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
   const [severityFilter, setSeverityFilter] = useState("All Assets");
-  const [activeStatus, setActiveStatus] = useState<"Active" | "Inactive">("Active");
+  const [activeStatus, setActiveStatus] = useState<"Active" | "Inactive">(
+    urlParams.get("tab") === "inactive" ? "Inactive" : "Active"
+  );
   const [searchInput, setSearchInput] = useState(() =>
     typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("search") ?? "") : ""
   );
@@ -2862,7 +2865,7 @@ export default function AssetsPage() {
 
           {/* Pagination */}
           <div className="shrink-0 flex items-center justify-between border-t border-zinc-100 px-4 py-3 bg-white">
-            <span className="text-xs text-zinc-500">Showing {showingFrom} to {showingTo} of {total.toLocaleString()} assets</span>
+            <span className="text-xs text-zinc-500">Showing {showingFrom.toLocaleString()} to {showingTo.toLocaleString()} of {total.toLocaleString()} assets</span>
             <div className="flex items-center gap-3">
               {totalPages > 1 && (
                 <div className="flex items-center gap-1">

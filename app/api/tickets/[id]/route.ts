@@ -29,6 +29,8 @@ export async function GET(
       lokasiLantai: masterAset.lokasiLantai,
       lokasiZona: masterAset.lokasiZona,
       kategori: masterAset.kategori,
+      subKategori: masterAset.subKategori,
+      tipe: masterAset.tipe,
       merek: masterAset.merek,
       tanggalPerencanaan: asetKomplain.tanggalPerencanaan,
       tanggalPengerjaan: asetKomplain.tanggalPengerjaan,

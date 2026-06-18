@@ -29,7 +29,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" href="/icon.webp" />
+        <link rel="icon" href="/Logo.png" />
       </head>
       <body className="min-h-full bg-slate-100 text-black">
         <AppShell>{children}</AppShell>
