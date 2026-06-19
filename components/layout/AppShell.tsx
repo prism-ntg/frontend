@@ -9,8 +9,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage =
     pathname.startsWith("/login") || pathname.startsWith("/register");
+  const isLanding = pathname === "/";
 
-  if (isAuthPage) {
+  if (isAuthPage || isLanding) {
     return <div className="min-h-screen w-full">{children}</div>;
   }
 

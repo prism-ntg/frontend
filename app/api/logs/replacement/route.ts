@@ -16,8 +16,8 @@ export async function GET(request: Request) {
 
   const conditions = [
     search   ? or(like(riwayatPenggantianAset.namaAsetLama, `%${search}%`), like(riwayatPenggantianAset.kategori, `%${search}%`)) : undefined,
-    dateFrom ? gte(riwayatPenggantianAset.tanggalPenggantian, dateFrom) : undefined,
-    dateTo   ? lte(riwayatPenggantianAset.tanggalPenggantian, dateTo)   : undefined,
+    dateFrom ? gte(riwayatPenggantianAset.tanggalPenggantian, new Date(dateFrom)) : undefined,
+    dateTo   ? lte(riwayatPenggantianAset.tanggalPenggantian, new Date(dateTo))   : undefined,
   ].filter(Boolean) as Parameters<typeof and>;
 
   const whereClause = conditions.length ? and(...conditions) : undefined;

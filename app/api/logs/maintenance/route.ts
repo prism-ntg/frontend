@@ -23,8 +23,8 @@ export async function GET(request: Request) {
   if (search)   conditions.push(like(asetKomplain.nama, `%${search}%`));
   if (severity) conditions.push(eq(asetKomplain.severity, severity));
   if (gedung)   conditions.push(eq(masterAset.lokasiGedung, gedung));
-  if (dateFrom) conditions.push(gte(asetKomplain.tanggalPengerjaan, dateFrom));
-  if (dateTo)   conditions.push(lte(asetKomplain.tanggalPengerjaan, dateTo));
+  if (dateFrom) conditions.push(gte(asetKomplain.tanggalPengerjaan, new Date(dateFrom)));
+  if (dateTo)   conditions.push(lte(asetKomplain.tanggalPengerjaan, new Date(dateTo)));
 
   const whereClause = and(...conditions);
 
