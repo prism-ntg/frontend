@@ -42,3 +42,19 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-badge-pop { animation: none; }
 }
+
+/* ── Landing page animations ── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dash-preview {
+  from { opacity: 0; transform: perspective(1200px) rotateX(8deg) translateY(60px) scale(0.96); }
+  to   { opacity: 1; transform: perspective(1200px) rotateX(4deg) translateY(0px) scale(1); }
+}

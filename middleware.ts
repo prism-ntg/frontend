@@ -6,7 +6,7 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "fallback_secret_for_development_only"
 );
 
-const publicPaths = ['/login', '/register', '/register/teknisi'];
+const publicPaths = ['/', '/login', '/register', '/register/teknisi'];
 const apiPublicPaths = ['/api/auth/login', '/api/auth/signup', '/api/auth/signup-teknisi'];
 
 // Paths only accessible by admin
@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.nextUrl));
   }
 
-  if (isPublicPath && isValidToken) {
+  if (isPublicPath && isValidToken && path !== '/') {
     const dest = role === 'teknisi' ? '/technician/tickets' : '/dashboard';
     return NextResponse.redirect(new URL(dest, request.nextUrl));
   }
