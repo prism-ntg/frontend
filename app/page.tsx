@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 // ── Image assets (download these from Figma and place in /public/images/) ────
 // hero-dashboard.png     → dashboard screenshot shown in hero (node 1:98 Frame)
@@ -116,7 +117,10 @@ export default function LandingPage() {
         )}
 
         <div className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-8">
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
             className="flex items-center gap-[35px] border border-[#3f65ed]/50 px-[14px] py-[3px] rounded-[8px] mb-8"
             style={{
               background:
@@ -133,10 +137,13 @@ export default function LandingPage() {
               Powered with AI
             </span>
             <img src="/star.png" alt="" width={14} height={13} />
-          </div>
+          </motion.div>
 
-          <h1
-            className="text-[60px] sm:text-[87px] leading-none tracking-[-3.48px] max-w-4xl mb-6 whitespace-nowrap"
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-[42px] sm:text-[60px] md:text-[87px] leading-[1.1] sm:leading-none tracking-[0] sm:tracking-[-3.48px] max-w-4xl mb-6 whitespace-normal sm:whitespace-nowrap"
             style={{
               fontFamily: "'Host Grotesk', sans-serif",
               fontWeight: 600,
@@ -144,9 +151,12 @@ export default function LandingPage() {
           >
             <span className="text-[#c5d0f7]">Predict.</span>
             <span className="text-[#fdfdfd]"> Prevent. Perform.</span>
-          </h1>
+          </motion.h1>
 
-          <p
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="text-[#fdfdfd] text-[18px] sm:text-[20px] tracking-[-0.8px] max-w-[788px] mb-10 leading-normal"
             style={{ fontFamily: "'Akzidenz-Grotesk BQ', sans-serif" }}
           >
@@ -155,21 +165,32 @@ export default function LandingPage() {
             efficiency and performance. By optimizing resources and reducing
             downtime, PRISM boosts productivity and cost savings, positioning
             your organization for success.
-          </p>
+          </motion.p>
 
-          <Link
-            href="/sign-up"
-            className="bg-[#fdfdfd] text-[#3f65ed] text-[20px] tracking-[-0.8px] px-[17px] py-[8px] rounded-[8px] hover:bg-[#e8edff] transition-colors"
-            style={{
-              fontFamily: "'Host Grotesk', sans-serif",
-              fontWeight: 600,
-            }}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
           >
-            Sign Up Here
-          </Link>
+            <Link
+              href="/sign-up"
+              className="bg-[#fdfdfd] text-[#3f65ed] text-[20px] tracking-[-0.8px] px-[17px] py-[8px] rounded-[8px] hover:bg-[#e8edff] transition-colors"
+              style={{
+                fontFamily: "'Host Grotesk', sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              Sign Up Here
+            </Link>
+          </motion.div>
         </div>
         {/* Dashboard preview image */}
-        <div className="relative z-10 mx-auto mt-16 px-4 max-w-[1400px]">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 60 }}
+          className="relative z-10 mx-auto mt-16 px-4 max-w-[1400px]"
+        >
           <div
             className="rounded-t-[16px] overflow-hidden"
             style={{ background: "rgba(197,208,247,0.2)" }}
@@ -183,32 +204,48 @@ export default function LandingPage() {
               priority
             />
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <section id="features" className="bg-[#f9f9fb] px-6 md:px-[127px] pt-[231px] pb-[120px]">
         <div className="text-center mb-[231px]">
-          <h2
-            className="text-[38px] leading-[35px] tracking-[-1.52px] text-[#3f65ed] capitalize max-w-[572px] mx-auto"
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+            className="text-[28px] md:text-[38px] leading-[1.2] md:leading-[35px] tracking-[-1.52px] text-[#3f65ed] capitalize max-w-[572px] mx-auto"
             style={{ fontFamily: "'Host Grotesk', sans-serif" }}
           >
             Transform maintenance records into{" "}
             <em style={{ fontWeight: 700, fontStyle: "italic" }}>
               proactive decisions.
             </em>
-          </h2>
-          <p
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-6 text-[#848484] text-[18px] tracking-[-0.72px] max-w-[542px] mx-auto leading-normal"
             style={{ fontFamily: "'Akzidenz-Grotesk BQ', sans-serif" }}
           >
             We help organizations predict maintenance needs, monitor asset
             health, and centralize maintenance operations—reducing downtime and
             improving equipment reliability.
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          <div className="bg-[rgba(197,208,247,0.2)] rounded-[8px] p-0 overflow-hidden flex flex-col">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 1.05 }}
+            className="bg-[rgba(197,208,247,0.2)] rounded-[8px] p-0 overflow-hidden flex flex-col"
+          >
             <div className="flex-1 overflow-hidden">
               <img
                 src="/landings2p1.svg"
@@ -235,9 +272,17 @@ export default function LandingPage() {
                 asset behavior.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-[rgba(197,208,247,0.2)] rounded-[16px] overflow-hidden flex flex-col">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 1.05 }}
+            className="bg-[rgba(197,208,247,0.2)] rounded-[16px] overflow-hidden flex flex-col"
+          >
             <div className="flex-1 overflow-hidden">
               <img
                 src="/landings2p2.svg"
@@ -264,9 +309,17 @@ export default function LandingPage() {
                 workspace.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-[rgba(197,208,247,0.2)] rounded-[8px] overflow-hidden flex flex-col">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            whileTap={{ scale: 1.05 }}
+            className="bg-[rgba(197,208,247,0.2)] rounded-[8px] overflow-hidden flex flex-col"
+          >
             <div className="flex-1 overflow-hidden">
               <img
                 src="/landings2p3.svg"
@@ -292,7 +345,7 @@ export default function LandingPage() {
                 stakeholders with minimal manual effort.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
       {/* ═══════════════════════════════════════════════════════
@@ -307,41 +360,62 @@ export default function LandingPage() {
         }}
       >
         {/* ── CTA Section ── */}
-        <section className="relative z-10 py-[200px] px-6">
+        <section className="relative z-10 py-[100px] md:py-[200px] px-6">
           <div className="text-center max-w-3xl mx-auto">
-            <h2
-              className="text-[#fdfdfd] text-[40px] sm:text-[50px] tracking-[-2px] capitalize mb-8"
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-[#fdfdfd] text-[32px] sm:text-[50px] tracking-[-2px] capitalize mb-8"
               style={{
                 fontFamily: "'Host Grotesk', sans-serif",
                 fontWeight: 600,
               }}
             >
               Don&apos;t wait for equipment failures.
-            </h2>
-            <p
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               className="text-[#fdfdfd] text-[20px] tracking-[-0.8px] max-w-[631px] mx-auto mb-12 leading-normal"
               style={{ fontFamily: "'Akzidenz-Grotesk BQ', sans-serif" }}
             >
               Stay ahead of maintenance needs with predictive insights that help
               your team prevent disruptions before they happen.
-            </p>
-            <Link
-              href="/sign-up"
-              className="inline-flex items-center gap-[35px] bg-[#3f65ed] text-[#f5f5f5] text-[20px] tracking-[-0.8px] px-[17px] py-[8px] rounded-[8px] hover:bg-[#3059d8] transition-colors"
-              style={{
-                fontFamily: "'Host Grotesk', sans-serif",
-                fontWeight: 600,
-              }}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
             >
-              Start Managing Smarter
-              <ArrowRight size={21} />
-            </Link>
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center gap-[35px] bg-[#3f65ed] text-[#f5f5f5] text-[20px] tracking-[-0.8px] px-[17px] py-[8px] rounded-[8px] hover:bg-[#3059d8] transition-colors"
+                style={{
+                  fontFamily: "'Host Grotesk', sans-serif",
+                  fontWeight: 600,
+                }}
+              >
+                Start Managing Smarter
+                <ArrowRight size={21} />
+              </Link>
+            </motion.div>
           </div>
         </section>
 
         {/* ── Footer ── */}
-        <footer className="relative z-10 px-[58px] pt-[120px] pb-0">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-x-4 gap-y-8 mb-16 items-start">
+        <footer className="relative z-10 px-6 md:px-[58px] pt-[60px] md:pt-[120px] pb-0">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-x-4 gap-y-8 mb-16 items-start"
+          >
             {/* Brand */}
             <div>
               <p
@@ -378,7 +452,7 @@ export default function LandingPage() {
                   <li key={item}>
                     <Link
                       href="#"
-                      className="text-[#3f65ed] text-[48px] tracking-[-1.92px] leading-tight hover:opacity-70 transition-opacity block"
+                      className="text-[#3f65ed] text-[36px] md:text-[48px] tracking-[-1.92px] leading-tight hover:opacity-70 transition-opacity block"
                       style={{
                         fontFamily: "'Akzidenz-Grotesk BQ', sans-serif",
                       }}
@@ -410,7 +484,7 @@ export default function LandingPage() {
                   <li key={item}>
                     <Link
                       href="#"
-                      className="text-[#fdfdfd] text-[48px] tracking-[-1.92px] leading-tight hover:opacity-70 transition-opacity block"
+                      className="text-[#fdfdfd] text-[36px] md:text-[48px] tracking-[-1.92px] leading-tight hover:opacity-70 transition-opacity block"
                       style={{
                         fontFamily: "'Akzidenz-Grotesk BQ', sans-serif",
                       }}
@@ -421,10 +495,16 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-          </div>
+          </motion.div>
 
           {/* Giant PRISM watermark */}
-          <div className="overflow-hidden -mx-[58px]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="overflow-hidden -mx-[58px]"
+          >
             <p
               className="text-[#fdfdfd] text-center select-none"
               style={{
@@ -439,7 +519,7 @@ export default function LandingPage() {
             >
               PRISM
             </p>
-          </div>
+          </motion.div>
         </footer>
       </div>
     </div>
