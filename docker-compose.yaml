@@ -21,6 +21,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: prism-mysql
+    command: --innodb-buffer-pool-size=64M --key-buffer-size=16M --max-connections=50 --performance-schema=off
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
