@@ -1,10 +1,10 @@
 services:
   app:
-    image: oven/bun:1
+    image: node:20-alpine
     container_name: prism-web
     working_dir: /app
     restart: always
-    command: sh -c "bun scripts/db-setup.ts && bunx drizzle-kit push && bun scripts/seed.ts && bun start -- -H 0.0.0.0"
+    command: sh -c "npx tsx scripts/db-setup.ts && npx drizzle-kit push && npx tsx scripts/seed.ts && npx next start -H 0.0.0.0"
     depends_on:
       mysql:
         condition: service_healthy
