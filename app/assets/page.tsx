@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
@@ -2009,6 +2009,14 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 // Main Page
 
 export default function AssetsPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>}>
+      <AssetsPageContent />
+    </Suspense>
+  );
+}
+
+function AssetsPageContent() {
   const urlParams = useSearchParams();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [total, setTotal] = useState(0);

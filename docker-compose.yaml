@@ -1,0 +1,41 @@
+services:
+  app:
+    image: oven/bun:1
+    container_name: prism-web
+    working_dir: /app
+    restart: always
+    command: sh -c "bun scripts/db-setup.ts && bunx drizzle-kit push && bun scripts/seed.ts && bun start -- -H 0.0.0.0"
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_HOST=mysql
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+    volumes:
+      - .:/app
+    networks:
+      - prism-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: prism-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - ../mysql-data-prism:/var/lib/mysql
+    networks:
+      - prism-network
+    restart: unless-stopped
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel --no-autoupdate --url http://app:3000 run --token ${CF_TOKEN}
+    networks:
+      - prism-network
+
+networks:
+  prism-network:

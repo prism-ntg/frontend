@@ -51,6 +51,11 @@ async function insertBatches<T extends object>(
 }
 
 async function seedMasterAset() {
+  const existing = await db.select().from(masterAset).limit(1);
+  if (existing.length > 0) {
+    console.log('[master_aset] sudah ada data, seed dilewati.');
+    return;
+  }
   const rows = readCsv('master_aset.csv').map((r) => ({
     idAset: parseInt2(r.id_aset)!,
     nama: r.nama || null,
@@ -71,6 +76,11 @@ async function seedMasterAset() {
 }
 
 async function seedKatalogHarga() {
+  const existing = await db.select().from(katalogHarga).limit(1);
+  if (existing.length > 0) {
+    console.log('[katalog_harga] sudah ada data, seed dilewati.');
+    return;
+  }
   const rows = readCsv('katalog_harga.csv').map((r) => ({
     tipe: r.tipe,
     hargaBeli: parseFloat2(r.harga_beli),
@@ -79,6 +89,11 @@ async function seedKatalogHarga() {
 }
 
 async function seedAsetKomplain() {
+  const existing = await db.select().from(asetKomplain).limit(1);
+  if (existing.length > 0) {
+    console.log('[aset_komplain] sudah ada data, seed dilewati.');
+    return;
+  }
   const masterIds = new Set(
     readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
   );
@@ -109,6 +124,11 @@ async function seedAsetKomplain() {
 }
 
 async function seedRiwayatPenggantianAset() {
+  const existing = await db.select().from(riwayatPenggantianAset).limit(1);
+  if (existing.length > 0) {
+    console.log('[riwayat_penggantian_aset] sudah ada data, seed dilewati.');
+    return;
+  }
   const masterIds = new Set(
     readCsv('master_aset.csv').map((r) => parseInt(r.id_aset, 10)),
   );
