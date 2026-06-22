@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { masterAset, asetKomplain } from "@/db/schema";
 import { parse } from "csv-parse/sync";
+import { sql } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   let formData: FormData;
@@ -34,13 +35,11 @@ export async function POST(req: NextRequest) {
     return isNaN(d.getTime()) ? null : d;
   }
 
+  const [maxRow] = await db.select({ max: sql<number>`MAX(id_aset)` }).from(masterAset);
+  let nextId = (maxRow.max ?? 0) + 1;
+
   for (const row of records) {
-    const idAsetRaw = row["ID_Aset"]?.trim();
-    const idAset = parseInt(idAsetRaw ?? "", 10);
-    if (!idAsetRaw || isNaN(idAset)) {
-      errors.push(`Row with ID_Aset="${idAsetRaw}" is not a valid integer — skipped`);
-      continue;
-    }
+    const idAset = nextId++;
 
     try {
       await db.insert(masterAset).values({
