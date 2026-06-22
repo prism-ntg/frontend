@@ -6,7 +6,8 @@ services:
     restart: always
     command: sh -c "bun scripts/db-setup.ts && bunx drizzle-kit push && bun scripts/seed.ts && bun start -- -H 0.0.0.0"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       - DATABASE_HOST=mysql
       - DATABASE_USER=${DATABASE_USER}
@@ -20,6 +21,11 @@ services:
   mysql:
     image: mysql:8.0
     container_name: prism-mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     environment:
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_DATABASE=${DATABASE_NAME}
