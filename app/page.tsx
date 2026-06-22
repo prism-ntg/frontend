@@ -23,7 +23,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
-      <section id="about" className="relative bg-[#3e3e3e] overflow-hidden pb-0">
+      <section
+        id="about"
+        className="relative bg-[#3e3e3e] overflow-hidden pb-0"
+      >
         <Image
           src="/bg-dashboard.png"
           alt=""
@@ -70,7 +73,7 @@ export default function LandingPage() {
           </div>
 
           <Link
-            href="/sign-in"
+            href="/login"
             className="hidden md:flex items-center gap-[17px] bg-[#3f65ed] text-[#f5f5f5] text-[12px] tracking-[-0.48px] px-[17px] py-[8px] rounded-[8px] hover:bg-[#3059d8] transition-colors"
             style={{
               fontFamily: "'Host Grotesk', sans-serif",
@@ -107,7 +110,7 @@ export default function LandingPage() {
               </Link>
             ))}
             <Link
-              href="/sign-in"
+              href="/login"
               className="flex items-center gap-3 bg-[#3f65ed] text-white px-6 py-3 rounded-lg font-semibold mt-4"
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -188,7 +191,12 @@ export default function LandingPage() {
         <motion.div
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 60 }}
+          transition={{
+            duration: 0.6,
+            delay: 0.4,
+            type: "spring",
+            stiffness: 60,
+          }}
           className="relative z-10 mx-auto mt-16 px-4 max-w-[1400px]"
         >
           <div
@@ -207,7 +215,10 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      <section id="features" className="bg-[#f9f9fb] px-6 md:px-[127px] pt-[231px] pb-[120px]">
+      <section
+        id="features"
+        className="bg-[#f9f9fb] px-6 md:px-[127px] pt-[231px] pb-[120px]"
+      >
         <div className="text-center mb-[231px]">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
