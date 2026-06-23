@@ -251,7 +251,9 @@ export default function AuthPage() {
 
         {/* ── Login form (left half) ── */}
         <div
-          className="absolute inset-y-0 left-0 w-1/2 flex flex-col items-center justify-center px-10"
+          className={`absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-10 transition-all duration-500 ${
+            overlayOnRight ? "z-10 opacity-100" : "z-0 opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
+          }`}
         >
           <h2 className="text-[1.55rem] font-bold text-slate-100 mb-6 tracking-tight">
             Sign In
@@ -303,12 +305,20 @@ export default function AuthPage() {
                 {loginLoading ? "Signing in…" : "Sign In"}
               </button>
             </div>
+            <div className="md:hidden text-center mt-4 pb-2">
+              <p className="text-xs text-slate-400">
+                Don't have an account?{" "}
+                <button type="button" onClick={goToRegister} className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">Sign Up</button>
+              </p>
+            </div>
           </form>
         </div>
 
         {/* ── Register form (right half) ── */}
         <div
-          className="absolute inset-y-0 right-0 w-1/2 flex flex-col items-center justify-center px-10"
+          className={`absolute inset-y-0 right-0 w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-10 transition-all duration-500 ${
+            !overlayOnRight ? "z-10 opacity-100" : "z-0 opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
+          }`}
         >
           {regSuccess ? (
             <div className="text-center">
@@ -422,6 +432,12 @@ export default function AuthPage() {
                     {regLoading ? "Creating…" : "Sign Up"}
                   </button>
                 </div>
+                <div className="md:hidden text-center mt-4 pb-2">
+                  <p className="text-xs text-slate-400">
+                    Already have an account?{" "}
+                    <button type="button" onClick={goToLogin} className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">Sign In</button>
+                  </p>
+                </div>
               </form>
             </>
           )}
@@ -429,7 +445,7 @@ export default function AuthPage() {
 
         {/* ── Sliding overlay panel ── */}
         <div
-          className="absolute inset-y-0 left-0 w-1/2 z-20 overflow-hidden"
+          className="hidden md:block absolute inset-y-0 left-0 w-1/2 z-20 overflow-hidden"
           style={overlaySlide}
         >
           {/* Breathing indigo glow */}

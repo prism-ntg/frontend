@@ -932,7 +932,7 @@ export default function Dashboard() {
             <div className="h-2.5 w-28 rounded bg-slate-100" />
           </div>
           {/* Fatal / At Risk / Healthy */}
-          <div className="col-span-12 md:col-span-6 grid grid-cols-3 gap-3">
+          <div className="col-span-12 md:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[0, 1, 2].map((i) => (
               <div key={i} className="rounded-xl border border-slate-100 bg-white p-4 space-y-2">
                 <div className="h-2.5 w-10 rounded bg-slate-100" />
@@ -952,7 +952,7 @@ export default function Dashboard() {
         {/* Row 2: Bar Chart + Frequency */}
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 md:col-span-8 rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div className="flex items-start justify-between mb-5">
+            <div className="flex flex-col sm:flex-row items-start sm:justify-between mb-5 gap-3">
               <div className="space-y-1.5">
                 <div className="h-3.5 w-48 rounded bg-slate-200" />
                 <div className="h-2.5 w-36 rounded bg-slate-100" />
@@ -988,7 +988,7 @@ export default function Dashboard() {
         </div>
 
         {/* Row 3: Priority / Donut / Top Assets */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, col) => (
             <div key={col} className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm space-y-4">
               <div className="h-3.5 w-36 rounded bg-slate-200" />
@@ -1093,7 +1093,7 @@ export default function Dashboard() {
         </div>
 
         {/* Health KPIs */}
-        <div className="col-span-12 md:col-span-6 grid grid-cols-3 gap-3">
+        <div className="col-span-12 md:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="group rounded-xl border border-red-200 bg-red-50 p-4 hover:shadow-md transition duration-200 cursor-default relative overflow-hidden">
             <div className="absolute inset-0 bg-red-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
             <p className="text-xs font-medium text-red-500 mb-2">Fatal</p>
@@ -1145,7 +1145,7 @@ export default function Dashboard() {
 
         {/* Maintenance Bar Chart */}
         <div className="col-span-12 md:col-span-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-start justify-between mb-4 gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:justify-between mb-4 gap-3">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-slate-700">Maintenance Activities Done</p>
               {thisMonthMaint > 0 && (
@@ -1182,7 +1182,7 @@ export default function Dashboard() {
 
       {/* Row 4: Cost Distribution by Building */}
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-start justify-between mb-4 gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:justify-between mb-4 gap-3">
           <div>
             <p className="text-sm font-semibold text-slate-700">Cost Distribution by Building</p>
             <p className="text-xs text-slate-400 mt-0.5">Total repair costs per location</p>
@@ -1199,7 +1199,7 @@ export default function Dashboard() {
       </div>
 
       {/* Row 3: Health Bars + Donut + Top Assets */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Kekritisan */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -1225,7 +1225,7 @@ export default function Dashboard() {
 
         {/* Top Assets by Komplain */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
             <p className="text-sm font-semibold text-slate-700">Top Assets by Complaint</p>
             <div className="flex items-center gap-2">
               <FilterCombobox
