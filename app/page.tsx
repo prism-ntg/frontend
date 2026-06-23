@@ -60,8 +60,12 @@ export default function LandingPage() {
             {[
               { label: "About", href: "#about", action: null },
               { label: "Features", href: "#features", action: null },
-              { label: "Pricing", href: "#", action: () => setPricingModalOpen(true) },
-            ].map((item) => (
+              {
+                label: "Pricing",
+                href: "#",
+                action: () => setPricingModalOpen(true),
+              },
+            ].map((item) =>
               item.action ? (
                 <button
                   key={item.label}
@@ -80,8 +84,8 @@ export default function LandingPage() {
                 >
                   {item.label}
                 </Link>
-              )
-            ))}
+              ),
+            )}
           </div>
 
           <Link
@@ -110,8 +114,15 @@ export default function LandingPage() {
             {[
               { label: "About", href: "#about", action: null },
               { label: "Features", href: "#features", action: null },
-              { label: "Pricing", href: "#", action: () => { setPricingModalOpen(true); setMobileMenuOpen(false); } },
-            ].map((item) => (
+              {
+                label: "Pricing",
+                href: "#",
+                action: () => {
+                  setPricingModalOpen(true);
+                  setMobileMenuOpen(false);
+                },
+              },
+            ].map((item) =>
               item.action ? (
                 <button
                   key={item.label}
@@ -129,8 +140,8 @@ export default function LandingPage() {
                 >
                   {item.label}
                 </Link>
-              )
-            ))}
+              ),
+            )}
             <Link
               href="/login"
               className="flex items-center gap-3 bg-[#3f65ed] text-white px-6 py-3 rounded-lg font-semibold mt-4"
@@ -568,7 +579,7 @@ export default function LandingPage() {
               onClick={() => setPricingModalOpen(false)}
               className="fixed inset-0 bg-[#111111]/80 backdrop-blur-sm"
             />
-            
+
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -576,7 +587,7 @@ export default function LandingPage() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-5xl bg-[#1e1e1e] border border-white/10 rounded-3xl overflow-hidden shadow-2xl my-auto"
             >
-              <button 
+              <button
                 onClick={() => setPricingModalOpen(false)}
                 className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-10"
               >
@@ -585,11 +596,14 @@ export default function LandingPage() {
 
               <div className="p-8 md:p-12">
                 <div className="text-center mb-10">
-                  <h2 
+                  <h2
                     className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4"
                     style={{ fontFamily: "'Host Grotesk', sans-serif" }}
                   >
-                    Invest in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5d0f7] to-[#3f65ed]">Reliability</span>
+                    Invest in{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5d0f7] to-[#3f65ed]">
+                      Reliability
+                    </span>
                   </h2>
                   <p className="text-gray-400 text-lg max-w-2xl mx-auto">
                     Empower your organization with predictive maintenance.
@@ -602,20 +616,36 @@ export default function LandingPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-[#3f65ed] to-purple-600 opacity-50"></div>
                     <div className="relative h-full bg-[#161616] rounded-[15px] p-8 flex flex-col">
                       <div className="mb-6">
-                        <h3 className="text-2xl font-semibold text-white mb-1" style={{ fontFamily: "'Host Grotesk', sans-serif" }}>Software License</h3>
-                        <p className="text-gray-400 text-sm">Lisensi Perangkat Lunak (1 Item / 1 Paket)</p>
+                        <h3
+                          className="text-2xl font-semibold text-white mb-1"
+                          style={{ fontFamily: "'Host Grotesk', sans-serif" }}
+                        >
+                          Software License
+                        </h3>
+                        <p className="text-gray-400 text-sm">
+                          Lisensi Perangkat Lunak Lifetime
+                        </p>
                       </div>
-                      
+
                       <div className="mb-8">
                         <div className="flex items-baseline gap-2">
                           <span className="text-xl text-gray-400">Rp</span>
-                          <span className="text-4xl font-bold text-white">30.000.000</span>
+                          <span className="text-4xl font-bold text-white">
+                            30.000.000
+                          </span>
                         </div>
-                        <span className="text-xs text-[#3f65ed] mt-2 bg-[#3f65ed]/10 px-2 py-1 rounded-full border border-[#3f65ed]/20 inline-block">One-time Payment</span>
+                        <span className="text-xs text-[#3f65ed] mt-2 bg-[#3f65ed]/10 px-2 py-1 rounded-full border border-[#3f65ed]/20 inline-block">
+                          One-time Payment
+                        </span>
                       </div>
 
                       <div className="space-y-4 mb-8 flex-1">
-                        {["Full Access to PRISM Dashboard", "Predictive Analytics", "Centralized Asset Management", "AI Report Generation"].map((f, i) => (
+                        {[
+                          "Full Access to PRISM Dashboard",
+                          "Predictive Analytics",
+                          "Centralized Asset Management",
+                          "AI Report Generation",
+                        ].map((f, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <CheckCircle2 className="w-5 h-5 text-[#3f65ed] shrink-0" />
                             <span className="text-gray-300 text-sm">{f}</span>
@@ -623,7 +653,11 @@ export default function LandingPage() {
                         ))}
                       </div>
 
-                      <Link href="/sign-up" className="w-full py-3 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                      <Link
+                        href="https://xeyla.site/"
+                        target="blank"
+                        className="w-full py-3 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                      >
                         Get Started <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
@@ -633,20 +667,34 @@ export default function LandingPage() {
                   <div className="relative rounded-2xl p-[1px] bg-gradient-to-b from-white/10 to-transparent">
                     <div className="h-full bg-[#1c1c1c] rounded-[15px] p-8 flex flex-col">
                       <div className="mb-6">
-                        <h3 className="text-2xl font-semibold text-white mb-1" style={{ fontFamily: "'Host Grotesk', sans-serif" }}>Maintenance Cost</h3>
-                        <p className="text-gray-400 text-sm">Biaya Maintenance (1 Kali / 1 Tahun)</p>
+                        <h3
+                          className="text-2xl font-semibold text-white mb-1"
+                          style={{ fontFamily: "'Host Grotesk', sans-serif" }}
+                        >
+                          Maintenance Cost
+                        </h3>
+                        <p className="text-gray-400 text-sm">
+                          Biaya Maintenance (Yearly)
+                        </p>
                       </div>
-                      
+
                       <div className="mb-8">
                         <div className="flex items-baseline gap-2">
                           <span className="text-xl text-gray-400">Rp</span>
-                          <span className="text-4xl font-bold text-white">12.000.000</span>
+                          <span className="text-4xl font-bold text-white">
+                            12.000.000
+                          </span>
                           <span className="text-gray-500 text-sm">/ year</span>
                         </div>
                       </div>
 
                       <div className="space-y-4 mb-8 flex-1">
-                        {["24/7 Technical Support", "Regular System Updates", "Performance Monitoring", "Data Backup & Security"].map((f, i) => (
+                        {[
+                          "24/7 Technical Support",
+                          "Regular System Updates",
+                          "Performance Monitoring",
+                          "Data Backup & Security",
+                        ].map((f, i) => (
                           <div key={i} className="flex items-center gap-3">
                             <CheckCircle2 className="w-5 h-5 text-gray-500 shrink-0" />
                             <span className="text-gray-400 text-sm">{f}</span>
